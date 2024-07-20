@@ -1,0 +1,366 @@
+Core programming language prototype (a sketch), inspired by Rust, Kotlin, Python, C++ (mostly)
+
+This file contains a set of notes and ideas on what the language would look like, this notes will later be used to write down complete language specs.
+The prototype is up to have a lot of modifications during alpha version development.
+
+
+Notes on the compiler and compilation itself:
+In the language there must be those modes available:
+A program can be either a single-file script or a project (that should contain a project file used by the compiler).
+A program can be compiled into a single object file or each source file into separate object file (probably, each symbol into separate object file).
+
+A core program is expected to be written in UTF-8 (although symbols other then ASCII are allowed only in strings/comments, and not in the code).
+
+During compilation different stages are cached into files (this can be optionally turned off).
+Possible cached stages:
+	1. Source file is cached into a directory (archive?/some sort of file?). There is a reference file that contains a list of contained symbols,
+	   for each symbol there is a separate file with info on its dependencies (other symbols), metadata and its contents as a serialized AST? in a simoplified form.
+	2. Other than that, each symbol can be further cached in LLVM IR form instead of AST.
+Those caches can be used for incremental compilation, especially the first kind. It can be used for libraries as a default imported state to increase compilations speed.
+It is supposed to have the minimum of modifications so that any global optimization can still be done.
+Unused symbols of the own project can this way be dropped, while in the other projects (libraries) it might be completely ignored.
+
+In the core IR stage it is allowed to still have generic code and some type/compile time expressions.
+In that phase the generics can be instantiated (which can also be cached), and complile time expressions can be executed.
+
+During frontend part of compilation, the initial AST gets simplified: the diverse loops (for, do-while, repeat) are replaced with simple while loop, and so on.
+After all such things, a simplified AST (or probably it is not a suitable term anymore) for core IR is produced, and this IR is used in caching.
+All the optimizations and complex semantics checks are applied to the IR.
+
+During the initial AST phase the symbol tables for a module is created, it is then used in the IR generation phase.
+
+To add a dependency to the project, one just need to write it down in the project file either as a full/relative path or as a short name if the dependency is provided to
+the compiler in a special file. The standard library is always added by default.
+
+The symbol names are mangled by default, but the mangling can be optionally turned off or the symbol name can be stated explicitly.
+Default mangling uses both the package and the different types of the symbol.
+Within the sama package there can at most be one function with a specific name.
+
+To import / otherwise address a module/symbol, the project name is used (rather than the path), but within the project the relative paths are used.
+Example: import core.lang.String imports a file <core standard library path>/lang/String.core.
+
+To address a symbol in the code, those options are available:
+	1. You can write a complete symbol path, like core.io.Console.print(...)
+	2. You can import a symbol and then use it directly:
+		import core.io.Console.print
+		print(...)
+	3. You can import all the symbols:
+		import core.io.Console.* # Imports all the contents of Console file.
+	   But if you do so for a package, like:
+		import core.io.*
+	   Then you cannot access the contents of Console directly, only as Console.print(), because the symbol itself was not imported.
+	   To do it recursively, you can use **:
+		import core.io.** # This will import print() symbol as well.
+	4. You can import a package and shorten the symbol paths used:
+		import core.io.Console
+		Console.print()
+	   Or:
+		import core.io
+		io.Console.print()
+	   There is a spicific case: if the file contains the only public symbol and its name mathes the file name, the by importing the file you gain direct access to the symbol.
+	5. For the imported packages you can specify an alias:
+		import core.io.Console as out
+		out.print()
+	6. If a symbol is used without its path (for example, you call function print()), then it is looked for in the following order:
+		First, the current file is checked for such a symbol.
+		Then, the directly imported symbols are checked.
+		Finally, the compiler looks into the default library (so you do not need to import it in most cases).
+		
+		This doesn't work for other libraries; you must always either import symbols from them explicitly or state a symbol path.
+
+
+Notes on the language:
+A comment starts with # and continues till the end of the line
+A multiline comment starts with ### on a line and ends with ### on another.
+
+Names of variables, functions, types, etc can contain both lower and upper case latin letters (a-z and A-Z),
+numbers(0-9, name cannot start with a number), symbols _ and $.
+
+As much stuff as possible should be moved to the library, while the language itself should be kept simple.
+First of all, the core language should be able to use LLVM IR inside the code, like:
+	let a = 10
+	llvm {
+		call i32 putchar(i32 %a)
+	}
+As can be seen, it is not the canonical form of LLVM IR, but a modified one where you can address core symbols and probably do some other operations.
+Also, you can supposedly use LLVM IR to make an expression:
+	let a: i32 = llvm {
+		%tmp0 = alloca i32
+		store i32 42, i32* %tmp0
+		= %tmp0 # Or some other way to state the returned value
+	}
+It is equivalent to the code:
+	let tmp0 = 42
+	let a = tmp0
+Such LLVM IR code parts are unsafe code.
+
+Unsafe code, unlike in Rust, is allowed everywhere, but it would produce a warning unless marked with annotation @unsafe.
+A function with @unsafe marker will also produce warnings when used in safe code, so there are two ways to make an unsafe function:
+	@unsafe
+	fn foo() {} # Will produce a warning on using on safe code.
+Or:
+	fn foo() @unsafe {} # Will not produce warning since only the scope is marked as unsafe, but not the function itself.
+
+To declare a variable, one can use the following syntax:
+let a = 10 # Mutable variable with inferred type i32
+let a: u64 = 10 # Mutable variable with explicitly stated type u64
+const a = 10 # Immutable variable
+
+To declare a function:
+fn sum(a: i32, b: i32) = a + b # Returns a sum of two arguments, the return type is inferred
+fn sum(a: i32, b: i32): i64 = a + b # Return type is stated explicitly.
+fn sum<ValTy: Integral>(a: ValTy, b: ValTy) = a + b # Template function.
+fn sum(a: Integral, b: Integral) = a + b # Template function with anonymous template parameter names.
+
+Both functions and variables can be both global, static and local.
+Static: let/const static <name>, fn static <name>.
+Static functions have no access to the scope (arguments) of parent function.
+
+For global symbols (not only variables and functions) the following access modifiers are available:
+pub - public (avaliable everywhere)
+intern - internal (available on;y within project)
+priv - private (only within the module)
+For symbols within a scope (such as class methods and fields), a protected modifier is the default (it cannot be stated explicitly),
+which allows to use the symbols only in the class / trait / .. and in their inheritors (if there are any).
+
+Function calls:
+You can write positional arguments one by one, and you can as well use named parameters. Function can have default values for parameters.
+For template functions their template types can be stated explicitly:
+fn foo<T: Integral>(first: T, second: T) = first ** second
+foo(10, 20) # T is inferred as i32
+foo<i64>(10, 20) # Explicitly state that T is i64
+foo(second = 20, first = 10) # Using named arguments
+
+Apart from variables and functions, a symbol can also be a type (global or local):
+1. type - allows to create a type alias, example:
+	type int = i32
+2. metatype - allows to create a type constraint used in templates (and for type expressions):
+	metatype Integral<T[, ...]> = ct Type(T).isIntegral # Or something like that, similar to c++ concept
+3. trait - allows to create a trait. A trait can have some methods without definition and some with, it can have no fields.
+   A trait can inherit s number of other traits, it can be generic. Each trait can also be treated as a metatype that identifies all the inherited types.
+   Can be used as an interface for dynamic polymorphism with classes.
+   Example:
+	trait Formatable {
+		pub fn format(): String
+	}
+4. struct - allows to create a struct. A struct can have fields, methods, constructors, destructors, overloadable operators. It can inherit some traits.
+   A struct is represented as is, it cannot be used in any kind of dynamic polymorphism, its instances have no virtual functions table.
+   Example:
+	struct FileHandle(const descriptor: i32) : Copyable {
+		pub fn this() = FileHandle(0)
+	}
+5. class - allows to create a class. It can have fields, methods, constructors, destructors, and so on.
+   A class can inherit another class, if it was declared as open or abstract, but no more than one.
+   A class can be used in dynamic polymorphism (and expected to), it is represented as a pointer by default.
+   For a class, it is possible to define properties / custom getters/setters as in Kotlin
+   Example:
+	open class File(const handle: FileHandle) {
+		let path: String
+			set {  
+				this = File(path)
+			}
+			get = handle.getPath()
+	
+		pub fn this(path: String) {
+			...
+		}
+		
+	}
+   To use a class statically, as if a struct, you can use struct keyword:
+	type File refers to a fat pointer
+	type struct File refers to the internals of the File class, as if it was defined as a struct.
+6. union - allows to create a union. Can only be anonymous as is:
+	type OurUnion = union {
+		a: i32
+		b: char
+	}
+	Or:
+	struct OurUnion {
+		union {
+			a: i32
+			b: char
+		}
+		
+		...
+	}
+7. enum - allows to create an enumeration. It can only inherit traits:
+	enum Animal(size: i32, maxAge: i32) {
+		Cat(25, 20),
+		Dog(100, 20) # Fields can have the same values, the enum is represented as an int anyways
+		
+		# Can have methods
+	}
+
+All the classes and struct by default inherit those traits (with a default constructor):
+Formatable
+
+Any type can be extended with additional methods / operators / constructors like this:
+fn i32.tou32() = llvm { = ... }
+
+Anonymous types can be created when using:
+1. Lambdas:
+	{ args... -> code } (like in Kotlin)
+   Just like in Kotlin, if the last function argument is a lambda, it can be moved out of the parens () and be written separately.
+   If it is the only argument used, the parens can be omitted (like list.foreach { print(it) }).
+   If the lambda has a single argument, it can be omitted and be used as it.
+2. Anonymous classes as is:
+	class [ : Parent] {
+		...
+	} # Similar to Kotlin's objects
+
+Basic types are: unit, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64, char (utf-8 character), bool, arrays (like i32[11]), dynamic arrays (like i32[]), 
+pointers (like i32*), function pointers (like fn() -> unit), nullable pointers and function pointers (like i32?, fn?() -> unit), references (like i32&),
+tuples (like (i32, i64)), and user defined types + nullable classes (like File?, same as in Kotlin).
+
+Implicit type conversions are forbidden, it must be done explicitly ba calling a corresponding method.
+The only case where the conversion is done explicitly is when you assign a derived class to the base class type, or when assigning struct Class to Class (and vice versa).
+
+This basic list is extended by the standard library with types such as String, Vector<T>, List<T> and so on.
+
+Literals:
+1. Integer and floating point literals:
+    [-system-]-value-
+    
+    -System- is the numeric system (base) for the literal. By default the base is 10 (decimal).
+        0x is used for the base 16 (hexadecimal).
+        0o is used for the base 8 (octodecimal).
+        0b is used for the base 2 (binary).
+    -Value- is the value of the literal. In the case of floating point, the format would be: abc.efg. -Value- can have character ' in the middle
+        to split a long number. In case of hexadecimal number, all the letters must be of the same case (it cannot be 0xFffa).
+    
+    Examples:
+        0xf - 15.
+        0b11.01 - 3.25.
+        1'125'625'000 - 1125625000.
+        0xf.ff64 - 15.935.
+        
+	Literal type can be inferred from context, when it is not possible, the integer literals have a type of i32, and float literals have a type of f32.
+	Exception: if the value cannot fit into i32/f32, then a larger type is used (i64/f64, then BigInt/BigFloat?).
+	
+2. Boolean literals:
+    false for 0 and true for 1.
+    
+3. Character literals:
+    '-value-'
+    
+    -Value- is the value. Format:
+        A single character
+        or an escape sequence (\n, \t, \r, \a, \b, \f, \v, \', \", \\)
+        or the code of a symbol \u-code- with code in decimal formal and \x-code- with code in hexadecimal format, \o-code- in octodecimal.
+    Character literals have a type of char.
+    
+4. String literals:
+    [r]"-value-" or [r]"""-multiline text-"""
+    
+    -Value- is the string itself, where each character has the same format as of character literal.
+    A string can contain {} characters, the code within them will be converted into string and used for string interpolation.
+	To write down a { character, you can use \{ or wrtie down its code (same for }).
+	
+	If r is written in front of the string, then all its contents are used as is, without {} and escape sequences. (raw string)
+    
+    Examples:
+        "\tAlert!!!\a\n"
+        "a + b is {a + b}" - the resulting string would be "a + b is 32" for example.
+        """a
+        
+        b""" - same as "a\n\n\t\tb"
+		b"{\n}\a" - would be {\n}\a, as a sequence of these 6 characters.
+		
+	String literals have a type of u8[...] (or char[...]?).
+    
+5. Array literals:
+    -type-[[-size-]]( -values...- )
+    
+    The type of the array literal would be the type of the first value.
+    
+    Examples:
+        i32[](1, 2, 3) - i32[3]
+        u8[](8, 16, 12) - u8[3]
+        f32[2]() - f32[2] with values { 0.0f32, 0.0f32 } - if values of the array are not specified, they would be default.
+        char[3]('a', 'b') - c8[3] with values { 'a', 'b', '\0' } - if the size is bigger than the number of specified values, the default values are used.
+		
+	Also, it is possible to use a constructor from lambda that takes the index and returns the value:
+		i32[128] { it } # Will fill the array with sequential numbers from 0 to 127.
+            
+6. Optional pointers and class literal:
+    null
+    
+7. Tuple literals:
+    (-values-)
+    
+    Examples:
+        (1, 4.0, 'a') - (i32, f32, c8)
+        
+8. Function literals (lambdas):
+    {[-arguments...- ->] -function body- }
+	Or (if the type must be specified explicitly):
+	fn(-args-): -return type- -body- # Common function without name.
+    
+    Examples:
+        let fact = { n: i32 -> if n <= 1 1 else n * this(n - 1) } # Keyword this in lambdas refers to the lambda itself.
+        { it != 0 } # Can only be used if the type of it can be inferred.
+		let f = fn(i32) -> bool { it % 2 != 0 } # Function type is stated explicitly
+
+Operators and their corresponding priorities:
+    1.  -function-(a) - function call.
+        -type-(a) - constructor call.
+        typeof(a) - type of an expression. Not overrideable.
+        a[b] - access to an element, applicable to arrays, pointers and tuples by default. b is an integer.
+        a[[b]..[c][..step]] - slice of a part of an array, pointer or tuples. b and c are integers. Returns Span object.
+        a.b - member access. Not overrideable.
+        a?.b - nullable member access. Executes method / accesses a field or returns null if the a is null. Safe.
+        
+    2.  +a, -a - unary plus and minus. Applcable to number types.
+        !a - logical NOT. Applcable to any type that can be converted to bool.
+        ~a - bitwise NOT. Applcable to integer and boolean types.
+        *a - dereference of a pointer. Applcable to pointers. Unsafe for nullable pointers. 
+        addressof a - address of a variable. Unsafe.
+		ref a - returns a reference to a.
+		
+	3.  a as -type- - type cast. Allows to cast a class to its base class, to its inheritor (in dynamic polymorphism), and some other conversions.
+        
+    4.  a ** b - raise to power. Applcable to numbers.
+    
+    5.  a * b - multiplication. Applcable to numbers, characters, strings and pointers (string * n to duplicate string n times, n * n, c * n, p * n).
+        a / b - division. Applcable to numbers. The result is a floating point number.
+        a // b - division with the whole result. Applcable to numbers, characters and pointers. (n // n, c // n, p // n)
+        a % b - remainder. Applcable to numbers, characters and pointers. (n % n, c % n, p % n)
+        
+    6.  a + b - addition. Applcable to numbers, strings, characters and pointers. (n + n, s + s, s + c, c + n, p + p, p + n)
+        a - b - substraction. Applcable to numbers, characters and pointers. (n - n, c - n, p - p, p - n)
+        
+    7.  a <<, >>, &, |, ^ b - bitwise left and right shifts, bitwise AND, OR and XOR. Applcable to numbers, characters and pointers. (n << n, c << n, p << n)
+    
+    8.  a..b[..-step-] - range creation. Returns a range that starts with a and continues till b (exclusively) with step -step-.
+     
+    9.  a <, <=, >, >= b - relational operators. Applcable to numbers, characters, pointers.
+        a ==, != b - equation and non-equation. Applcable to any types that can be compared.
+        a is -type- - returns true if a is an instance of -type-. Can be used in dynamic polymorphism.
+		a is -metatype- - returns true if the type of a satisfies the given metatype.
+        a in b - returns true if b contains a.
+        
+    10.  a &&, || b - logical AND and OR. Applcable to bool.
+    
+    10. a if expr else b - ternary operator. e is bool. If e is true then a would be the result, else b.
+        a ?: b - elvis operator. Returns a if a is not null else b.
+        match e { -val- -> a, -val- -> b..., else -> c } - match operator. If e matches any of the cases, the respective value is the result, otherwise default.
+            Else must be specified anyway (unless all the possible values have their branches). Instead of specific values, whole expressions can be used (then, it would be compiled into if-else series).
+        a =, +=, -=, *=, **=, /=, //=, %=, ^=, |=, &=, <<=, >>= b - compound and direct assignments. Applcable to any types that can be used
+            with respective operators. Direct assignment is applicable to any type.
+            
+    11. , - comma.
+
+Flow control structures:
+1. if-elif-else - trivial
+2. loops: while, do-while, for (<var> in ...), repeat(<times>).
+3. Inside of loops: continue/break.
+4. A loop can have a label that can be used to continue / break an outer loop: for@outer(...) for@inner(...) break outer # Will break the outer loop.
+5. After a loop there can be an else block that will be executed on breaking the loop.
+
+To use a for cycle, the type must implement either of Iterator or Iterable traits.
+
+
+TODO:
+1. Think of enums: how to implement both Rust-like and Kotlin-like functionality.
+2. Think of macros and compile-time computation system.
+3. Think of ways to make new types based on LLVM type system.
