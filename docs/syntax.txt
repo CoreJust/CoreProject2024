@@ -1,1 +1,85 @@
-// To be filled in during development
+This file contains the relevant features of the language (currently it is only a small subset of Core language).
+
+###  Program structure  ###
+A program consists of a single .core file.
+The file can contain a number of functions, among which there must be the main function.
+<program> :=
+	<function>...
+
+###  Function declaration  ###
+TO declare a function, one must use the following syntax:
+<function> :=
+	fn <name>([<argument-name>: <type>[, other arguments...]])[: <return-type>] [<function-body>]|[= native("<extern-function-name>")]
+<function-body> :=
+	= <expression>
+	|<scope>
+<scope> :=
+	{ [<statement>]... }
+
+Function name and arguments must be valid identifiers.
+Function can have no or any number of arguments.
+If function return type is not specified explicitly, then it will be unit type (unless the = <expression> is used as a function body, then the return type can be inferred).
+One can use = native("<extern-function-name>") instead of body to state that the function is external and will be linked to the program later.
+Example: fn putc(ch: i32): i32 = native("putc")
+This allows to deal with mangling.
+Function body can be written as either a code scope {...} or assignment = ...
+Assignment like this fn func(<args>): <return-type> = <expression>
+is equivalent to: fn func(<argg>): <return-type> { return expression }
+
+###  Statements  ###
+Within a code scope there can be one of those three statements:
+<statement> :=
+	return <expression> # Makes a return from the function with the given value.
+	|let <variable-name>[: <variable-type>] = <expression> # Variable declaration
+	|<expression>
+It is possible to explicitly separate statements with semicolon.
+
+###  Variable declaration  ###
+With the syntax demonstrated above, one can declare a local variable on the stack.
+Such a variable will only exist within the scope.
+Also, it is allowed to do shadowing, thus overriding an existing variable with another of the same name.
+
+###  Types  ###
+There are only two variable types available:
+<type> :=
+	i32
+	|unit.
+The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used as function return type (so all the variables and arguments are actually i32 as of now).
+
+###  Expressions  ###
+There are following expressions available:
+<expression> :=
+	<expression> <binary-operator> <expression>
+	<unary-operator> <expression>
+	<function-call>
+	<variable-name>
+	<literal>
+<binary-operator> :=
+	+|-|*|/|%
+<unary-operator> :=
+	+|-
+<function-call> :=
+	<function-name>([<expression>]...)
+
+###  Literals  ###
+There are currently only one type of literals: numbers.
+<literal> :=
+	[<numeric-system>]<number>
+<numeric-system> :=
+	0x|0o|0b
+<number> :=
+	<digit>[<digit>|']
+<digit> :=
+	0-9
+	
+###  Identifiers  ###
+Any name must be a valid identifier:
+<identifier> :=
+	(<a-z>|<A-Z>|_|$)[(<a-z>|<A-Z>|_|$|<0-9>)]...
+But identifier cannot match any of the keywords.
+
+###  Comments  ###
+In any place within the code there can be a comment, which is ignored by the compiler:
+<comment> :=
+	#<any-symbols>\n
+	###<any-symbols>###

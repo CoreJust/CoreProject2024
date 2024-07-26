@@ -1,3 +1,7 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #include "UtfIO.hpp"
 
 #ifdef _WIN32
@@ -6,7 +10,7 @@
 #include <io.h>
 #endif // _WIN32
 
-int initUtfIO() {
+int utf::initUtfIO() {
 #ifdef _WIN32
 	fflush(stdout);
 
@@ -22,8 +26,4 @@ int initUtfIO() {
 	// Additionally we turn sync with C stdio off so as to accelerate I/O operations.
 	std::ios_base::sync_with_stdio(false);
 	return 0;
-}
-
-std::ostream& operator<<(std::ostream& out, StringView str) {
-	return out.write(reinterpret_cast<const char*>(str.data()), str.size());
 }

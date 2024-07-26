@@ -1,3 +1,7 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 /*
 *	Bit.hpp by CoreJust
 *	Created on 20.07.2024
@@ -15,6 +19,13 @@
 #endif
 
 namespace bit {
+	// Returns the negative for the value as if it is a signed integer.
+	constexpr auto negateUnsigned(std::unsigned_integral auto value) noexcept {
+		return std::bit_cast<decltype(value)>(
+			-std::bit_cast<std::make_signed_t<decltype(value)>>(value)
+		);
+	}
+
 	// Parallel extract function.
 	// Extracts from value only those bits that are set in mask
 	// and remaps them to packed number.
@@ -26,7 +37,7 @@ namespace bit {
 			uint64_t bit = 1;
 
 			do {
-				uint64_t lsb = mask & -mask;
+				uint64_t lsb = mask & negateUnsigned(mask);
 				mask &= ~lsb;
 				result |= bool(value & lsb) * bit;
 				bit <<= 1;
@@ -42,7 +53,7 @@ namespace bit {
 		uint64_t bit = 1;
 
 		do {
-			uint64_t lsb = mask & -mask;
+			uint64_t lsb = mask & negateUnsigned(mask);
 			mask &= ~lsb;
 			result |= bool(value & lsb) * bit;
 			bit <<= 1;
@@ -60,7 +71,7 @@ namespace bit {
 			uint32_t bit = 1;
 
 			do {
-				uint32_t lsb = mask & -mask;
+				uint32_t lsb = mask & negateUnsigned(mask);
 				mask &= ~lsb;
 				result |= bool(value & lsb) * bit;
 				bit <<= 1;
@@ -76,7 +87,7 @@ namespace bit {
 		uint32_t bit = 1;
 
 		do {
-			uint32_t lsb = mask & -mask;
+			uint32_t lsb = mask & negateUnsigned(mask);
 			mask &= ~lsb;
 			result |= bool(value & lsb) * bit;
 			bit <<= 1;

@@ -9,7 +9,7 @@ In the language there must be those modes available:
 A program can be either a single-file script or a project (that should contain a project file used by the compiler).
 A program can be compiled into a single object file or each source file into separate object file (probably, each symbol into separate object file).
 
-A core program is expected to be written in UTF-8 (although symbols other then ASCII are allowed only in strings/comments, and not in the code).
+A Core program is expected to be written in UTF-8 (although symbols other then ASCII are allowed only in strings/comments, and not in the code).
 
 During compilation different stages are cached into files (this can be optionally turned off).
 Possible cached stages:
@@ -20,7 +20,7 @@ Those caches can be used for incremental compilation, especially the first kind.
 It is supposed to have the minimum of modifications so that any global optimization can still be done.
 Unused symbols of the own project can this way be dropped, while in the other projects (libraries) it might be completely ignored.
 
-In the core IR stage it is allowed to still have generic code and some type/compile time expressions.
+In the Core IR stage it is allowed to still have generic code and some type/compile time expressions.
 In that phase the generics can be instantiated (which can also be cached), and complile time expressions can be executed.
 
 During frontend part of compilation, the initial AST gets simplified: the diverse loops (for, do-while, repeat) are replaced with simple while loop, and so on.
@@ -77,7 +77,7 @@ Names of variables, functions, types, etc can contain both lower and upper case 
 numbers(0-9, name cannot start with a number), symbols _ and $.
 
 As much stuff as possible should be moved to the library, while the language itself should be kept simple.
-First of all, the core language should be able to use LLVM IR inside the code, like:
+First of all, the Core language should be able to use LLVM IR inside the code, like:
 	let a = 10
 	llvm {
 		call i32 putchar(i32 %a)
@@ -299,7 +299,7 @@ Literals:
     Examples:
         let fact = { n: i32 -> if n <= 1 1 else n * this(n - 1) } # Keyword this in lambdas refers to the lambda itself.
         { it != 0 } # Can only be used if the type of it can be inferred.
-		let f = fn(i32) -> bool { it % 2 != 0 } # Function type is stated explicitly
+		let f = fn(it: i32) -> bool { it % 2 != 0 } # Function type is stated explicitly
 
 Operators and their corresponding priorities:
     1.  -function-(a) - function call.
@@ -364,3 +364,4 @@ TODO:
 1. Think of enums: how to implement both Rust-like and Kotlin-like functionality.
 2. Think of macros and compile-time computation system.
 3. Think of ways to make new types based on LLVM type system.
+4. Think of ways to add C-compatible types like int.
