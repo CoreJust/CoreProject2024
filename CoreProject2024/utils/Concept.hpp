@@ -11,12 +11,14 @@
 #pragma once
 #include <concepts>
 
-// Arithmetic type is any of the basic integral or floating point types.
-template<class T>
-concept Arithmetic = std::is_arithmetic_v<T>;
+namespace utils {
+	// Arithmetic type is any of the basic integral or floating point types.
+	template<class T>
+	concept Arithmetic = std::is_arithmetic_v<T>;
 
-// Callable type is anything that can be called with the given argument types and return something convertible to the required return type.
-template<class T, class Result, class... Args>
-concept Callable = requires(T func, Args... args) {
-	{ func(args...) } -> std::convertible_to<Result>;
-};
+	// Callable type is anything that can be called with the given argument types and return something convertible to the required return type.
+	template<class T, class Result, class... Args>
+	concept Callable = requires(T func, Args... args) {
+		{ func(args...) } -> std::convertible_to<Result>;
+	};
+}

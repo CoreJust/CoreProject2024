@@ -5,17 +5,17 @@
 #include "File.hpp"
 #include <fstream>
 #include <filesystem>
-#include "ErrorPrinter.hpp"
+#include "error/ErrorPrinter.hpp"
 
-std::optional<utf::String> file::readFile(const utf::String& path) {
+std::optional<utf::String> utils::readFile(const utf::String& path) {
     auto result = readFileUnchecked(path);
     if (!result.has_value()) {
         return result;
     }
 
     if (!utf::isValidUtf(*result)) {
-        ErrorPrinter::error({
-            .code = ErrorCode::INVALID_UTF_IN_FILE,
+        error::ErrorPrinter::error({
+            .code = error::ErrorCode::INVALID_UTF_IN_FILE,
             .name = "Compiler error: Invalid Utf-8 encoding of file",
             .selectionStart = TextPosition(),
             .selectionLength = 0,
@@ -29,7 +29,7 @@ std::optional<utf::String> file::readFile(const utf::String& path) {
     return result;
 }
 
-std::optional<utf::String> file::readFileUnchecked(const utf::String& path) {
+std::optional<utf::String> utils::readFileUnchecked(const utf::String& path) {
     /*
     *   It is the quickest implementation among all the tested.
     *   Here, we get the file size and allocate a String with the size of the file.
@@ -41,8 +41,8 @@ std::optional<utf::String> file::readFileUnchecked(const utf::String& path) {
 
     std::FILE* file = std::fopen(path.c_str(), "rb");
     if (fileSize != std::fread(reinterpret_cast<void*>(&result[0]), 1, fileSize, file)) {
-        ErrorPrinter::error({
-            .code = ErrorCode::CANNOT_OPEN_FILE_ERROR,
+        error::ErrorPrinter::error({
+            .code = error::ErrorCode::CANNOT_OPEN_FILE_ERROR,
             .name = "Compiler error: Failed to read file",
             .selectionStart = TextPosition(),
             .selectionLength = 0,

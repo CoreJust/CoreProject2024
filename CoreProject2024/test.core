@@ -1,3 +1,12 @@
-		aa aba ad jda oijth _1 _122 $_d1	~_
-		@
-	^~?
+fn putchar(ch: i32): i32 = native("putchar")
+
+fn main(): i32 {
+	let a = 42
+	let space: i32 = 32; let b = 0x40
+
+	putchar(a)
+	putchar(space)
+	putchar(b)
+
+	return 0
+}

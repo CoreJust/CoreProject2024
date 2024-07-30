@@ -18,7 +18,7 @@
 #define ENABLE_INTRINSICS
 #endif
 
-namespace bit {
+namespace utils {
 	// Returns the negative for the value as if it is a signed integer.
 	constexpr auto negateUnsigned(std::unsigned_integral auto value) noexcept {
 		return std::bit_cast<decltype(value)>(
@@ -44,8 +44,7 @@ namespace bit {
 			} while (mask);
 
 			return result;
-		}
-		else {
+		} else {
 			return _pext_u64(value, mask);
 		}
 #else
@@ -78,8 +77,7 @@ namespace bit {
 			} while (mask);
 
 			return result;
-		}
-		else {
+		} else {
 			return _pext_u32(value, mask);
 		}
 #else
@@ -138,8 +136,7 @@ namespace bit {
 			}
 
 			return result;
-		}
-		else {
+		} else {
 			return _pdep_u32(value, mask);
 		}
 #else
@@ -158,8 +155,7 @@ namespace bit {
 	constexpr uint8_t leastSignificantBit(const uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
 			return static_cast<uint8_t>(std::countr_zero(value));
-		}
-		else {
+		} else {
 #ifdef ENABLE_INTRINSICS
 			unsigned long result;
 			_BitScanForward64(&result, value);
@@ -177,8 +173,7 @@ namespace bit {
 	constexpr uint8_t mostSignificantBit(const uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
 			return static_cast<uint8_t>(63 - std::countl_zero(value));
-		}
-		else {
+		} else {
 #ifdef ENABLE_INTRINSICS
 			unsigned long result;
 			_BitScanReverse64(&result, value);
@@ -196,8 +191,7 @@ namespace bit {
 	constexpr uint8_t popCount(uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
 			return static_cast<uint8_t>(std::popcount(value));
-		}
-		else {
+		} else {
 #ifdef ENABLE_INTRINSICS
 			return static_cast<uint8_t>(_mm_popcnt_u64(value));
 #elif defined(__GNUC__)

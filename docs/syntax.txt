@@ -29,6 +29,7 @@ is equivalent to: fn func(<argg>): <return-type> { return expression }
 ###  Statements  ###
 Within a code scope there can be one of those three statements:
 <statement> :=
+	<function> # Internal function declaration
 	return <expression> # Makes a return from the function with the given value.
 	|let <variable-name>[: <variable-type>] = <expression> # Variable declaration
 	|<expression>
@@ -62,8 +63,9 @@ There are following expressions available:
 	<function-name>([<expression>]...)
 
 ###  Literals  ###
-There are currently only one type of literals: numbers.
-<literal> :=
+There are currently only two type of literals: numbers and strings.
+<literal> := <number>|<text>
+<number> :=
 	[<numeric-system>]<number>
 <numeric-system> :=
 	0x|0o|0b
@@ -71,6 +73,12 @@ There are currently only one type of literals: numbers.
 	<digit>[<digit>|']
 <digit> :=
 	0-9
+<text> :=
+	[r]"<characters without new line>..." # Single line string
+	|[r]"""<characters with possibly new line>...""" # Multiline string
+r before the string literal stands for raw string, where all the characters are understood as is, whereas in
+common strings there can be escape sequences:
+	\n, \t, \v, \f, \e, \a, \b, \', \", \\, \{, \}, \r, \[o]<octal value>, \o{...}, \x<hexadecimal value>, \x{...}, \uDDDD, \u{<unicode code point>}
 	
 ###  Identifiers  ###
 Any name must be a valid identifier:

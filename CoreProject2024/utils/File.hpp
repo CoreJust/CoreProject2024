@@ -10,9 +10,9 @@
 
 #pragma once
 #include <optional>
-#include "String.hpp"
+#include "utf/String.hpp"
 
-namespace file {
+namespace utils {
 	// Reads the contents of the file on the given path.
 	// If the contents of the file is not a valid Utf-8 string, or the file cannot be read, returns nullopt.
 	std::optional<utf::String> readFile(const utf::String& path);

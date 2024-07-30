@@ -5,28 +5,29 @@
 #include "Token.hpp"
 #include <cassert>
 #include <format>
+#include "utf/StringUtils.hpp"
 
-utf::String tokenType2String(TokenType type) {
+utf::String lexer::tokenType2String(TokenType type) {
 	assert(type <= TOKEN_TYPES_COUNT);
 
     static const char* TOKEN_TYPE_NAMES[] = {
-		"IDENTIFIER", "NUMBER", "TEXT",
+		"IDENTIFIER", "NUMBER", "TEXT", "RAW_TEXT",
 		"FN", "NATIVE", "RETURN", "LET",
 		"I32", "UNIT",
 		"EQ", "PLUS", "MINUS", "STAR",
 		"SLASH", "PERCENT",
 		"LPAREN", "RPAREN", "LBRACE", "RBRACE",
 		"COLON", "SEMICOLON", "COMMA",
-		"NO_TOKEN", "TOKEN_TYPES_COUNT"
+		"NEWLINE", "NO_TOKEN", "TOKEN_TYPES_COUNT"
     };
 
     return TOKEN_TYPE_NAMES[type];
 }
 
-utf::String Token::toString() const {
+utf::String lexer::Token::toString() const {
 	if (this->text.empty()) {
 		return std::format("[{} at {}]", tokenType2String(type), position.toString());
 	} else {
-		return std::format("[{} {} at {}]", tokenType2String(type), text, position.toString());
+		return std::format("[{} \"{}\" at {}]", tokenType2String(type), utf::replaceControlCharacters(text), position.toString());
 	}
 }

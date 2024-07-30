@@ -5,7 +5,7 @@
 #include "TextPosition.hpp"
 #include <format>
 
-utf::String TextPosition::getTextSelection(utf::StringView text, uint64_t selectionLength, bool allowMultipleLines, bool empasize) const {
+utf::String utils::TextPosition::getTextSelection(utf::StringView text, uint64_t selectionLength, bool allowMultipleLines, bool empasize) const {
     uint64_t selectionStart = getIndexInText(TextPosition { .line = line, .character = 0 }, text);
     if (selectionStart == utf::String::npos) {
         return ""; // this TextPosition is out of text.
@@ -53,7 +53,7 @@ utf::String TextPosition::getTextSelection(utf::StringView text, uint64_t select
     return result;
 }
 
-uint64_t TextPosition::getIndexInText(TextPosition position, utf::StringView text) {
+uint64_t utils::TextPosition::getIndexInText(TextPosition position, utf::StringView text) {
     if (text.empty()) {
         return utf::String::npos;
     }
@@ -87,6 +87,6 @@ uint64_t TextPosition::getIndexInText(TextPosition position, utf::StringView tex
     return (ptr - text.data()) - utf::getCharSize(ch);
 }
 
-utf::String TextPosition::toString() const {
+utf::String utils::TextPosition::toString() const {
     return std::format("{}:{}", line + 1, character + 1);
 }

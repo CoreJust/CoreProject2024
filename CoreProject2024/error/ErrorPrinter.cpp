@@ -6,26 +6,26 @@
 #include <format>
 #include <iostream>
 
-void ErrorPrinter::error(const ErrorStruct& err) {
+void error::ErrorPrinter::error(const ErrorStruct& err) {
 	printMessage('E', err);
 }
 
-void ErrorPrinter::warning(const ErrorStruct& err) {
+void error::ErrorPrinter::warning(const ErrorStruct& err) {
 	printMessage('W', err);
 }
 
-void ErrorPrinter::setSource(utf::StringView source) {
+void error::ErrorPrinter::setSource(utf::StringView source) {
 	s_currentSource = source;
 }
 
-void ErrorPrinter::printMessage(char messageType, const ErrorStruct& err) {
+void error::ErrorPrinter::printMessage(char messageType, const ErrorStruct& err) {
 	switch (errorDetailLevel) {
 		case ErrorDetailLevel::ERROR_NAME_AND_CODE_ONLY:
 			std::cout << std::format("[{}{:0>4}] {} at {}", messageType, err.code, err.name, err.selectionStart.toString()) << std::endl;
 			break;
 		case ErrorDetailLevel::WITH_CODE:
 			std::cout << std::format(
-				"[{}{:0>4}] {} at {}\n{}", 
+				"[{}{:0>4}] {} at {}\n{}\n", 
 				messageType, 
 				err.code, 
 				err.name,
@@ -35,7 +35,7 @@ void ErrorPrinter::printMessage(char messageType, const ErrorStruct& err) {
 			break;
 		case ErrorDetailLevel::WITH_DESCRIPTION:
 			std::cout << std::format(
-				"[{}{:0>4}] {} at {}\n{}\nDescription: {}",
+				"[{}{:0>4}] {} at {}\n{}\nDescription: {}\n",
 				messageType,
 				err.code,
 				err.name,
@@ -46,7 +46,7 @@ void ErrorPrinter::printMessage(char messageType, const ErrorStruct& err) {
 			break;
 		case ErrorDetailLevel::WITH_EXPLANATION:
 			std::cout << std::format(
-				"[{}{:0>4}] {} at {}\n{}\nDescription: {}\nExplanation: {}",
+				"[{}{:0>4}] {} at {}\n{}\nDescription: {}\nExplanation: {}\n",
 				messageType,
 				err.code,
 				err.name,

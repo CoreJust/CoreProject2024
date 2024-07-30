@@ -10,9 +10,9 @@
 
 #pragma once
 #include <array>
-#include "utils/String.hpp"
+#include "utf/String.hpp"
 
-namespace tokenization_utils {
+namespace lexer {
 	// Returns an array with true for indices equal to characters corresponding to identifier start.
 	constexpr std::array<bool, 256> _MAKE_IDENTIFIER_START_CHARS() {
 		std::array<bool, 256> result;
@@ -41,7 +41,7 @@ namespace tokenization_utils {
 		result.fill(false);
 
 		for (char ch : arr) {
-			result[ch] = true;
+			result[std::bit_cast<uint8_t>(ch)] = true;
 		}
 
 		return result;

@@ -10,8 +10,8 @@
 
 #pragma once
 #include <string>
-#include "Bit.hpp"
-#include "Macro.hpp"
+#include "utils/Bit.hpp"
+#include "utils/Macro.hpp"
 
 namespace utf {
 	// Utf-8 string, string view and character respectively.
@@ -111,7 +111,7 @@ namespace utf {
 		};
 
 		int size = getCodePointSize(codePoint);
-		return bit::parallelDeposit(codePoint, UTF_INSERTION_BITS[size - 1]) | UTF_BITS[size - 1];
+		return utils::parallelDeposit(codePoint, UTF_INSERTION_BITS[size - 1]) | UTF_BITS[size - 1];
 	}
 
 	// Decodes a Utf-8 into unicode codepoint.
@@ -125,7 +125,7 @@ namespace utf {
 		};
 
 		int size = getCharSize(ch);
-		return bit::parallelExtract(ch, UTF_INSERTION_BITS[size - 1]);
+		return utils::parallelExtract(ch, UTF_INSERTION_BITS[size - 1]);
 	}
 
 	// Returns true if character is a new line Utf-8 character.
@@ -180,6 +180,30 @@ namespace utf {
 	// Assumes that character a valid Utf-8 character.
 	constexpr bool isDigit(Char ch) noexcept {
 		return ch >= encodeUtf('0') && ch <= encodeUtf('9');
+	}
+
+
+	// Returns true if the character changes the flow of printed characters, e.g. new lines.
+	// Assumes that character a valid Utf-8 character.
+	constexpr bool isControlCharacter(Char ch) noexcept {
+		switch (ch) {
+			case encodeUtf(0x61C): [[fallthrough]]; // ARABIC LETTER MARK
+			case encodeUtf(0x200E): [[fallthrough]]; // LEFT-TO-RIGHT MARK
+			case encodeUtf(0x200F): [[fallthrough]]; // RIGHT-TO-LEFT MARK
+			case encodeUtf(0x202A): [[fallthrough]]; // LEFT-TO-RIGHT EMBEDDING
+			case encodeUtf(0x202B): [[fallthrough]]; // RIGHT-TO-LEFT EMBEDDING
+			case encodeUtf(0x202C): [[fallthrough]]; // POP DIRECTIONAL FORMATTING
+			case encodeUtf(0x202D): [[fallthrough]]; // LEFT-TO-RIGHT OVERRIDE
+			case encodeUtf(0x202E): [[fallthrough]]; // RIGHT-TO-LEFt OVERRIDE
+			case encodeUtf(0x2066): [[fallthrough]]; // LEFT-TO-RIGHT ISOLATE
+			case encodeUtf(0x2067): [[fallthrough]]; // RIGHT-TO-LEFt ISOLATE
+			case encodeUtf(0x2068): [[fallthrough]]; // FIRST STRONG ISOLATE
+			case encodeUtf(0x2069): [[fallthrough]]; // POP DIRECTIONAL ISOLATE
+			case encodeUtf(0xFFF9): [[fallthrough]]; // INTERLINEAR ANNOTATION ANCHOR
+			case encodeUtf(0xFFFA): [[fallthrough]]; // INTERLINEAR ANNOTATION SEPARATOR
+			case encodeUtf(0xFFFB): return true; // INTERLINEAR ANNOTATION TERMINATOR
+		default: return isNewLine(ch) || ch < encodeUtf(' ') || (ch >= encodeUtf(0x80) && ch <= encodeUtf(0x9F));
+		}
 	}
 
 	// Returns true if the pointer points at a new line Utf-8 character or a sequence of CR+LF,
