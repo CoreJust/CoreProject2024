@@ -4,7 +4,10 @@ This file contains the relevant features of the language (currently it is only a
 A program consists of a single .core file.
 The file can contain a number of functions, among which there must be the main function.
 <program> :=
-	<function>...
+	<declaration>...
+<declaration> :=
+	<function-declaration>
+	|<variable-declaration>
 
 ###  Function declaration  ###
 TO declare a function, one must use the following syntax:
@@ -32,6 +35,7 @@ Within a code scope there can be one of those three statements:
 	<function> # Internal function declaration
 	return <expression> # Makes a return from the function with the given value.
 	|let <variable-name>[: <variable-type>] = <expression> # Variable declaration
+	|<scope>
 	|<expression>
 It is possible to explicitly separate statements with semicolon.
 
@@ -50,6 +54,7 @@ The i32 type is the signed 32-bit integer type, whereas unit is the void type, t
 ###  Expressions  ###
 There are following expressions available:
 <expression> :=
+	(<expression>)
 	<expression> <binary-operator> <expression>
 	<unary-operator> <expression>
 	<function-call>
@@ -61,6 +66,13 @@ There are following expressions available:
 	+|-
 <function-call> :=
 	<function-name>([<expression>]...)
+	
+###  Operator precedence  ###
+1. a, <literal>
+2. a()
+3. -a, +a
+4. a * b, a / b, a % be
+5. a + b, a - b
 
 ###  Literals  ###
 There are currently only two type of literals: numbers and strings.

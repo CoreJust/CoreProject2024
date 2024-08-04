@@ -5,12 +5,11 @@
 #include "AstPrinter.hpp"
 #include "ast/AstClassImplementations.hpp"
 
-ast_visitor::AstPrinter::AstPrinter(utils::IndentPrinter printer)
-	: Parent(*this), m_printer(std::move(printer)) { }
+ast_visitor::AstPrinter::AstPrinter(utils::IndentPrinter& printer) noexcept
+	: Parent(*this), m_printer(printer) { }
 
-void ast_visitor::AstPrinter::print(ast::Node* node) {
+void ast_visitor::AstPrinter::print(utils::NoNull<ast::Node> node) {
 	Parent::visitRoot(node);
-	m_printer.stream() << std::flush;
 }
 
 void ast_visitor::AstPrinter::visit(ast::LiteralValue& node) {
@@ -25,14 +24,14 @@ void ast_visitor::AstPrinter::visit(ast::InvocationOperator& node) {
 	Parent::visit(node.getCallee());
 	m_printer.stream() << "(";
 	
-	const std::vector<ast::Expression*>& args = node.getArguments();
+	const std::vector<utils::NoNull<ast::Expression>>& args = node.getArguments();
 	if (!args.empty()) {
-		Parent::visit(args[0]);
+		Parent::visit(args[0].get());
 	}
 
 	for (size_t i = 1; i < args.size(); i++) {
 		m_printer.stream() << ", ";
-		Parent::visit(args[i]);
+		Parent::visit(args[i].get());
 	}
 
 	m_printer.stream() << ")";
@@ -40,27 +39,37 @@ void ast_visitor::AstPrinter::visit(ast::InvocationOperator& node) {
 
 void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 	switch (node.getOperator()) {
-		case ast::UnaryOperator::PLUS:  m_printer.stream() << '+'; break;
-		case ast::UnaryOperator::MINUS: m_printer.stream() << '-'; break;
+		case ast::UnaryOperator::PLUS:  m_printer.stream() << "+("; break;
+		case ast::UnaryOperator::MINUS: m_printer.stream() << "-("; break;
 	default: unreachable();
 	}
 
 	Parent::visit(node.getExpression());
+	m_printer.stream() << ')';
 }
 
 void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {
+	m_printer.stream() << '(';
 	Parent::visit(node.getLeft());
 
 	switch (node.getOperator()) {
-		case ast::BinaryOperator::PLUS:		 m_printer.stream() << " + "; break;
-		case ast::BinaryOperator::MINUS:	 m_printer.stream() << " - "; break;
-		case ast::BinaryOperator::MULTIPLY:  m_printer.stream() << " * "; break;
-		case ast::BinaryOperator::DIVIDE:	 m_printer.stream() << " / "; break;
-		case ast::BinaryOperator::REMAINDER: m_printer.stream() << " % "; break;
+		case ast::BinaryOperator::PLUS:		 m_printer.stream() << ") + ("; break;
+		case ast::BinaryOperator::MINUS:	 m_printer.stream() << ") - ("; break;
+		case ast::BinaryOperator::MULTIPLY:  m_printer.stream() << ") * ("; break;
+		case ast::BinaryOperator::DIVIDE:	 m_printer.stream() << ") / ("; break;
+		case ast::BinaryOperator::REMAINDER: m_printer.stream() << ") % ("; break;
 	default: unreachable();
 	}
 
 	Parent::visit(node.getRight());
+	m_printer.stream() << ')';
+}
+
+void ast_visitor::AstPrinter::visit(ast::ReturnOperator& node) {
+	m_printer.stream() << "return ";
+	if (node.getExpression() != nullptr) {
+		Parent::visit(node.getExpression());
+	}
 }
 
 void ast_visitor::AstPrinter::visit(ast::ExpressionStatement& node) {
@@ -72,7 +81,7 @@ void ast_visitor::AstPrinter::visit(ast::ExpressionStatement& node) {
 void ast_visitor::AstPrinter::visit(ast::ScopeStatement& node) {
 	m_printer.stream() << "{\n";
 	m_printer.increaseIndent();
-	for (ast::Statement* statement : node.getStatements()) {
+	for (utils::NoNull<ast::Statement> statement : node.getStatements()) {
 		Parent::visit(statement);
 	}
 
@@ -81,18 +90,11 @@ void ast_visitor::AstPrinter::visit(ast::ScopeStatement& node) {
 	m_printer.stream() << "}\n\n";
 }
 
-void ast_visitor::AstPrinter::visit(ast::ReturnStatement& node) {
-	m_printer.printIndent();
-	m_printer.stream() << "return ";
-	Parent::visit(node.getExpression());
-	m_printer.stream() << '\n';
-}
-
 void ast_visitor::AstPrinter::visit(ast::VariableDeclaration& node) {
 	m_printer.printIndent();
 	m_printer.stream() << "let " << node.getName();
-	if (auto type = node.getType(); !type.empty()) {
-		m_printer.stream() << ": " << type;
+	if (auto type = node.getVariableType(); !type.isNoType()) {
+		m_printer.stream() << ": " << type.getTypeName();
 	}
 
 	m_printer.stream() << " = ";
@@ -106,17 +108,17 @@ void ast_visitor::AstPrinter::visit(ast::FunctionDeclaration& node) {
 
 	const std::vector<ast::FunctionDeclaration::Argument>& args = node.getArguments();
 	if (!args.empty()) {
-		m_printer.stream() << args[0].name << ": " << args[0].type;
+		m_printer.stream() << args[0].name << ": " << args[0].type.getTypeName();
 	}
 
 	for (size_t i = 1; i < args.size(); i++) {
 		m_printer.stream() << ", ";
-		m_printer.stream() << args[i].name << ": " << args[i].type;
+		m_printer.stream() << args[i].name << ": " << args[i].type.getTypeName();
 	}
 
 	m_printer.stream() << ')';
-	if (auto returnType = node.getReturnType(); !returnType.empty()) {
-		m_printer.stream() << ": " << returnType;
+	if (auto returnType = node.getReturnType(); !returnType.isNoType()) {
+		m_printer.stream() << ": " << returnType.getTypeName();
 	}
 
 	m_printer.stream() << ' ';
@@ -127,4 +129,10 @@ void ast_visitor::AstPrinter::visit(ast::FunctionDeclaration& node) {
 	}
 
 	m_printer.stream() << "\n\n";
+}
+
+void ast_visitor::AstPrinter::visit(ast::ModuleDeclarations& node) {
+	for (auto declaration : node.getDeclarations()) {
+		Parent::visit(declaration);
+	}
 }

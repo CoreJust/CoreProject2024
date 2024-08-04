@@ -5,7 +5,7 @@
 /*
 *	NodeType.hpp by CoreJust
 *	Created on 29.07.2024
-*	Contains the enumeration of possible node types.
+*	Contains the enumeration of possible AST node types.
 */
 
 #pragma once
@@ -46,6 +46,13 @@ namespace ast {
 		*/
 		BINARY_OPERATOR,
 
+		/*
+		*	Return operator that returns the result from the function:
+		*	return [<expr>] # <expr> is omitted in functions returning unit type.
+		*	Also, it is implicitly used in expressions like fn...(...) = <expr>
+		*/
+		RETURN_OPERATOR,
+
 
 		// Statement node types
 
@@ -63,13 +70,6 @@ namespace ast {
 		*/
 		SCOPE_STATEMENT,
 
-		/*
-		*	Return statement that returns the result from the function:
-		*	return [<expr>] # <expr> is omitted in functions returning unit type.
-		*	Also, it is implicitly used in expressions like fn...(...) = <expr>
-		*/
-		RETURN_STATEMENT,
-
 
 		// Subtype of statements - declarations (statements that can exist on the highest level, i.e. global objects)
 
@@ -84,6 +84,11 @@ namespace ast {
 		*	fn <name>(<args>...)[: <return-type>] <function-body>
 		*/
 		FUNCTION_DECLARATION,
+
+		/*
+		*	A list of global declarations of a single module (source file).
+		*/
+		MODULE_DECLARATIONS,
 
 		NODE_TYPES_COUNT
 	};

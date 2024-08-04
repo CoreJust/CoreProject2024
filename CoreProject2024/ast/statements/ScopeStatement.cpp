@@ -4,10 +4,13 @@
 
 #include "ScopeStatement.hpp"
 
-ast::ScopeStatement::ScopeStatement(std::vector<Statement*> statements) noexcept
+ast::ScopeStatement::ScopeStatement(std::vector<utils::NoNull<ast::Statement>> statements) noexcept
     : Statement(NodeType::SCOPE_STATEMENT), m_statements(std::move(statements)) {
+    for (auto statement : m_statements) {
+        Node::setParent(statement, this);
+    }
 }
 
-const std::vector<ast::Statement*>& ast::ScopeStatement::getStatements() noexcept {
+const std::vector<utils::NoNull<ast::Statement>>& ast::ScopeStatement::getStatements() noexcept {
     return m_statements;
 }

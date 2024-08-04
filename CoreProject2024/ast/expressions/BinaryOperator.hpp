@@ -22,19 +22,19 @@ namespace ast {
 			DIVIDE,
 			REMAINDER,
 
-			UNARY_OPERATOR_TYPES_COUNT
+			BINARY_OPERATOR_TYPES_COUNT
 		};
 
 	private:
-		Expression* m_left;
-		Expression* m_right;
+		utils::NoNull<Expression> m_left;
+		utils::NoNull<Expression> m_right;
 		BinaryOperatorType m_operator;
 
 	public:
-		BinaryOperator(BinaryOperatorType operatorType, Expression* left, Expression* right) noexcept;
+		BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Expression> left, utils::NoNull<Expression> right) noexcept;
 
-		Expression*& getLeft() noexcept;
-		Expression*& getRight() noexcept;
+		utils::NoNull<Expression>& getLeft() noexcept;
+		utils::NoNull<Expression>& getRight() noexcept;
 		BinaryOperatorType getOperator() const noexcept;
 	};
 }

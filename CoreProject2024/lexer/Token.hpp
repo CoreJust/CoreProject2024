@@ -41,8 +41,8 @@ namespace lexer {
 		LBRACE, // {
 		RBRACE, // }
 		COLON, // :
-		SEMICOLON, // ;
 		COMMA, // ,
+		SEMICOLON, // ;
 
 		NEWLINE, // Any number of new lines (probably with spaces/comments amidst)
 
@@ -60,20 +60,18 @@ namespace lexer {
 		utils::TextPosition position;
 		TokenType type;
 
-		constexpr static Token NO_TOKEN() noexcept {
-			return Token {
-				.text = utf::StringView(),
-				.position = utils::TextPosition(),
-				.type = NO_TOKEN_TYPE
-			};
-		}
-
 		// Returns true if the token is a NO_TOKEN.
-		constexpr bool isNoToken() noexcept {
+		constexpr bool isNoToken() const noexcept {
 			return type == NO_TOKEN_TYPE;
 		}
 
 		// Converts a token to a string representation for output.
 		utf::String toString() const;
+	};
+
+	constexpr Token NO_TOKEN = Token {
+		.text = utf::StringView(),
+		.position = utils::TextPosition(),
+		.type = NO_TOKEN_TYPE
 	};
 }

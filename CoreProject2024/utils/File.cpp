@@ -39,7 +39,21 @@ std::optional<utf::String> utils::readFileUnchecked(const utf::String& path) {
     auto fileSize = std::filesystem::file_size(path);
     utf::String result(fileSize, 0);
 
-    std::FILE* file = std::fopen(path.c_str(), "rb");
+    std::FILE* file = std::fopen(path.c_str(), "rb");   
+    if (file == nullptr) {
+        error::ErrorPrinter::error({
+            .code = error::ErrorCode::CANNOT_OPEN_FILE_ERROR,
+            .name = "Compiler error: Failed to open file",
+            .selectionStart = TextPosition(),
+            .selectionLength = 0,
+            .description = "Encountered an error when trying to open file " + path,
+            .explanation = "-"
+    });
+
+        std::fclose(file);
+        return std::nullopt;
+    }
+
     if (fileSize != std::fread(reinterpret_cast<void*>(&result[0]), 1, fileSize, file)) {
         error::ErrorPrinter::error({
             .code = error::ErrorCode::CANNOT_OPEN_FILE_ERROR,

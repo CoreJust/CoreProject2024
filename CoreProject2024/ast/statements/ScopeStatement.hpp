@@ -15,11 +15,11 @@
 namespace ast {
 	class ScopeStatement final : public Statement {
 	private:
-		std::vector<Statement*> m_statements;
+		std::vector<utils::NoNull<Statement>> m_statements;
 
 	public:
-		ScopeStatement(std::vector<Statement*> statements) noexcept;
+		ScopeStatement(std::vector<utils::NoNull<Statement>> statements) noexcept;
 
-		const std::vector<Statement*>& getStatements() noexcept;
+		const std::vector<utils::NoNull<Statement>>& getStatements() noexcept;
 	};
 }

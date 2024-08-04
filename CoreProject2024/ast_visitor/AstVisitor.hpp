@@ -20,10 +20,10 @@ namespace ast_visitor {
 	/*
 	*	To create a visitor, one must inherit their visitor class from this one with Self = the derived class,
 	*	which allows non-virtual invocation of the derived class visit methods.
-	*	ExpressionResult, StatementResult and DeclarationResult allow to specify the return type of visit functions
+	*	ExpressionResult and StatementResult allow to specify the return type of visit functions
 	*	for corresponding nodes.
 	*/
-	template<class Self, class ExpressionResult, class StatementResult, class DeclarationResult>
+	template<class Self, class ExpressionResult, class StatementResult>
 	class AstVisitor {
 	private:
 		Self& m_self;
@@ -32,42 +32,35 @@ namespace ast_visitor {
 		AstVisitor(Self& self) noexcept : m_self(self) { }
 
 	public:
-		INLINE void visitRoot(ast::Node* node) {
+		INLINE void visitRoot(utils::NoNull<ast::Node> node) {
 			if (node->isExpression()) {
-				visit(reinterpret_cast<ast::Expression*>(node));
-			} else if (node->isDeclaration()) {
-				visit(reinterpret_cast<ast::Declaration*>(node));
+				visit(reinterpret_cast<ast::Expression*>(node.get()));
 			} else if (node->isStatement()) {
-				visit(reinterpret_cast<ast::Statement*>(node));
+				visit(reinterpret_cast<ast::Statement*>(node.get()));
 			} else {
 				unreachable();
 			}
 		}
 
-		INLINE ExpressionResult visit(ast::Expression* node) {
+		INLINE ExpressionResult visit(utils::NoNull<ast::Expression> node) {
 			switch (node->getType()) {
-				case ast::NodeType::LITERAL_VALUE:			return m_self.visit(*reinterpret_cast<ast::LiteralValue*>(node));
-				case ast::NodeType::IDENTIFIER_VALUE:		return m_self.visit(*reinterpret_cast<ast::IdentifierValue*>(node));
-				case ast::NodeType::INVOCATION_OPERATOR:	return m_self.visit(*reinterpret_cast<ast::InvocationOperator*>(node));
-				case ast::NodeType::UNARY_OPERATOR:			return m_self.visit(*reinterpret_cast<ast::UnaryOperator*>(node));
-				case ast::NodeType::BINARY_OPERATOR:		return m_self.visit(*reinterpret_cast<ast::BinaryOperator*>(node));
+				case ast::NodeType::LITERAL_VALUE:			return m_self.visit(*reinterpret_cast<ast::LiteralValue*>(node.get()));
+				case ast::NodeType::IDENTIFIER_VALUE:		return m_self.visit(*reinterpret_cast<ast::IdentifierValue*>(node.get()));
+				case ast::NodeType::INVOCATION_OPERATOR:	return m_self.visit(*reinterpret_cast<ast::InvocationOperator*>(node.get()));
+				case ast::NodeType::UNARY_OPERATOR:			return m_self.visit(*reinterpret_cast<ast::UnaryOperator*>(node.get()));
+				case ast::NodeType::BINARY_OPERATOR:		return m_self.visit(*reinterpret_cast<ast::BinaryOperator*>(node.get()));
+				case ast::NodeType::RETURN_OPERATOR:		return m_self.visit(*reinterpret_cast<ast::ReturnOperator*>(node.get()));
 			default: unreachable();
 			}
 		}
 
-		INLINE StatementResult visit(ast::Statement* node) {
+		INLINE StatementResult visit(utils::NoNull<ast::Statement> node) {
 			switch (node->getType()) {
-				case ast::NodeType::EXPRESSION_STATEMENT:	return m_self.visit(*reinterpret_cast<ast::ExpressionStatement*>(node));
-				case ast::NodeType::SCOPE_STATEMENT:		return m_self.visit(*reinterpret_cast<ast::ScopeStatement*>(node));
-				case ast::NodeType::RETURN_STATEMENT:		return m_self.visit(*reinterpret_cast<ast::ReturnStatement*>(node));
-			default: unreachable();
-			}
-		}
-
-		INLINE DeclarationResult visit(ast::Declaration* node) {
-			switch (node->getType()) {
-				case ast::NodeType::VARIABLE_DECLARATION:	return m_self.visit(*reinterpret_cast<ast::VariableDeclaration*>(node));
-				case ast::NodeType::FUNCTION_DECLARATION:	return m_self.visit(*reinterpret_cast<ast::FunctionDeclaration*>(node));
+				case ast::NodeType::EXPRESSION_STATEMENT:	return m_self.visit(*reinterpret_cast<ast::ExpressionStatement*>(node.get()));
+				case ast::NodeType::SCOPE_STATEMENT:		return m_self.visit(*reinterpret_cast<ast::ScopeStatement*>(node.get()));
+				case ast::NodeType::VARIABLE_DECLARATION:	return m_self.visit(*reinterpret_cast<ast::VariableDeclaration*>(node.get()));
+				case ast::NodeType::FUNCTION_DECLARATION:	return m_self.visit(*reinterpret_cast<ast::FunctionDeclaration*>(node.get()));
+				case ast::NodeType::MODULE_DECLARATIONS:	return m_self.visit(*reinterpret_cast<ast::ModuleDeclarations*>(node.get()));
 			default: unreachable();
 			}
 		}
@@ -78,10 +71,11 @@ namespace ast_visitor {
 		virtual ExpressionResult visit(ast::InvocationOperator& node) = 0;
 		virtual ExpressionResult visit(ast::UnaryOperator& node) = 0;
 		virtual ExpressionResult visit(ast::BinaryOperator& node) = 0;
+		virtual ExpressionResult visit(ast::ReturnOperator& node) = 0;
 		virtual StatementResult visit(ast::ExpressionStatement& node) = 0;
 		virtual StatementResult visit(ast::ScopeStatement& node) = 0;
-		virtual StatementResult visit(ast::ReturnStatement& node) = 0;
 		virtual StatementResult visit(ast::VariableDeclaration& node) = 0;
 		virtual StatementResult visit(ast::FunctionDeclaration& node) = 0;
+		virtual StatementResult visit(ast::ModuleDeclarations& node) = 0;
 	};
 }

@@ -4,12 +4,12 @@
 
 #include "UnaryOperator.hpp"
 
-ast::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, Expression* expression) noexcept 
+ast::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Expression> expression) noexcept
 	: Expression(NodeType::UNARY_OPERATOR), m_operator(operatorType), m_expression(expression) {
 	Node::setParent(m_expression, this);
 }
 
-ast::Expression*& ast::UnaryOperator::getExpression() noexcept {
+utils::NoNull<ast::Expression>& ast::UnaryOperator::getExpression() noexcept {
 	return m_expression;
 }
 

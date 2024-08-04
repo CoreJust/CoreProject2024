@@ -22,5 +22,9 @@ namespace ast {
 		LiteralValue(utf::StringView value) noexcept;
 
 		utf::StringView getValue() const noexcept;
+		int64_t parseAsI64() const noexcept;
+
+	private:
+		int64_t tryParseAsI64(int base) const noexcept;
 	};
 }

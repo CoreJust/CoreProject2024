@@ -12,19 +12,20 @@
 #include "utf/String.hpp"
 #include "../Declaration.hpp"
 #include "../Expression.hpp"
+#include "../AstType.hpp"
 
 namespace ast {
 	class VariableDeclaration final : public Declaration {
 	private:
 		utf::StringView m_name;
-		utf::StringView m_type; // empty if no type is specified
-		Expression* m_initialValue;
+		Type m_type; // empty if no type is specified
+		utils::NoNull<Expression> m_initialValue;
 
 	public:
-		VariableDeclaration(utf::StringView name, utf::StringView type, Expression* initialValue) noexcept;
+		VariableDeclaration(utf::StringView name, Type type, utils::NoNull<Expression> initialValue) noexcept;
 
 		utf::StringView getName() const noexcept;
-		utf::StringView getType() const noexcept;
-		Expression*& getInitialValue() noexcept;
+		const Type& getVariableType() const noexcept;
+		utils::NoNull<Expression>& getInitialValue() noexcept;
 	};
 }

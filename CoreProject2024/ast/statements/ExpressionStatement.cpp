@@ -4,11 +4,11 @@
 
 #include "ExpressionStatement.hpp"
 
-ast::ExpressionStatement::ExpressionStatement(Expression* expression) noexcept
+ast::ExpressionStatement::ExpressionStatement(utils::NoNull<ast::Expression> expression) noexcept
     : Statement(NodeType::EXPRESSION_STATEMENT), m_expression(expression) {
     Node::setParent(m_expression, this);
 }
 
-ast::Expression*& ast::ExpressionStatement::getExpression() noexcept {
+utils::NoNull<ast::Expression>& ast::ExpressionStatement::getExpression() noexcept {
     return m_expression;
 }

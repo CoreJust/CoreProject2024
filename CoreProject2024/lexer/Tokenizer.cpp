@@ -3,38 +3,49 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "Tokenizer.hpp"
+#include <cassert>
 #include <format>
-#include <map>
+#include "utf/StringHash.hpp"
 #include "error/ErrorPrinter.hpp"
 #include "TokenizationUtils.hpp"
 
 using lexer::TokenType;
 using lexer::Token;
 
-std::map<utf::StringView, lexer::TokenType> KEYWORDS = {
-	{ "fn", TokenType::FN },
-	{ "native", TokenType::NATIVE },
-	{ "return", TokenType::RETURN },
-	{ "let", TokenType::LET },
-	{ "i32", TokenType::I32 },
-	{ "unit", TokenType::UNIT }
-};
+// Returns the keyword TokenType corresponding to the string hashed with hashBuilder.
+// If no keyword matches is, returns NO_TOKEN_TYPE.
+constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuilder) noexcept {
+	switch (hashBuilder.getHash()) {
+		case utils::hashOf("fn"): return TokenType::FN;
+		case utils::hashOf("native"): return TokenType::NATIVE;
+		case utils::hashOf("return"): return TokenType::RETURN;
+		case utils::hashOf("let"): return TokenType::LET;
+		case utils::hashOf("i32"): return TokenType::I32;
+		case utils::hashOf("unit"): return TokenType::UNIT;
+	default: return TokenType::NO_TOKEN_TYPE;
+	}
+}
 
-std::map<utf::StringView, lexer::TokenType> OPERATORS = {
-	{ "=", TokenType::EQ },
-	{ "+", TokenType::PLUS },
-	{ "-", TokenType::MINUS },
-	{ "*", TokenType::STAR },
-	{ "/", TokenType::SLASH },
-	{ "%", TokenType::PERCENT },
-	{ "(", TokenType::LPAREN },
-	{ ")", TokenType::RPAREN },
-	{ "{", TokenType::LBRACE },
-	{ "}", TokenType::RBRACE },
-	{ ":", TokenType::COLON },
-	{ ";", TokenType::SEMICOLON },
-	{ ",", TokenType::COMMA }
-};
+// Returns the operator TokenType corresponding to the string hashed with hashBuilder.
+// If no operator matches is, returns NO_TOKEN_TYPE.
+constexpr TokenType getOperatorTokenType(const utils::StringHashBuilder& hashBuilder) noexcept {
+	switch (hashBuilder.getHash()) {
+		case utils::hashOf("="): return TokenType::EQ;
+		case utils::hashOf("+"): return TokenType::PLUS;
+		case utils::hashOf("-"): return TokenType::MINUS;
+		case utils::hashOf("*"): return TokenType::STAR;
+		case utils::hashOf("/"): return TokenType::SLASH;
+		case utils::hashOf("%"): return TokenType::PERCENT;
+		case utils::hashOf("("): return TokenType::LPAREN;
+		case utils::hashOf(")"): return TokenType::RPAREN;
+		case utils::hashOf("{"): return TokenType::LBRACE;
+		case utils::hashOf("}"): return TokenType::RBRACE;
+		case utils::hashOf(":"): return TokenType::COLON;
+		case utils::hashOf(","): return TokenType::COMMA;
+		case utils::hashOf(";"): return TokenType::SEMICOLON;
+	default: return TokenType::NO_TOKEN_TYPE;
+	}
+}
 
 lexer::Tokenizer::Tokenizer(utf::StringView text)
 	: m_ptr(text.data()), m_end(text.data() + text.size()), m_position() {
@@ -42,7 +53,8 @@ lexer::Tokenizer::Tokenizer(utf::StringView text)
 	next(); // Get the first token.
 }
 
-bool lexer::Tokenizer::consume(TokenType type) {
+Token lexer::Tokenizer::consume(TokenType type, utf::String explanation) {
+	Token result = m_currentToken;
 	if (!match(type)) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::UNEXPECTED_TOKEN,
@@ -50,13 +62,31 @@ bool lexer::Tokenizer::consume(TokenType type) {
 			.selectionStart = m_currentToken.position,
 			.selectionLength = m_currentToken.text.size(),
 			.description = std::format("Encountered unexpected token {}, while [{}] was expected.", m_currentToken.toString(), tokenType2String(type)),
-			.explanation = "-"
+			.explanation = std::move(explanation)
 		});
 
-		return false;
+		return NO_TOKEN;
 	}
 
-	return true;
+	return result;
+}
+
+Token lexer::Tokenizer::consumeRange(TokenType first, TokenType last, utf::String explanation) {
+	Token result = m_currentToken;
+	if (!matchRange(first, last)) {
+		error::ErrorPrinter::error({
+			.code = error::ErrorCode::UNEXPECTED_TOKEN,
+			.name = "Syntax error: Unexpected token",
+			.selectionStart = m_currentToken.position,
+			.selectionLength = m_currentToken.text.size(),
+			.description = std::format("Encountered unexpected token {}, while token in range [{}..{}] was expected.", m_currentToken.toString(), tokenType2String(first), tokenType2String(last)),
+			.explanation = std::move(explanation)
+		});
+
+		return NO_TOKEN;
+	}
+
+	return result;
 }
 
 bool lexer::Tokenizer::match(TokenType type) {
@@ -68,10 +98,21 @@ bool lexer::Tokenizer::match(TokenType type) {
 	return false;
 }
 
+bool lexer::Tokenizer::matchRange(TokenType first, TokenType last) {
+	assert(first <= last);
+
+	if (m_currentToken.type >= first && m_currentToken.type <= last) {
+		next();
+		return true;
+	}
+
+	return false;
+}
+
 const Token& lexer::Tokenizer::next() {
 	// Shifting tokens: the current becomes the previous, while the current is to be generated.
 	m_previousToken = m_currentToken;
-	m_currentToken = Token::NO_TOKEN();
+	m_currentToken = NO_TOKEN;
 
 	utils::TextPosition initialPosition = m_position;
 	const char* initialPtr = getCurrentCharPtr();
@@ -87,14 +128,16 @@ const Token& lexer::Tokenizer::next() {
 			break;
 		}
 
-		if (m_position.line != initialPosition.line || utf::isNewLine(utf::extractChar(initialPtr))) { // There was a new line(s)
-			m_currentToken = Token {
-				.text = utf::StringView(initialPtr, getCurrentCharPtr()),
-				.position = initialPosition,
-				.type = TokenType::NEWLINE
-			};
+		if (m_previousToken.type != TokenType::SEMICOLON) { // No need to produce new line token after a semicolon
+			if (m_position.line != initialPosition.line || utf::isNewLine(utf::extractChar(initialPtr))) { // There was a new line(s)
+				m_currentToken = Token {
+					.text = utf::StringView(initialPtr, getCurrentCharPtr()),
+					.position = initialPosition,
+					.type = TokenType::NEWLINE
+				};
 
-			break;
+				break;
+			}
 		}
 
 		if (m_char == utf::encodeUtf('"') || (m_char == utf::encodeUtf('r') && peek(0) == '"')) { // Normal or raw string literal.
@@ -137,15 +180,16 @@ void lexer::Tokenizer::tokenizeIdentifier() {
 	utils::TextPosition tokenPosition = m_position;
 	const char* identifierStart = getCurrentCharPtr();
 
-	while (lexer::isIdentifierMiddle(nextChar())); // Consuming the identifier.
+	utils::StringHashBuilder identifierHash(m_char);
+	while (lexer::isIdentifierMiddle(nextChar())) identifierHash.consume(m_char); // Consuming the identifier.
 
 	const char* identifierEnd = getCurrentCharPtr();
 	utf::StringView identifier(identifierStart, identifierEnd);
-	if (auto it = KEYWORDS.find(identifier); it != KEYWORDS.end()) {
+	if (auto keyword = getKeywordTokenType(identifierHash); keyword != TokenType::NO_TOKEN_TYPE) {
 		m_currentToken = Token {
 			.text = identifier,
 			.position = tokenPosition,
-			.type = it->second
+			.type = keyword
 		};
 	} else {
 		m_currentToken = Token {
@@ -264,13 +308,21 @@ void lexer::Tokenizer::tokenizeOperator() {
 	utils::TextPosition tokenPosition = m_position;
 	const char* operatorStart = getCurrentCharPtr();
 
-	while (OPERATORS.contains(utf::StringView(operatorStart, m_ptr)) && lexer::isOperator(nextChar())); // Consuming the operator.
+	utils::StringHashBuilder operatorHash(m_char);
+	while (getOperatorTokenType(operatorHash) != TokenType::NO_TOKEN_TYPE && lexer::isOperator(nextChar()))
+		operatorHash.consume(m_char); // Consuming the operator.
+
+	TokenType operatorTokenType = getOperatorTokenType(operatorHash);
+	if (operatorTokenType == TokenType::NO_TOKEN_TYPE) {
+		operatorHash.unconsume(m_char);
+		operatorTokenType = getOperatorTokenType(operatorHash);
+	}
 
 	utf::StringView operatorString(operatorStart, getCurrentCharPtr());
 	m_currentToken = Token {
 		.text = operatorString,
 		.position = tokenPosition,
-		.type = OPERATORS[operatorString]
+		.type = operatorTokenType
 	};
 }
 

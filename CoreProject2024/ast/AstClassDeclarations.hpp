@@ -21,9 +21,10 @@ namespace ast {
 	class InvocationOperator;
 	class UnaryOperator;
 	class BinaryOperator;
+	class ReturnOperator;
 	class ExpressionStatement;
 	class ScopeStatement;
-	class ReturnStatement;
 	class VariableDeclaration;
 	class FunctionDeclaration;
+	class ModuleDeclarations;
 }

@@ -15,13 +15,13 @@
 namespace ast {
 	class InvocationOperator final : public Expression {
 	private:
-		Expression* m_callee;
-		std::vector<Expression*> m_arguments;
+		utils::NoNull<Expression> m_callee;
+		std::vector<utils::NoNull<Expression>> m_arguments;
 
 	public:
-		InvocationOperator(Expression* callee, std::vector<Expression*> arguments) noexcept;
+		InvocationOperator(utils::NoNull<Expression> callee, std::vector<utils::NoNull<Expression>> arguments) noexcept;
 
-		Expression*& getCallee() noexcept;
-		const std::vector<Expression*>& getArguments() noexcept;
+		utils::NoNull<Expression>& getCallee() noexcept;
+		std::vector<utils::NoNull<Expression>>& getArguments() noexcept;
 	};
 }

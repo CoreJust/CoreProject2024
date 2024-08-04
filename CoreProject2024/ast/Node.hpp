@@ -10,11 +10,13 @@
 
 #pragma once
 #include "NodeType.hpp"
+#include "utils/NoNull.hpp"
+#include "utils/TextPosition.hpp"
 
 namespace ast {
 	/*
 	*	In AST we have no information about any symbols yet, and neither about types.
-	*	It will be fetched later before generation Core IR.
+	*	It will be fetched later before generation Core High-level IR.
 	*/
 	class Node {
 	private:
@@ -22,6 +24,7 @@ namespace ast {
 		static thread_local uint64_t s_nodeIdCounter;
 
 	protected:
+		utils::TextPosition m_position;
 		Node* m_parent; // Pointer to the parent Node.
 		const uint64_t m_nodeId; // Unique for each node within a single module.
 		const NodeType m_nodeType; // For each final inheritor there is a separate NodeType.
@@ -30,16 +33,20 @@ namespace ast {
 		Node(NodeType type, Node* parent = nullptr) noexcept;
 
 		// To be used when the parent Node is constructed.
-		static void setParent(Node* node, Node* parent) noexcept;
+		static void setParent(utils::NoNull<Node> node, Node* parent) noexcept;
 
 	public:
 		Node() = delete;
 		Node(const Node&) = default;
 		Node(Node&&) = default;
 
+		inline virtual ~Node() { }
+
 		constexpr bool operator==(const Node& other) const noexcept {
 			return m_nodeId == other.m_nodeId;
 		}
+
+		void setTextPosition(utils::TextPosition position) noexcept;
 
 		constexpr bool isExpression() const noexcept {
 			return ast::isExpression(m_nodeType);
@@ -55,6 +62,10 @@ namespace ast {
 
 
 		// Getters
+
+		constexpr utils::TextPosition getPosition() const noexcept {
+			return m_position;
+		}
 
 		constexpr Node* getParent() noexcept {
 			return m_parent;

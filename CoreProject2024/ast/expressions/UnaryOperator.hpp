@@ -23,13 +23,13 @@ namespace ast {
 		};
 
 	private:
-		Expression* m_expression;
+		utils::NoNull<Expression> m_expression;
 		UnaryOperatorType m_operator;
 
 	public:
-		UnaryOperator(UnaryOperatorType operatorType, Expression* expression) noexcept;
+		UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Expression> expression) noexcept;
 
-		Expression*& getExpression() noexcept;
+		utils::NoNull<Expression>& getExpression() noexcept;
 		UnaryOperatorType getOperator() const noexcept;
 	};
 }

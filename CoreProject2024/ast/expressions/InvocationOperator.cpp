@@ -1,6 +1,10 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #include "InvocationOperator.hpp"
 
-ast::InvocationOperator::InvocationOperator(Expression* callee, std::vector<Expression*> arguments) noexcept
+ast::InvocationOperator::InvocationOperator(utils::NoNull<Expression> callee, std::vector<utils::NoNull<Expression>> arguments) noexcept
 	: Expression(NodeType::INVOCATION_OPERATOR), m_callee(callee), m_arguments(std::move(arguments)) {
 	// Setting the current node as the parent.
 	Node::setParent(m_callee, this);
@@ -9,10 +13,10 @@ ast::InvocationOperator::InvocationOperator(Expression* callee, std::vector<Expr
 	}
 }
 
-ast::Expression*& ast::InvocationOperator::getCallee() noexcept {
+utils::NoNull<ast::Expression>& ast::InvocationOperator::getCallee() noexcept {
 	return m_callee;
 }
 
-const std::vector<ast::Expression*>& ast::InvocationOperator::getArguments() noexcept {
+std::vector<utils::NoNull<ast::Expression>>& ast::InvocationOperator::getArguments() noexcept {
 	return m_arguments;
 }

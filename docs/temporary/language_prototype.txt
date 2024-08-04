@@ -109,7 +109,7 @@ const a = 10 # Immutable variable
 To declare a function:
 fn sum(a: i32, b: i32) = a + b # Returns a sum of two arguments, the return type is inferred
 fn sum(a: i32, b: i32): i64 = a + b # Return type is stated explicitly.
-fn sum<ValTy: Integral>(a: ValTy, b: ValTy) = a + b # Template function.
+fn sum<ValTy: Integral type>(a: ValTy, b: ValTy) = a + b # Template function.
 fn sum(a: Integral, b: Integral) = a + b # Template function with anonymous template parameter names.
 
 Both functions and variables can be both global, static and local.
@@ -209,8 +209,9 @@ Anonymous types can be created when using:
 	} # Similar to Kotlin's objects
 
 Basic types are: unit, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64, char (utf-8 character), bool, arrays (like i32[11]), dynamic arrays (like i32[]), 
-pointers (like i32*), function pointers (like fn() -> unit), nullable pointers and function pointers (like i32?, fn?() -> unit), references (like i32&),
-tuples (like (i32, i64)), and user defined types + nullable classes (like File?, same as in Kotlin).
+pointers (like i32*), function pointers (like fn(): unit), nullable pointers and function pointers (like i32?, fn?(): unit), references (like i32&),
+tuples (like (i32, i64)), and user defined types + nullable classes (like File?, same as in Kotlin), never type (special type that shows that the value would never
+return, can be used with any value), pointer (general pointer type aka void*).
 
 Implicit type conversions are forbidden, it must be done explicitly ba calling a corresponding method.
 The only case where the conversion is done explicitly is when you assign a derived class to the base class type, or when assigning struct Class to Class (and vice versa).
@@ -360,8 +361,52 @@ Flow control structures:
 To use a for cycle, the type must implement either of Iterator or Iterable traits.
 
 
+Metaprogramming:
+1. Templates:
+One can define template functions / types using template syntax:
+open class List<T: type> {
+	...
+}
+
+fn sum<T: std.addable type>(xs: T...) {
+	return xs[0] + sum(xs[1..])
+}
+
+2. Type expressions:
+One can make type expressions using template parameters and/or compiler builtins.
+typeof(), ...
+
+3. Compile-time functions.
+The function can be used in runtime, unless the @Target(CompileTime) annotation is used.
+ct fn factorial(n: std.Integral): typeof(n) = n * factorial(n - 1) if (n > 1) else 1
+
+4. Decorators:
+decorator fn Logged<ReturnType: type, Args: type...>(f: fn(Args...): ReturnType, args: T...): ReturnType {
+	std.logger.log("Invoked {f.name} with parameters {args...}")
+	return f(args...)
+}
+
+Usage:
+@Logged
+fn funcToBeLogged(...)...
+
+5. Special annotations (mostly @Target()).
+@Target(CompileTime)
+ct fn print(str: std.String) = ct print(str)
+
+@Target(RunTime)
+fn print(str: std.String) = std.io.print(str)
+
+6. Local compile-time expressions:
+if (ct isCompileTime()) {
+	...
+} else {
+	...
+}
+
+
 TODO:
 1. Think of enums: how to implement both Rust-like and Kotlin-like functionality.
-2. Think of macros and compile-time computation system.
+2. Think of macros.
 3. Think of ways to make new types based on LLVM type system.
 4. Think of ways to add C-compatible types like int.

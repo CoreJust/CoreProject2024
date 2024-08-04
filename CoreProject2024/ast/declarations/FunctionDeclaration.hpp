@@ -13,31 +13,32 @@
 #include <vector>
 #include "utf/String.hpp"
 #include "../Declaration.hpp"
+#include "../AstType.hpp"
 
 namespace ast {
 	class FunctionDeclaration final : public Declaration {
 	public:
 		struct Argument {
 			utf::StringView name;
-			utf::StringView type;
+			Type type;
 		};
 
 	private:
 		utf::StringView m_name;
-		utf::StringView m_returnType; // empty if no type is specified
+		Type m_returnType; // empty if no type is specified
 		std::vector<Argument> m_arguments;
-		std::variant<Statement*, utf::StringView> m_body;
+		std::variant<utils::NoNull<Statement>, utf::StringView> m_body;
 
 	public:
-		FunctionDeclaration(utf::StringView name, utf::StringView returnType, std::vector<Argument> arguments, Statement* body) noexcept;
-		FunctionDeclaration(utf::StringView name, utf::StringView returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept;
+		FunctionDeclaration(utf::StringView name, Type returnType, std::vector<Argument> arguments, utils::NoNull<Statement> body) noexcept;
+		FunctionDeclaration(utf::StringView name, Type returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept;
 
 		utf::StringView getName() const noexcept;
-		utf::StringView getReturnType() const noexcept;
+		const Type& getReturnType() const noexcept;
 		const std::vector<Argument>& getArguments() const noexcept;
 
 		bool isNative() const noexcept;
-		Statement*& getBodyAsStatement() noexcept;
+		utils::NoNull<Statement>& getBodyAsStatement() noexcept;
 		utf::StringView getBodyAsNative() const noexcept;
 	};
 }

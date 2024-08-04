@@ -14,8 +14,12 @@ void error::ErrorPrinter::warning(const ErrorStruct& err) {
 	printMessage('W', err);
 }
 
-void error::ErrorPrinter::setSource(utf::StringView source) {
+void error::ErrorPrinter::setSource(utf::StringView source) noexcept {
 	s_currentSource = source;
+}
+
+bool error::ErrorPrinter::hasErrors() noexcept {
+	return s_hasErrors;
 }
 
 void error::ErrorPrinter::printMessage(char messageType, const ErrorStruct& err) {

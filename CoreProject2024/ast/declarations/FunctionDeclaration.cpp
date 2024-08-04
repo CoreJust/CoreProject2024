@@ -4,19 +4,19 @@
 
 #include "FunctionDeclaration.hpp"
 
-ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utf::StringView returnType, std::vector<Argument> arguments, Statement* body) noexcept
+ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, ast::Type returnType, std::vector<Argument> arguments, utils::NoNull<Statement> body) noexcept
     : Declaration(NodeType::FUNCTION_DECLARATION), m_name(name), m_returnType(returnType), m_arguments(std::move(arguments)), m_body(body) {
     Node::setParent(body, this);
 }
 
-ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utf::StringView returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept
+ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, ast::Type returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept
     : Declaration(NodeType::FUNCTION_DECLARATION), m_name(name), m_returnType(returnType), m_arguments(std::move(arguments)), m_body(nativeFunctionName) { }
 
 utf::StringView ast::FunctionDeclaration::getName() const noexcept {
     return m_name;
 }
 
-utf::StringView ast::FunctionDeclaration::getReturnType() const noexcept {
+const ast::Type& ast::FunctionDeclaration::getReturnType() const noexcept {
     return m_returnType;
 }
 
@@ -28,8 +28,8 @@ bool ast::FunctionDeclaration::isNative() const noexcept {
     return std::holds_alternative<utf::StringView>(m_body);
 }
 
-ast::Statement*& ast::FunctionDeclaration::getBodyAsStatement() noexcept {
-    return std::get<Statement*>(m_body);
+utils::NoNull<ast::Statement>& ast::FunctionDeclaration::getBodyAsStatement() noexcept {
+    return std::get<utils::NoNull<Statement>>(m_body);
 }
 
 utf::StringView ast::FunctionDeclaration::getBodyAsNative() const noexcept {

@@ -1,0 +1,95 @@
+Currently planned features for alpha 0.1.1:
+1) Add comments (single- and multi-line)
+2) Add bool type
+3) Add conditional expressions (==, !=, <, >, <=, >=, !, ||, &&)
+4) Add if-elif-else branching
+
+Features for alpha 0.1.2:
+1) Add int types (i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, i128?, u128?, i256?, u256?...)
+2) Add bit operators (>>, <<, ~, ^, |, &)
+
+Features for alpha 0.1.3:
+1) Add const variables and variable assignment
+2) Add assignment-like operators (+=, -=, and so on)
+
+Features for alpha 0.1.4:
+1) Add while-else loop
+2) Add break and continue operators
+3) Add loop labels
+
+Features for alpha 0.1.5:
+1) Add floating-point types (f32, f64, f16?, f128?, f80?...)
+2) Add ir/llvm insertions
+
+Features for alpha 0.2.0:
+1) Add import directive
+2) Add project file
+
+Features for alpha 0.2.1:
+1) Add compiler options file
+2) Add compilation options
+
+Features for alpha 0.2.2:
+1) Add cross-compilation support
+2) Add debug, release, (?...) compilation modes, debug info
+
+Features for alpha 0.3.0:
+1) Add annotations (@unsafe)
+2) Add pointers
+3) Add pointer-related operators (*, addressof)
+
+Features for alpha 0.3.1:
+1) Add tuple type
+2) Add struct type (without methods)
+3) Add . operator
+
+Features for alpha 0.3.2:
+1) Add extension functions (type.func)
+2) Add this keyword
+
+Features for alpha 0.3.3:
+1) Add methods to structs
+2) Add constructors
+3) Add destructors
+
+Features for alpha 0.3.4:
+1) Add operator functions
+2) Add references and related ref operator
+
+Features for alpha 0.4.0:
+1) Add static arrays
+2) Add operator []
+
+Features for alpha 0.4.1:
+1) Add dynamic arrays
+
+Features for alpha 0.4.1:
+1) Add string literals and strings
+2) Add char type
+
+Features for alpha 0.5.0:
+1) Develop metaclasses (traits or in some other way)
+
+Features for alpha 0.5.1:
+1) Develop macros system
+
+Features for alpha 0.5.2:
+1) Add type expressions
+2) Add typeof operator
+3) Add type aliasing
+
+Features for alpha 0.5.3:
+1) Add templates
+
+Features for alpha 0.6.0:
+1) Add for loop, repeat loop, do-while loop
+2) Add iterators
+3) Add ranges
+
+Features for alpha 0.6.1:
+1) Write standard library std.core
+
+Features for alpha 0.6.2:
+1) Add target-specific annotations
+
+Features for alpha 0.7.0:

@@ -22,20 +22,29 @@ namespace lexer {
 
 		utf::Char m_hadCROrLF = 0; // Set to corresponding character if the previous character was CR or LF
 
-		Token m_currentToken = Token::NO_TOKEN();
-		Token m_previousToken = Token::NO_TOKEN();
+		Token m_currentToken = NO_TOKEN;
+		Token m_previousToken = NO_TOKEN;
 
 	public:
 		Tokenizer(utf::StringView text);
 
-		// If the current token matches the given type, then just goes to the next one, returning true.
-		// Otherwise, it is a syntax error, and Unexpected token error is printed, while function returns false.
-		// The returned value can then be optionally handled (for example, so as not to stop the compilation with just one error).
-		bool consume(TokenType type);
+		// If the current token matches the given type, then just goes to the next one.
+		// Otherwise, it is a syntax error, and Unexpected token error is printed.
+		// Returns the consumed token (or NO_TOKEN() on failure).
+		Token consume(TokenType type, utf::String explanation = "-");
+
+		// If the current token is within the range first..last inclusively, then just goes to the next one.
+		// Otherwise, it is a syntax error, and Unexpected token error is printed.
+		// Returns the consumed token (or NO_TOKEN() on failure).
+		Token consumeRange(TokenType first, TokenType last, utf::String explanation = "-");
 
 		// If the current token matches the given type, then returns true and goes to the next token.
 		// Otherwise, returns false.
 		bool match(TokenType type);
+
+		// If the current token is within the range first..last inclusively, then returns true and goes to the next token.
+		// Otherwise, returns false.
+		bool matchRange(TokenType first, TokenType last);
 
 		// Similar to the previous match method, but uses the given predicate function.
 		bool match(utils::Callable<bool, const Token&> auto pred) {

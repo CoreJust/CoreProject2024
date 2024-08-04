@@ -15,11 +15,11 @@
 namespace ast {
 	class ExpressionStatement final : public Statement {
 	private:
-		Expression* m_expression;
+		utils::NoNull<Expression> m_expression;
 
 	public:
-		ExpressionStatement(Expression* expression) noexcept;
+		ExpressionStatement(utils::NoNull<Expression> expression) noexcept;
 
-		Expression*& getExpression() noexcept;
+		utils::NoNull<Expression>& getExpression() noexcept;
 	};
 }

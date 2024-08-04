@@ -36,7 +36,7 @@ namespace lexer {
 	}
 
 	// For an array of given characters returns anothers array with trues set to indices corresponding to the chars of the given array.
-	constexpr std::array<bool, 256> inverseArray(std::string arr) {
+	consteval std::array<bool, 256> inverseArray(std::string_view arr) {
 		std::array<bool, 256> result;
 		result.fill(false);
 

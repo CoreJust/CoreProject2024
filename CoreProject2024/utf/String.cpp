@@ -40,16 +40,67 @@ Char utf::nextChar(char const*& ptr) {
 }
 
 bool utf::isValidUtf(StringView str) {
-	const char* end = str.data() + str.size();
-	for (const char* ptr = str.data(); ptr < end;) {
-		int size = getCharSize(std::bit_cast<char8_t>(*ptr));
-		if (ptr + size > end) {
-			return false; // The last character doesn't fit in the String.
+	const uint8_t* end = reinterpret_cast<const uint8_t*>(str.data()) + str.size();
+	const uint8_t* ptr = reinterpret_cast<const uint8_t*>(str.data());
+
+	while (ptr < end) {
+		if (ptr + 8 <= end && (*reinterpret_cast<const uint64_t*>(ptr) & 0x8080808080808080) == 0) { // ASCII optimization
+			ptr += 8;
+			continue;
 		}
 
-		Char ch = nextChar(ptr);
-		if (!isValidUtf(ch)) {
-			return false; // Invalid character code.
+		switch (*ptr & 0b11111000) {
+			// 1-byte (ASCII) sequence
+			case 0b00000000: [[fallthrough]];
+			case 0b00001000: [[fallthrough]];
+			case 0b00010000: [[fallthrough]];
+			case 0b00011000: [[fallthrough]];
+			case 0b00100000: [[fallthrough]];
+			case 0b00101000: [[fallthrough]];
+			case 0b00110000: [[fallthrough]];
+			case 0b00111000: [[fallthrough]];
+			case 0b01000000: [[fallthrough]];
+			case 0b01001000: [[fallthrough]];
+			case 0b01010000: [[fallthrough]];
+			case 0b01011000: [[fallthrough]];
+			case 0b01100000: [[fallthrough]];
+			case 0b01101000: [[fallthrough]];
+			case 0b01110000: [[fallthrough]];
+			case 0b01111000: ptr += 1; break;
+			// 2-byte sequence
+			case 0b11000000: 
+				if (*ptr < 0b11000100) return false; // Overlong character
+				[[fallthrough]];
+			case 0b11001000: [[fallthrough]];
+			case 0b11010000: [[fallthrough]];
+			case 0b11011000:
+				if (ptr + 1 == end || (ptr[1] & 0xC0) != 0x80) {
+					return false;
+				} ptr += 2; break;
+			// 3-byte sequence
+			case 0b11100000:
+				if (ptr + 2 >= end || (*reinterpret_cast<const uint16_t*>(ptr + 1) & 0xC0C0) != 0x8080
+					|| (ptr[1] & 0b00100000) == 0) {
+					return false;
+				} ptr += 3; break;
+			case 0b11101000:
+				if (ptr + 2 >= end || (*reinterpret_cast<const uint16_t*>(ptr + 1) & 0xC0C0) != 0x8080) {
+					return false;
+				} if (*ptr == 0b11101101 && (ptr[1] & 0b00100000)) {
+					return false; // Surrogate
+				} ptr += 3; break;
+			// 4-byte sequence
+			case 0b11110000:
+				if (ptr + 3 >= end || (*reinterpret_cast<const uint16_t*>(ptr + 1) & 0xC0C0) != 0x8080 || (ptr[3] & 0xC0) != 0x80) {
+					return false;
+				} if (*ptr == 0b11110000) {
+					if ((ptr[1] & 0b00110000) == 0) return false; // Overlong
+				} else if (*ptr == 0b11110100) {
+					if (ptr[1] & 0b00100000) return false; // Too large
+				} else if (*ptr > 0b11110100) {
+					return false; // Too large
+				} ptr += 4; break;
+		default: return false; // Invalid sequence
 		}
 	}
 

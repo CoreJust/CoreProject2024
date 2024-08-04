@@ -4,19 +4,19 @@
 
 #include "VariableDeclaration.hpp"
 
-ast::VariableDeclaration::VariableDeclaration(utf::StringView name, utf::StringView type, Expression* initialValue) noexcept
+ast::VariableDeclaration::VariableDeclaration(utf::StringView name, ast::Type type, utils::NoNull<Expression> initialValue) noexcept
     : Declaration(NodeType::VARIABLE_DECLARATION), m_name(name), m_type(type), m_initialValue(initialValue) {
-    Node::setParent(m_initialValue, this);
+    Node::setParent(m_initialValue.get(), this);
 }
 
 utf::StringView ast::VariableDeclaration::getName() const noexcept {
     return m_name;
 }
 
-utf::StringView ast::VariableDeclaration::getType() const noexcept {
+const ast::Type& ast::VariableDeclaration::getVariableType() const noexcept {
     return m_type;
 }
 
-ast::Expression*& ast::VariableDeclaration::getInitialValue() noexcept {
+utils::NoNull<ast::Expression>& ast::VariableDeclaration::getInitialValue() noexcept {
     return m_initialValue;
 }

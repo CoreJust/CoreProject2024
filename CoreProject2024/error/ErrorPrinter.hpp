@@ -47,7 +47,22 @@ namespace error {
 			UNEXPECTED_CHARACTER,
 			UNEXPECTED_TOKEN,
 			NO_CLOSING_QUOTES,
-			NO_NUMBER_AFTER_NUMERIC_SYSTEM
+			NO_NUMBER_AFTER_NUMERIC_SYSTEM,
+
+			// Parser errors
+			EXPECTED_A_TYPE,
+			EXPECTED_A_DECLARATION,
+			EXPECTED_A_STATEMENT,
+			NO_CLOSING_BRACE,
+
+			// CHIR Generator errors
+			INVALID_NUMBER_LITERAL,
+			UNRESOLVED_SYMBOL,
+			TOO_MANY_SYMBOLS,
+			INVALID_CALLEE,
+			UNEXPECTED_TYPE,
+			TYPE_MISMATCH,
+			NON_FUNCTION_CONTEXT,
 		};
 	}
 
@@ -72,18 +87,28 @@ namespace error {
 
 	private:
 		// Contains the source file text currently being compiled.
-		inline static utf::StringView s_currentSource = "";
+		inline static thread_local utf::StringView s_currentSource = "";
+
+		// Set to true upon any error.
+		inline static thread_local bool s_hasErrors = false;
 
 	public:
 		inline static bool printWarnings = true;
 		inline static ErrorDetailLevel errorDetailLevel = ErrorDetailLevel::WITH_EXPLANATION;
 
 	public:
+		// Prints the error to the standard output stream.
 		static void error(const ErrorStruct& err);
+
+		// Prints the warning to the standard output stream.
 		static void warning(const ErrorStruct& err);
 
+		// Sets the currently compiled source string, which is used to print source code lines on errors.
 		// Must be called on new file compilation start.
-		static void setSource(utf::StringView source);
+		static void setSource(utf::StringView source) noexcept;
+
+		// Returns true if there were any errors.
+		static bool hasErrors() noexcept;
 
 	private:
 		// Does the actual output for errors/warnings.

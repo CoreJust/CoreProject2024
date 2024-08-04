@@ -26,13 +26,13 @@ namespace utf {
 	String asString(Char ch);
 
 	// Returns the first byte of the given Utf-8 character.
-	constexpr char8_t getFirstByteOf(Char ch) noexcept {
+	constexpr INLINE char8_t getFirstByteOf(Char ch) noexcept {
 		return static_cast<char8_t>((ch & 0xff000000) >> 24);
 	}
 
 	// Allows to get the size of a character by the first symbol (it can be either 1, 2, 3, or 4)
 	// Returns 1 for bad characters.
-	constexpr int getCharSize(char8_t firstByte) noexcept {
+	constexpr INLINE int getCharSize(char8_t firstByte) noexcept {
 		if ((firstByte & 0b11100000) == 0b11000000) {
 			return 2;
 		} else if ((firstByte & 0b11110000) == 0b11100000) {
@@ -80,7 +80,7 @@ namespace utf {
 
 	// Returns the number of bytes for the given code point of unicode.
 	// Assumes that the code point is correct and right within the range of unicode values.
-	constexpr int getCodePointSize(uint32_t codePoint) noexcept {
+	constexpr INLINE int getCodePointSize(uint32_t codePoint) noexcept {
 		if (codePoint <= 0x7f) {
 			return 1;
 		} else if (codePoint <= 0x7ff) {
@@ -131,7 +131,7 @@ namespace utf {
 	// Returns true if character is a new line Utf-8 character.
 	// Assumes that character a valid Utf-8 character.
 	// Does not consider CR+LF (these are considered to be 2 separate characters).
-	constexpr bool isNewLine(Char ch) noexcept {
+	constexpr INLINE bool isNewLine(Char ch) noexcept {
 		switch (ch) {
 			case encodeUtf(0xA): [[fallthrough]]; // LF (line feed) or \n
 			case encodeUtf(0xB): [[fallthrough]]; // VT (vertical tab) or \v
@@ -146,7 +146,7 @@ namespace utf {
 
 	// Returns true if the character is a whitespace Utf-8 character but line-terminating ones.
 	// Assumes that character a valid Utf-8 character.
-	constexpr bool isWhitespaceButNewLine(Char ch) noexcept {
+	constexpr INLINE bool isWhitespaceButNewLine(Char ch) noexcept {
 		switch (ch) {
 			case encodeUtf(0x9): [[fallthrough]]; // tab or \t
 			case encodeUtf(0x20): [[fallthrough]]; // Normal space
@@ -172,20 +172,46 @@ namespace utf {
 
 	// Returns true if the character is a digit.
 	// Assumes that character a valid Utf-8 character.
-	constexpr bool isAnyWhitespace(Char ch) noexcept {
-		return isNewLine(ch) || isWhitespaceButNewLine(ch);
+	constexpr INLINE bool isAnyWhitespace(Char ch) noexcept {
+		switch (ch) {
+			case encodeUtf(0xA): [[fallthrough]]; // LF (line feed) or \n
+			case encodeUtf(0xB): [[fallthrough]]; // VT (vertical tab) or \v
+			case encodeUtf(0xC): [[fallthrough]]; // FF (form feed) or \f
+			case encodeUtf(0xD): [[fallthrough]]; // CR (caret return) or \r
+			case encodeUtf(0x85): [[fallthrough]]; // NEL (next line)
+			case encodeUtf(0x2028): [[fallthrough]]; // LS (line separator)
+			case encodeUtf(0x2029): [[fallthrough]]; // PS (paragraph separator)
+			case encodeUtf(0x9): [[fallthrough]]; // tab or \t
+			case encodeUtf(0x20): [[fallthrough]]; // Normal space
+			case encodeUtf(0xA0): [[fallthrough]]; // NBSP (non-breaking space)
+			case encodeUtf(0x1680): [[fallthrough]]; // Ogham space mark
+			case encodeUtf(0x2000): [[fallthrough]]; // En quad
+			case encodeUtf(0x2001): [[fallthrough]]; // Em quad
+			case encodeUtf(0x2002): [[fallthrough]]; // En space
+			case encodeUtf(0x2003): [[fallthrough]]; // Em space
+			case encodeUtf(0x2004): [[fallthrough]]; // Three-per-em space
+			case encodeUtf(0x2005): [[fallthrough]]; // Four-per-em space
+			case encodeUtf(0x2006): [[fallthrough]]; // Six-per-em space
+			case encodeUtf(0x2007): [[fallthrough]]; // Figure space
+			case encodeUtf(0x2008): [[fallthrough]]; // Punctuation space
+			case encodeUtf(0x2009): [[fallthrough]]; // Thin space
+			case encodeUtf(0x200A): [[fallthrough]]; // Hair space
+			case encodeUtf(0x202F): [[fallthrough]]; // Narrow no-break space
+			case encodeUtf(0x205F): [[fallthrough]]; // Medium mathematical space
+			case encodeUtf(0x3000): return true; // Ideographic space
+		default: return false;
+		}
 	}
-
+		
 	// Returns true if the character is a whitespace Utf-8 character, line-terminating ones included.
 	// Assumes that character a valid Utf-8 character.
-	constexpr bool isDigit(Char ch) noexcept {
+	constexpr INLINE bool isDigit(Char ch) noexcept {
 		return ch >= encodeUtf('0') && ch <= encodeUtf('9');
 	}
 
-
 	// Returns true if the character changes the flow of printed characters, e.g. new lines.
 	// Assumes that character a valid Utf-8 character.
-	constexpr bool isControlCharacter(Char ch) noexcept {
+	constexpr INLINE bool isControlCharacter(Char ch) noexcept {
 		switch (ch) {
 			case encodeUtf(0x61C): [[fallthrough]]; // ARABIC LETTER MARK
 			case encodeUtf(0x200E): [[fallthrough]]; // LEFT-TO-RIGHT MARK
