@@ -5,7 +5,7 @@
 #include "ChirUnaryOperator.hpp"
 
 chir::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Value> value, symbol::Type type) noexcept
-	: Value(NodeType::UNARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_value(value) {
+	: Value(NodeKind::UNARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_value(value) {
 	Node::setParent(m_value, this);
 }
 

@@ -21,6 +21,8 @@ namespace symbol {
 	public:
 		FunctionSymbol(SymbolPath path, utf::String name, symbol::Type returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
 
+		utf::String makeMangledName() const;
+
 		const symbol::Type& getReturnType() const noexcept;
 		const std::vector<utils::NoNull<VariableSymbol>>& getArguments() const noexcept;
 

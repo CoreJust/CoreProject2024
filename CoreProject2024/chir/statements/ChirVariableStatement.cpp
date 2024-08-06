@@ -6,7 +6,7 @@
 #include "symbol/SymbolAllocator.hpp"
 
 chir::VariableStatement::VariableStatement(symbol::VariableSymbol& variable, utils::NoNull<Value> initialValue) noexcept
-    : Statement(NodeType::VARIABLE_STATEMENT), m_variable(variable), m_initialValue(initialValue) {
+    : Statement(NodeKind::VARIABLE_STATEMENT), m_variable(variable), m_initialValue(initialValue) {
     Node::setParent(m_initialValue, this);
 }
 

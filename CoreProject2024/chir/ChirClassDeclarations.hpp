@@ -14,16 +14,16 @@
 namespace chir {
 	class Node;
 	class Value;
-	class Statement;
-	class Declaration;
 	class ConstantValue;
 	class SymbolValue;
 	class InvocationOperator;
 	class UnaryOperator;
 	class BinaryOperator;
 	class ReturnOperator;
+	class Statement;
 	class ValueStatement;
 	class ScopeStatement;
+	class Declaration;
 	class VariableStatement;
 	class VariableDeclaration;
 	class FunctionDeclaration;

@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "NodeType.hpp"
+#include "NodeKind.hpp"
 #include "utils/NoNull.hpp"
 #include "utils/TextPosition.hpp"
 
@@ -27,10 +27,10 @@ namespace ast {
 		utils::TextPosition m_position;
 		Node* m_parent; // Pointer to the parent Node.
 		const uint64_t m_nodeId; // Unique for each node within a single module.
-		const NodeType m_nodeType; // For each final inheritor there is a separate NodeType.
+		const NodeKind m_nodeKind; // For each final inheritor there is a separate NodeKind.
 
 	protected:
-		Node(NodeType type, Node* parent = nullptr) noexcept;
+		Node(NodeKind type, Node* parent = nullptr) noexcept;
 
 		// To be used when the parent Node is constructed.
 		static void setParent(utils::NoNull<Node> node, Node* parent) noexcept;
@@ -49,15 +49,15 @@ namespace ast {
 		void setTextPosition(utils::TextPosition position) noexcept;
 
 		constexpr bool isExpression() const noexcept {
-			return ast::isExpression(m_nodeType);
+			return ast::isExpression(m_nodeKind);
 		}
 
 		constexpr bool isStatement() const noexcept {
-			return ast::isStatement(m_nodeType);
+			return ast::isStatement(m_nodeKind);
 		}
 
 		constexpr bool isDeclaration() const noexcept {
-			return ast::isDeclaration(m_nodeType);
+			return ast::isDeclaration(m_nodeKind);
 		}
 
 
@@ -75,8 +75,8 @@ namespace ast {
 			return m_nodeId;
 		}
 
-		constexpr NodeType getType() const noexcept {
-			return m_nodeType;
+		constexpr NodeKind getType() const noexcept {
+			return m_nodeKind;
 		}
 	};
 }

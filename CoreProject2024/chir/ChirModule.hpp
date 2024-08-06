@@ -21,6 +21,8 @@ namespace chir {
 	public:
 		Module(std::vector<utils::NoNull<Declaration>> declarations) noexcept;
 
-		void print(utils::IndentPrinter& printer) const;
+		void print(utils::IndentPrinter& printer);
+
+		std::vector<utils::NoNull<Declaration>>& getDeclarations() noexcept;
 	};
 }

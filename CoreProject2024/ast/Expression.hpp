@@ -14,7 +14,7 @@
 namespace ast {
 	class Expression : public Node {
 	protected:
-		Expression(NodeType type) noexcept;
+		Expression(NodeKind type) noexcept;
 
 	public:
 

@@ -12,9 +12,9 @@
 #include "utils/TextPosition.hpp"
 
 namespace lexer {
-// TokenType represents a category of a single token.
-// Some tokens represent a fixed substring in text (like keywords and operators),
-// while others represent a wide range of those (like identifiers and literals).
+	// TokenType represents a category of a single token.
+	// Some tokens represent a fixed substring in text (like keywords and operators),
+	// while others represent a wide range of those (like identifiers and literals).
 	enum TokenType : uint8_t {
 		IDENTIFIER = 0,
 		NUMBER, // number literal

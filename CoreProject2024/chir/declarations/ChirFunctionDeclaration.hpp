@@ -24,7 +24,7 @@ namespace chir {
 		FunctionDeclaration(const symbol::FunctionSymbol& function, utils::NoNull<Statement> body) noexcept;
 		FunctionDeclaration(const symbol::FunctionSymbol& function, utf::String nativeName) noexcept;
 
-		const symbol::FunctionSymbol& getFunction() noexcept;
+		const symbol::FunctionSymbol& getFunction() const noexcept;
 
 		bool isNative() const noexcept;
 		utils::NoNull<Statement>& getBodyAsStatement() noexcept;

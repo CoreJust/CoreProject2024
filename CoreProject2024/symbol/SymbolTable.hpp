@@ -60,7 +60,7 @@ namespace symbol {
 
 		// Returns the symbols with the given name.
 		// If no such symbol exists, returns empty vector.
-		const std::vector<utils::NoNull<Symbol>> getSymbols(utf::StringView name) const;
+		std::vector<utils::NoNull<Symbol>> getSymbols(utf::StringView name) const;
 
 		// Returns the variable with the given name.
 		// If no such variable exists or the variable is not visible from the current scope, returns nullptr.

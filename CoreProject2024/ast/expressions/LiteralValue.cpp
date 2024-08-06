@@ -7,7 +7,7 @@
 #include "error/ErrorPrinter.hpp"
 
 ast::LiteralValue::LiteralValue(utf::StringView value) noexcept 
-	: Expression(NodeType::LITERAL_VALUE), m_value(value) { }
+	: Expression(NodeKind::LITERAL_VALUE), m_value(value) { }
 
 utf::StringView ast::LiteralValue::getValue() const noexcept {
 	return m_value;

@@ -14,16 +14,16 @@
 namespace ast {
 	class Node;
 	class Expression;
-	class Statement;
-	class Declaration;
 	class LiteralValue;
 	class IdentifierValue;
 	class InvocationOperator;
 	class UnaryOperator;
 	class BinaryOperator;
 	class ReturnOperator;
+	class Statement;
 	class ExpressionStatement;
 	class ScopeStatement;
+	class Declaration;
 	class VariableDeclaration;
 	class FunctionDeclaration;
 	class ModuleDeclarations;

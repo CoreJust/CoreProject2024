@@ -14,7 +14,7 @@ symbol::Scope& symbol::Scope::addScope(utf::String name, FunctionSymbol* functio
     return m_childScopes.emplace_back(std::move(name), function, this);
 }
 
-std::vector<symbol::Symbol*>& symbol::Scope::symbols() noexcept {
+std::vector<utils::NoNull<symbol::Symbol>>& symbol::Scope::symbols() noexcept {
     return m_symbols;
 }
 

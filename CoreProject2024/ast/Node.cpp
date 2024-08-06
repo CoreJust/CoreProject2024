@@ -7,8 +7,8 @@
 
 thread_local uint64_t ast::Node::s_nodeIdCounter = 0;
 
-ast::Node::Node(NodeType type, Node* parent) noexcept
-	: m_parent(parent), m_nodeType(type), m_nodeId(s_nodeIdCounter++) {
+ast::Node::Node(NodeKind type, Node* parent) noexcept
+	: m_parent(parent), m_nodeKind(type), m_nodeId(s_nodeIdCounter++) {
 
 }
 

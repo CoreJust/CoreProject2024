@@ -5,7 +5,7 @@
 #include "UnaryOperator.hpp"
 
 ast::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Expression> expression) noexcept
-	: Expression(NodeType::UNARY_OPERATOR), m_operator(operatorType), m_expression(expression) {
+	: Expression(NodeKind::UNARY_OPERATOR), m_operator(operatorType), m_expression(expression) {
 	Node::setParent(m_expression, this);
 }
 

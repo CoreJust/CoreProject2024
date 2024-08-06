@@ -5,7 +5,7 @@
 #include "ChirValueStatement.hpp"
 
 chir::ValueStatement::ValueStatement(utils::NoNull<Value> value) noexcept
-	: Statement(NodeType::VALUE_STATEMENT), m_value(value) {
+	: Statement(NodeKind::VALUE_STATEMENT), m_value(value) {
 	Node::setParent(value, this);
 }
 

@@ -36,7 +36,7 @@ ast::Declaration* parser::Parser::parse() {
         m_toks.consumeRange(lexer::NEWLINE, lexer::NO_TOKEN_TYPE, "Declarations must begin with a new line.");
     }
 
-    return ast::AstAllocator::make<ast::ModuleDeclarations>(utils::TextPosition(), std::move(result));
+    return ast::AstAllocator::make<ast::ModuleDeclarations>(utils::TextPosition(), std::move(result)).get();
 }
 
 ast::Declaration* parser::Parser::functionDeclaration() {
@@ -69,18 +69,18 @@ ast::Declaration* parser::Parser::functionDeclaration() {
             const utf::StringView nativeName = m_toks.consumeRange(lexer::TEXT, lexer::RAW_TEXT, "Missing native function name, format fn ... = native(\"<native name>\").").text;
             m_toks.consume(lexer::RPAREN, "Missing closing ')' after native function name, expected format fn ... = native(\"<native name>\").");
 
-            return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), nativeName);
+            return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), nativeName).get();
         } else { // = <return expression>
-            ast::ReturnOperator* returnOperator = ast::AstAllocator::make<ast::ReturnOperator>(m_toks.current().position, expression());
-            ast::ExpressionStatement* functionBody = ast::AstAllocator::make<ast::ExpressionStatement>(m_toks.current().position, returnOperator);
+            utils::NoNull<ast::ReturnOperator> returnOperator = ast::AstAllocator::make<ast::ReturnOperator>(m_toks.current().position, expression());
+            utils::NoNull<ast::ExpressionStatement> functionBody = ast::AstAllocator::make<ast::ExpressionStatement>(m_toks.current().position, returnOperator);
 
-            return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), functionBody);
+            return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), functionBody).get();
         }
     }
 
     // Function with scope body
     m_toks.consume(lexer::LBRACE, "Function body must begin with either '=' or '{'.");
-    return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), scopeStatement());
+    return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), scopeStatement()).get();
 }
 
 ast::Declaration* parser::Parser::variableDeclaration() {
@@ -94,7 +94,7 @@ ast::Declaration* parser::Parser::variableDeclaration() {
     m_toks.consume(lexer::EQ, "Missing '=', variable must be initialized with initial value.");
     ast::Expression* initialValue = expression();
 
-    return ast::AstAllocator::make<ast::VariableDeclaration>(position, name, std::move(type), initialValue);
+    return ast::AstAllocator::make<ast::VariableDeclaration>(position, name, std::move(type), initialValue).get();
 }
 
 ast::Statement* parser::Parser::statement() {
@@ -107,7 +107,7 @@ ast::Statement* parser::Parser::statement() {
     } else {
         ast::Expression* expr = expression();
         if (expr != nullptr) {
-            return ast::AstAllocator::make<ast::ExpressionStatement>(expr->getPosition(), expr);
+            return ast::AstAllocator::make<ast::ExpressionStatement>(expr->getPosition(), expr).get();
         }
 
         error::ErrorPrinter::error({
@@ -147,7 +147,7 @@ ast::Statement* parser::Parser::scopeStatement() {
         }
     }
 
-    return ast::AstAllocator::make<ast::ScopeStatement>(position, std::move(statements));
+    return ast::AstAllocator::make<ast::ScopeStatement>(position, std::move(statements)).get();
 }
 
 ast::Expression* parser::Parser::expression() {
@@ -161,9 +161,9 @@ ast::Expression* parser::Parser::expression() {
 ast::Expression* parser::Parser::returnOperator() {
     const utils::TextPosition position = m_toks.current().position;
     if (m_toks.matchRange(lexer::SEMICOLON, lexer::NO_TOKEN_TYPE)) {
-        return ast::AstAllocator::make<ast::ReturnOperator>(position);
+        return ast::AstAllocator::make<ast::ReturnOperator>(position).get();
     } else {
-        return ast::AstAllocator::make<ast::ReturnOperator>(position, expression());
+        return ast::AstAllocator::make<ast::ReturnOperator>(position, expression()).get();
     }
 }
 
@@ -171,10 +171,10 @@ ast::Expression* parser::Parser::additive() {
     ast::Expression* result = multiplicative();
     while (true) {
         if (m_toks.match(lexer::PLUS)) {
-            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::PLUS, result, multiplicative());
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::PLUS, result, multiplicative()).get();
             continue;
         } else if (m_toks.match(lexer::MINUS)) {
-            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MINUS, result, multiplicative());
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MINUS, result, multiplicative()).get();
             continue;
         }
 
@@ -188,13 +188,13 @@ ast::Expression* parser::Parser::multiplicative() {
     ast::Expression* result = unary();
     while (true) {
         if (m_toks.match(lexer::STAR)) {
-            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MULTIPLY, result, unary());
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MULTIPLY, result, unary()).get();
             continue;
         } else if (m_toks.match(lexer::SLASH)) {
-            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::DIVIDE, result, unary());
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::DIVIDE, result, unary()).get();
             continue;
         } else if (m_toks.match(lexer::PERCENT)) {
-            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::REMAINDER, result, unary());
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::REMAINDER, result, unary()).get();
             continue;
         }
 
@@ -206,9 +206,9 @@ ast::Expression* parser::Parser::multiplicative() {
 
 ast::Expression* parser::Parser::unary() {
     if (m_toks.match(lexer::PLUS)) {
-        return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::PLUS, unary());
+        return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::PLUS, unary()).get();
     } else if (m_toks.match(lexer::MINUS)) {
-        return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::MINUS, unary());
+        return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::MINUS, unary()).get();
     }
 
     return postprimary();
@@ -228,7 +228,7 @@ ast::Expression* parser::Parser::postprimary() {
                 }
             }
 
-            result = ast::AstAllocator::make<ast::InvocationOperator>(m_toks.current().position, result, std::move(arguments));
+            result = ast::AstAllocator::make<ast::InvocationOperator>(m_toks.current().position, result, std::move(arguments)).get();
             continue;
         }
 
@@ -249,9 +249,9 @@ ast::Expression* parser::Parser::primary() {
     utf::StringView tokenText = m_toks.current().text;
     utils::TextPosition position = m_toks.current().position;
     if (m_toks.match(lexer::NUMBER)) {
-        return ast::AstAllocator::make<ast::LiteralValue>(position, tokenText);
+        return ast::AstAllocator::make<ast::LiteralValue>(position, tokenText).get();
     } else if (m_toks.match(lexer::IDENTIFIER)) {
-        return ast::AstAllocator::make<ast::IdentifierValue>(position, tokenText); 
+        return ast::AstAllocator::make<ast::IdentifierValue>(position, tokenText).get();
     }
 
     return nullptr;

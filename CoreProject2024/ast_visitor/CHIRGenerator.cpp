@@ -20,11 +20,11 @@ chir::Module ast_visitor::CHIRGenerator::generateCHIRModule(utils::NoNull<ast::D
 	return chir::Module(std::move(m_declarations));
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::LiteralValue& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& node) {
 	return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), node.parseAsI64());
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
 	std::vector<utils::NoNull<symbol::Symbol>> symbols = m_symbols.getSymbols(node.getIdentifier());
 	if (symbols.empty()) {
 		error::ErrorPrinter::error({
@@ -75,7 +75,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
 	return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), symbols[0]);
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::InvocationOperator& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOperator& node) {
 	std::vector<utils::NoNull<chir::Value>> arguments;
 	arguments.reserve(node.getArguments().size());
 
@@ -85,16 +85,16 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::InvocationOperator& node) {
 
 	std::vector<symbol::Type> argumentTypes = utils::map<std::vector<symbol::Type>>(
 		arguments,
-		[](utils::NoNull<chir::Value> argument) -> symbol::Type {
+		[](auto argument) -> auto {
 			return argument->getValueType();
 		}
 	);
 
 	m_typeInquire = std::move(argumentTypes);
-	chir::Value* callee = Parent::visit(node.getCallee());
+	utils::NoNull<chir::Value> callee = Parent::visit(node.getCallee());
 	m_typeInquire.clear();
 
-	if (callee->getType() != chir::NodeType::SYMBOL_VALUE || reinterpret_cast<chir::SymbolValue*>(callee)->getSymbolKind() != symbol::FUNCTION) {
+	if (callee->getKind() != chir::NodeKind::SYMBOL_VALUE || callee.as<chir::SymbolValue>()->getSymbolKind() != symbol::FUNCTION) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INVALID_CALLEE,
 			.name = "Semantic error: Invalid callee",
@@ -111,13 +111,13 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::InvocationOperator& node) {
 		node.getPosition(),
 		callee,
 		std::move(arguments),
-		reinterpret_cast<chir::SymbolValue*>(callee)->getFunction().getReturnType()
+		(callee).as<chir::SymbolValue>()->getFunction().getReturnType()
 	);
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::UnaryOperator& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator& node) {
 	utils::NoNull<chir::Value> value = Parent::visit(node.getExpression());
-	if (value->getValueType() != symbol::BasicType::I32) {
+	if (value->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
@@ -138,7 +138,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::UnaryOperator& node) {
 	);
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::BinaryOperator& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator& node) {
 	utils::NoNull<chir::Value> left = Parent::visit(node.getLeft());
 	utils::NoNull<chir::Value> right = Parent::visit(node.getRight());
 	if (left->getValueType() != right->getValueType()) {
@@ -154,7 +154,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::BinaryOperator& node) {
 		return nullptr;
 	}
 
-	if (left->getValueType() != symbol::BasicType::I32) {
+	if (left->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
@@ -176,7 +176,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::BinaryOperator& node) {
 	);
 }
 
-chir::Value* ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {
 	symbol::FunctionSymbol* function = m_symbols.getCurrentScope().getFunction();
 	if (function == nullptr) {
 		error::ErrorPrinter::error({
@@ -213,7 +213,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {
 		return chir::ChirAllocator::make<chir::ReturnOperator>(node.getPosition(), value);
 	}
 
-	if (function->getReturnType() != symbol::BasicType::UNIT) {
+	if (function->getReturnType() != symbol::TypeKind::UNIT) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::TYPE_MISMATCH,
 			.name = "Semantic error: Type mismatch",
@@ -233,7 +233,7 @@ chir::Value* ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {
 }
 
 chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ExpressionStatement& node) {
-	return chir::ChirAllocator::make<chir::ValueStatement>(node.getPosition(), Parent::visit(node.getExpression()));
+	return chir::ChirAllocator::make<chir::ValueStatement>(node.getPosition(), Parent::visit(node.getExpression())).get();
 }
 
 chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
@@ -241,7 +241,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
 	statements.reserve(node.getStatements().size());
 
 	// Functions create their own scope, so no new scope is needed to be created.
-	bool needOwnScope = node.getParent()->getType() != ast::NodeType::FUNCTION_DECLARATION;
+	bool needOwnScope = node.getParent()->getType() != ast::NodeKind::FUNCTION_DECLARATION;
 
 	if (needOwnScope) {
 		m_symbols.pushScope("");
@@ -258,7 +258,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
 		m_symbols.popScope();
 	}
 
-	return chir::ChirAllocator::make<chir::ScopeStatement>(node.getPosition(), std::move(statements));
+	return chir::ChirAllocator::make<chir::ScopeStatement>(node.getPosition(), std::move(statements)).get();
 }
 
 chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& node) {
@@ -287,7 +287,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 		assert(variable != nullptr);
 		assert(variable->getType() == type);
 
-		m_declarations.push_back(chir::ChirAllocator::make<chir::VariableDeclaration>(
+		m_declarations.emplace_back(chir::ChirAllocator::make<chir::VariableDeclaration>(
 			node.getPosition(),
 			*variable,
 			initialValue
@@ -304,7 +304,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 			node.getPosition(),
 			variable,
 			initialValue
-		);
+		).get();
 	}
 }
 
@@ -313,8 +313,8 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 	symbol::FunctionSymbol* externalFunction = m_symbols.getCurrentScope().getFunction();
 
 	if (externalFunction == nullptr) { // Global function.
-		auto argumentTypes = utils::map<std::vector<symbol::Type>>(node.getArguments(), [](const ast::FunctionDeclaration::Argument& arg) -> symbol::Type { 
-			return arg.type.makeSymbolType(); 
+		std::vector<symbol::Type> argumentTypes = utils::map<std::vector<symbol::Type>>(node.getArguments(), [](const auto& argument) -> auto {
+			return argument.type.makeSymbolType();
 		});
 
 		function = const_cast<symbol::FunctionSymbol*>(m_symbols.getFunction(node.getName(), argumentTypes));
@@ -326,7 +326,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 
 		auto arguments = utils::map<std::vector<utils::NoNull<symbol::VariableSymbol>>>(
 			node.getArguments(), 
-			[](const ast::FunctionDeclaration::Argument& arg) -> utils::NoNull<symbol::VariableSymbol> {
+			[](const auto& arg) -> auto {
 				return symbol::SymbolAllocator::make<symbol::VariableSymbol>(symbol::SymbolPath { }, utf::String(arg.name), arg.type.makeSymbolType());
 			}
 		);
@@ -337,10 +337,10 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 	symbol::Scope& scope = m_symbols.pushFunctionScope(*function);
 
 	if (node.isNative()) {
-		m_declarations.push_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, utf::String(node.getBodyAsNative())));
+		m_declarations.emplace_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, utf::String(node.getBodyAsNative())));
 	} else { // Not a native function.
 		chir::Statement* functionBody = Parent::visit(node.getBodyAsStatement().get());
-		m_declarations.push_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, functionBody));
+		m_declarations.emplace_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, functionBody));
 	}
 
 	m_symbols.popScope();

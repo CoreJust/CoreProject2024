@@ -18,11 +18,12 @@ namespace utils {
 	class PooledAllocator {
 	protected:
 		inline static thread_local std::pmr::unsynchronized_pool_resource s_resource { };
-		inline static thread_local std::pmr::polymorphic_allocator<> s_allocator { &s_resource };
+		inline static thread_local std::pmr::polymorphic_allocator<ObjectBase> s_allocator { &s_resource };
 
 	public:
 		// Frees all the memory.
-		static void clear() {
+		// If the memory was already released, does nothing.
+		static void tryRelease() {
 			s_resource.release();
 		}
 

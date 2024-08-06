@@ -5,6 +5,6 @@
 #include "Expression.hpp"
 #include <cassert>
 
-ast::Expression::Expression(NodeType type) noexcept : Node(type) {
+ast::Expression::Expression(NodeKind type) noexcept : Node(type) {
 	assert(isExpression());
 }

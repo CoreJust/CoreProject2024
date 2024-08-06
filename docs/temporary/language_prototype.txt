@@ -45,12 +45,12 @@ To address a symbol in the code, those options are available:
 		import core.io.Console.print
 		print(...)
 	3. You can import all the symbols:
-		import core.io.Console.* # Imports all the contents of Console file.
+		import core.io.Console.* // Imports all the contents of Console file.
 	   But if you do so for a package, like:
 		import core.io.*
 	   Then you cannot access the contents of Console directly, only as Console.print(), because the symbol itself was not imported.
 	   To do it recursively, you can use **:
-		import core.io.** # This will import print() symbol as well.
+		import core.io.** // This will import print() symbol as well.
 	4. You can import a package and shorten the symbol paths used:
 		import core.io.Console
 		Console.print()
@@ -70,8 +70,8 @@ To address a symbol in the code, those options are available:
 
 
 Notes on the language:
-A comment starts with # and continues till the end of the line
-A multiline comment starts with ### on a line and ends with ### on another.
+A comment starts with // and continues till the end of the line
+A multiline comment starts with /* on a line and ends with */ on another.
 
 Names of variables, functions, types, etc can contain both lower and upper case latin letters (a-z and A-Z),
 numbers(0-9, name cannot start with a number), symbols _ and $.
@@ -87,7 +87,7 @@ Also, you can supposedly use LLVM IR to make an expression:
 	let a: i32 = llvm {
 		%tmp0 = alloca i32
 		store i32 42, i32* %tmp0
-		= %tmp0 # Or some other way to state the returned value
+		= %tmp0 // Or some other way to state the returned value
 	}
 It is equivalent to the code:
 	let tmp0 = 42
@@ -97,20 +97,20 @@ Such LLVM IR code parts are unsafe code.
 Unsafe code, unlike in Rust, is allowed everywhere, but it would produce a warning unless marked with annotation @unsafe.
 A function with @unsafe marker will also produce warnings when used in safe code, so there are two ways to make an unsafe function:
 	@unsafe
-	fn foo() {} # Will produce a warning on using on safe code.
+	fn foo() {} // Will produce a warning on using on safe code.
 Or:
-	fn foo() @unsafe {} # Will not produce warning since only the scope is marked as unsafe, but not the function itself.
+	fn foo() @unsafe {} // Will not produce warning since only the scope is marked as unsafe, but not the function itself.
 
 To declare a variable, one can use the following syntax:
-let a = 10 # Mutable variable with inferred type i32
-let a: u64 = 10 # Mutable variable with explicitly stated type u64
-const a = 10 # Immutable variable
+let a = 10 // Mutable variable with inferred type i32
+let a: u64 = 10 // Mutable variable with explicitly stated type u64
+const a = 10 // Immutable variable
 
 To declare a function:
-fn sum(a: i32, b: i32) = a + b # Returns a sum of two arguments, the return type is inferred
-fn sum(a: i32, b: i32): i64 = a + b # Return type is stated explicitly.
-fn sum<ValTy: Integral type>(a: ValTy, b: ValTy) = a + b # Template function.
-fn sum(a: Integral, b: Integral) = a + b # Template function with anonymous template parameter names.
+fn sum(a: i32, b: i32) = a + b // Returns a sum of two arguments, the return type is inferred
+fn sum(a: i32, b: i32): i64 = a + b // Return type is stated explicitly.
+fn sum<ValTy: Integral type>(a: ValTy, b: ValTy) = a + b // Template function.
+fn sum(a: Integral, b: Integral) = a + b // Template function with anonymous template parameter names.
 
 Both functions and variables can be both global, static and local.
 Static: let/const static <name>, fn static <name>.
@@ -127,15 +127,15 @@ Function calls:
 You can write positional arguments one by one, and you can as well use named parameters. Function can have default values for parameters.
 For template functions their template types can be stated explicitly:
 fn foo<T: Integral>(first: T, second: T) = first ** second
-foo(10, 20) # T is inferred as i32
-foo<i64>(10, 20) # Explicitly state that T is i64
-foo(second = 20, first = 10) # Using named arguments
+foo(10, 20) // T is inferred as i32
+foo<i64>(10, 20) // Explicitly state that T is i64
+foo(second = 20, first = 10) // Using named arguments
 
 Apart from variables and functions, a symbol can also be a type (global or local):
 1. type - allows to create a type alias, example:
 	type int = i32
 2. metatype - allows to create a type constraint used in templates (and for type expressions):
-	metatype Integral<T[, ...]> = ct Type(T).isIntegral # Or something like that, similar to c++ concept
+	metatype Integral<T[, ...]> = ct Type(T).isIntegral // Or something like that, similar to c++ concept
 3. trait - allows to create a trait. A trait can have some methods without definition and some with, it can have no fields.
    A trait can inherit s number of other traits, it can be generic. Each trait can also be treated as a metatype that identifies all the inherited types.
    Can be used as an interface for dynamic polymorphism with classes.
@@ -186,9 +186,9 @@ Apart from variables and functions, a symbol can also be a type (global or local
 7. enum - allows to create an enumeration. It can only inherit traits:
 	enum Animal(size: i32, maxAge: i32) {
 		Cat(25, 20),
-		Dog(100, 20) # Fields can have the same values, the enum is represented as an int anyways
+		Dog(100, 20) // Fields can have the same values, the enum is represented as an int anyways
 		
-		# Can have methods
+		// Can have methods
 	}
 
 All the classes and struct by default inherit those traits (with a default constructor):
@@ -206,7 +206,7 @@ Anonymous types can be created when using:
 2. Anonymous classes as is:
 	class [ : Parent] {
 		...
-	} # Similar to Kotlin's objects
+	} // Similar to Kotlin's objects
 
 Basic types are: unit, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64, char (utf-8 character), bool, arrays (like i32[11]), dynamic arrays (like i32[]), 
 pointers (like i32*), function pointers (like fn(): unit), nullable pointers and function pointers (like i32?, fn?(): unit), references (like i32&),
@@ -281,7 +281,7 @@ Literals:
         char[3]('a', 'b') - c8[3] with values { 'a', 'b', '\0' } - if the size is bigger than the number of specified values, the default values are used.
 		
 	Also, it is possible to use a constructor from lambda that takes the index and returns the value:
-		i32[128] { it } # Will fill the array with sequential numbers from 0 to 127.
+		i32[128] { it } // Will fill the array with sequential numbers from 0 to 127.
             
 6. Optional pointers and class literal:
     null
@@ -295,12 +295,12 @@ Literals:
 8. Function literals (lambdas):
     {[-arguments...- ->] -function body- }
 	Or (if the type must be specified explicitly):
-	fn(-args-): -return type- -body- # Common function without name.
+	fn(-args-): -return type- -body- // Common function without name.
     
     Examples:
-        let fact = { n: i32 -> if n <= 1 1 else n * this(n - 1) } # Keyword this in lambdas refers to the lambda itself.
-        { it != 0 } # Can only be used if the type of it can be inferred.
-		let f = fn(it: i32) -> bool { it % 2 != 0 } # Function type is stated explicitly
+        let fact = { n: i32 -> if n <= 1 1 else n * this(n - 1) } // Keyword this in lambdas refers to the lambda itself.
+        { it != 0 } // Can only be used if the type of it can be inferred.
+		let f = fn(it: i32) -> bool { it % 2 != 0 } // Function type is stated explicitly
 
 Operators and their corresponding priorities:
     1.  -function-(a) - function call.
@@ -355,7 +355,7 @@ Flow control structures:
 1. if-elif-else - trivial
 2. loops: while, do-while, for (<var> in ...), repeat(<times>).
 3. Inside of loops: continue/break.
-4. A loop can have a label that can be used to continue / break an outer loop: for@outer(...) for@inner(...) break outer # Will break the outer loop.
+4. A loop can have a label that can be used to continue / break an outer loop: for@outer(...) for@inner(...) break outer // Will break the outer loop.
 5. After a loop there can be an else block that will be executed on breaking the loop.
 
 To use a for cycle, the type must implement either of Iterator or Iterable traits.
@@ -403,6 +403,13 @@ if (ct isCompileTime()) {
 } else {
 	...
 }
+
+
+Contracts:
+The core language allow usage of contracts using keywords annotations @expect(<condition>), @assume(<condition>), @ensures(<condition>).
+@expect is used before the function and creates a pre-condition contract.
+@ensures is similar to @expect, but it is applied to the function result, so it is a post-condition contract.
+@assume is used in the code.
 
 
 TODO:

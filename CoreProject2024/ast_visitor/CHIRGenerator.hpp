@@ -19,9 +19,9 @@ namespace ast_visitor {
 	/*
 	*	Visit methods return nullptr for all the declarations.
 	*/
-	class CHIRGenerator final : public AstVisitor</* Self = */CHIRGenerator, /* ExpressionResult = */chir::Value*, /* StatementResult = */chir::Statement*> {
+	class CHIRGenerator final : public AstVisitor</* Self = */CHIRGenerator, /* ExpressionResult = */utils::NoNull<chir::Value>, /* StatementResult = */chir::Statement*> {
 	private:
-		using Parent = AstVisitor<CHIRGenerator, chir::Value*, chir::Statement*>;
+		using Parent = AstVisitor<CHIRGenerator, utils::NoNull<chir::Value>, chir::Statement*>;
 
 		friend class Parent;
 
@@ -39,12 +39,12 @@ namespace ast_visitor {
 		chir::Module generateCHIRModule(utils::NoNull<ast::Declaration> node);
 
 	private:
-		chir::Value* visit(ast::LiteralValue& node) override;
-		chir::Value* visit(ast::IdentifierValue& node) override;
-		chir::Value* visit(ast::InvocationOperator& node) override;
-		chir::Value* visit(ast::UnaryOperator& node) override;
-		chir::Value* visit(ast::BinaryOperator& node) override;
-		chir::Value* visit(ast::ReturnOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::LiteralValue& node) override;
+		utils::NoNull<chir::Value> visit(ast::IdentifierValue& node) override;
+		utils::NoNull<chir::Value> visit(ast::InvocationOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::UnaryOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::BinaryOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::ReturnOperator& node) override;
 		chir::Statement* visit(ast::ExpressionStatement& node) override;
 		chir::Statement* visit(ast::ScopeStatement& node) override;
 		chir::Statement* visit(ast::VariableDeclaration& node) override;

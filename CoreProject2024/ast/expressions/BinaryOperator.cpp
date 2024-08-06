@@ -5,7 +5,7 @@
 #include "BinaryOperator.hpp"
 
 ast::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Expression> left, utils::NoNull<Expression> right) noexcept
-    : Expression(NodeType::BINARY_OPERATOR), m_operator(operatorType), m_left(left), m_right(right) {
+    : Expression(NodeKind::BINARY_OPERATOR), m_operator(operatorType), m_left(left), m_right(right) {
     Node::setParent(m_left, this);
     Node::setParent(m_right, this);
 }

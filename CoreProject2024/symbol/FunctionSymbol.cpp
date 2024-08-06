@@ -11,6 +11,22 @@ symbol::FunctionSymbol::FunctionSymbol(SymbolPath path, utf::String name, symbol
 
 }
 
+utf::String symbol::FunctionSymbol::makeMangledName() const {
+	if (m_name == "main") {
+		return "main";
+	}
+
+	return std::format(
+		"{}::{}${}${}", 
+		utils::joinToString(m_path.internalPath.path, "."),
+		m_name, 
+		utils::joinToString(m_arguments, ":", "", "", [](utils::NoNull<VariableSymbol> argument) -> utf::String {
+			return argument->getType().toMangleString();
+		}),
+		m_returnType.toMangleString()
+	);
+}
+
 const symbol::Type& symbol::FunctionSymbol::getReturnType() const noexcept {
 	return m_returnType;
 }

@@ -5,7 +5,7 @@
 #include "ExpressionStatement.hpp"
 
 ast::ExpressionStatement::ExpressionStatement(utils::NoNull<ast::Expression> expression) noexcept
-    : Statement(NodeType::EXPRESSION_STATEMENT), m_expression(expression) {
+    : Statement(NodeKind::EXPRESSION_STATEMENT), m_expression(expression) {
     Node::setParent(m_expression, this);
 }
 

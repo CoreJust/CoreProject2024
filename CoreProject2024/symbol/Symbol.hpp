@@ -9,11 +9,10 @@
 */
 
 #pragma once
+#include "SymbolId.hpp"
 #include "SymbolPath.hpp"
 
 namespace symbol {
-	using SymbolId = uint64_t;
-
 	enum SymbolKind : uint8_t {
 		VARIABLE = 0,
 		FUNCTION,

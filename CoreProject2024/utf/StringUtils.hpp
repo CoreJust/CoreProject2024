@@ -43,6 +43,7 @@ namespace utf {
 			return t->toString();
 		} else {
 			static_assert(std::is_convertible_v<T, utf::String> || HasStdToString<T> || HasToStringMethod<T>, "The passed type has neither toString method nor can be converted with std::to_string.");
+			return ""; // To avoid warnings.
 		}
 	}
 }

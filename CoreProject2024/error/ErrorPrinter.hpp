@@ -55,7 +55,7 @@ namespace error {
 			EXPECTED_A_STATEMENT,
 			NO_CLOSING_BRACE,
 
-			// CHIR Generator errors
+			// CHIR errors
 			INVALID_NUMBER_LITERAL,
 			UNRESOLVED_SYMBOL,
 			TOO_MANY_SYMBOLS,
@@ -63,6 +63,12 @@ namespace error {
 			UNEXPECTED_TYPE,
 			TYPE_MISMATCH,
 			NON_FUNCTION_CONTEXT,
+
+			// CIR Errors
+			INSTRUCTION_AFTER_TERMINATOR,
+			VERIFICATION_FAILED,
+
+			ERROR_CODES_COUNT
 		};
 	}
 

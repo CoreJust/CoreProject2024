@@ -16,6 +16,10 @@
 #include "chir/ChirDeclaration.hpp"
 #include "chir/ChirClassDeclarations.hpp"
 
+namespace chir {
+	class Module;
+}
+
 namespace chir_visitor {
 	/*
 	*	To create a visitor, one must inherit their visitor class from this one with Self = the derived class,
@@ -32,43 +36,33 @@ namespace chir_visitor {
 		ChirVisitor(Self& self) noexcept : m_self(self) { }
 
 	public:
-		INLINE void visitRoot(utils::NoNull<chir::Node> node) {
-			if (node->isValue()) {
-				visit(reinterpret_cast<chir::Value*>(node.get()));
-			} else if (node->isStatement()) {
-				visit(reinterpret_cast<chir::Statement*>(node.get()));
-			} else if (node->isDeclaration()) {
-				visit(reinterpret_cast<chir::Declaration*>(node.get()));
-			} else {
-				unreachable();
-			}
-		}
+		virtual void visitRoot(chir::Module& module) = 0;
 
 		INLINE ValueResult visit(utils::NoNull<chir::Value> node) {
-			switch (node->getType()) {
-				case chir::NodeType::CONSTANT_VALUE:		return m_self.visit(*reinterpret_cast<chir::ConstantValue*>(node.get()));
-				case chir::NodeType::SYMBOL_VALUE:			return m_self.visit(*reinterpret_cast<chir::SymbolValue*>(node.get()));
-				case chir::NodeType::INVOCATION_OPERATOR:	return m_self.visit(*reinterpret_cast<chir::InvocationOperator*>(node.get()));
-				case chir::NodeType::UNARY_OPERATOR:		return m_self.visit(*reinterpret_cast<chir::UnaryOperator*>(node.get()));
-				case chir::NodeType::BINARY_OPERATOR:		return m_self.visit(*reinterpret_cast<chir::BinaryOperator*>(node.get()));
-				case chir::NodeType::RETURN_OPERATOR:		return m_self.visit(*reinterpret_cast<chir::ReturnOperator*>(node.get()));
+			switch (node->getKind()) {
+				case chir::NodeKind::CONSTANT_VALUE:		return m_self.visit(*node.as<chir::ConstantValue>());
+				case chir::NodeKind::SYMBOL_VALUE:			return m_self.visit(*node.as<chir::SymbolValue>());
+				case chir::NodeKind::INVOCATION_OPERATOR:	return m_self.visit(*node.as<chir::InvocationOperator>());
+				case chir::NodeKind::UNARY_OPERATOR:		return m_self.visit(*node.as<chir::UnaryOperator>());
+				case chir::NodeKind::BINARY_OPERATOR:		return m_self.visit(*node.as<chir::BinaryOperator>());
+				case chir::NodeKind::RETURN_OPERATOR:		return m_self.visit(*node.as<chir::ReturnOperator>());
 			default: unreachable();
 			}
 		}
 
 		INLINE StatementResult visit(utils::NoNull<chir::Statement> node) {
-			switch (node->getType()) {
-				case chir::NodeType::VALUE_STATEMENT:		return m_self.visit(*reinterpret_cast<chir::ValueStatement*>(node.get()));
-				case chir::NodeType::SCOPE_STATEMENT:		return m_self.visit(*reinterpret_cast<chir::ScopeStatement*>(node.get()));
-				case chir::NodeType::VARIABLE_STATEMENT:	return m_self.visit(*reinterpret_cast<chir::VariableStatement*>(node.get()));
+			switch (node->getKind()) {
+				case chir::NodeKind::VALUE_STATEMENT:		return m_self.visit(*node.as<chir::ValueStatement>());
+				case chir::NodeKind::SCOPE_STATEMENT:		return m_self.visit(*node.as<chir::ScopeStatement>());
+				case chir::NodeKind::VARIABLE_STATEMENT:	return m_self.visit(*node.as<chir::VariableStatement>());
 			default: unreachable();
 			}
 		}
 
 		INLINE DeclarationResult visit(utils::NoNull<chir::Declaration> node) {
-			switch (node->getType()) {
-				case chir::NodeType::VARIABLE_DECLARATION:	return m_self.visit(*reinterpret_cast<chir::VariableDeclaration*>(node.get()));
-				case chir::NodeType::FUNCTION_DECLARATION:	return m_self.visit(*reinterpret_cast<chir::FunctionDeclaration*>(node.get()));
+			switch (node->getKind()) {
+				case chir::NodeKind::VARIABLE_DECLARATION:	return m_self.visit(*node.as<chir::VariableDeclaration>());
+				case chir::NodeKind::FUNCTION_DECLARATION:	return m_self.visit(*node.as<chir::FunctionDeclaration>());
 			default: unreachable();
 			}
 		}

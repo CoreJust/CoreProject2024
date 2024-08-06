@@ -7,8 +7,8 @@
 
 thread_local uint64_t chir::Node::s_nodeIdCounter = 0;
 
-chir::Node::Node(NodeType type, Node* parent) noexcept
-	: m_parent(parent), m_nodeType(type), m_nodeId(s_nodeIdCounter++) { }
+chir::Node::Node(NodeKind type, Node* parent) noexcept
+	: m_parent(parent), m_nodeKind(type), m_nodeId(s_nodeIdCounter++) { }
 
 void chir::Node::setParent(utils::NoNull<Node> node, Node* parent) noexcept {
 	node->m_parent = parent;

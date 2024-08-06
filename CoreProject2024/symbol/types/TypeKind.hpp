@@ -3,9 +3,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 /*
-*	BasicType.hpp by CoreJust
+*	TypeKind.hpp by CoreJust
 *	Created on 02.08.2024
-*	Contains the BasicType enumeration that represents a node of the Type tree.
+*	Contains the TypeKind enumeration that represents a node of the Type tree.
 */
 
 #pragma once
@@ -13,16 +13,18 @@
 
 namespace symbol {
 	// Enumeration of the primitive types and type categories.
-	enum class BasicType : uint8_t {
+	enum class TypeKind : uint8_t {
 		UNIT = 0,
 		I32,
 
 		NEVER_TYPE,
 
-		NO_TYPE
+		NO_TYPE,
+
+		TYPE_KINDS_COUNT
 	};
 
-	constexpr bool isPrimitive(BasicType type) noexcept {
+	constexpr bool isPrimitive(TypeKind type) noexcept {
 		return true; // Currently all the basic types are primitive
 	}
 }

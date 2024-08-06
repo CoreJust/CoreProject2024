@@ -22,7 +22,7 @@ namespace symbol {
 		Scope* m_parent;
 		FunctionSymbol* m_function; // The function this scope belongs to.
 		utf::String m_name;
-		std::vector<Symbol*> m_symbols;
+		std::vector<utils::NoNull<Symbol>> m_symbols;
 		std::list<Scope> m_childScopes;
 
 	public:
@@ -30,7 +30,7 @@ namespace symbol {
 
 		Scope& addScope(utf::String name, FunctionSymbol* function);
 
-		std::vector<Symbol*>& symbols() noexcept;
+		std::vector<utils::NoNull<Symbol>>& symbols() noexcept;
 		ScopeId			getId()		const noexcept;
 		Scope*			getParent() const noexcept;
 		FunctionSymbol* getFunction() const noexcept;

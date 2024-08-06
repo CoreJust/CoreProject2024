@@ -5,10 +5,10 @@
 #include "ReturnOperator.hpp"
 
 ast::ReturnOperator::ReturnOperator() noexcept
-    : Expression(NodeType::RETURN_OPERATOR), m_expression(nullptr) { }
+    : Expression(NodeKind::RETURN_OPERATOR), m_expression(nullptr) { }
 
 ast::ReturnOperator::ReturnOperator(utils::NoNull<Expression> expression) noexcept
-    : Expression(NodeType::RETURN_OPERATOR), m_expression(expression.get()) {
+    : Expression(NodeKind::RETURN_OPERATOR), m_expression(expression.get()) {
     Node::setParent(m_expression, this);
 }
 

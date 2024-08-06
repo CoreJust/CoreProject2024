@@ -10,10 +10,11 @@ chir::Module::Module(std::vector<utils::NoNull<Declaration>> declarations) noexc
 
 }
 
-void chir::Module::print(utils::IndentPrinter& printer) const {
+void chir::Module::print(utils::IndentPrinter& printer) {
 	chir_visitor::ChirPrinter chirPrinter(printer);
+	chirPrinter.visitRoot(*this);
+}
 
-	for (auto declaration : m_declarations) {
-		chirPrinter.print(declaration);
-	}
+std::vector<utils::NoNull<chir::Declaration>>& chir::Module::getDeclarations() noexcept {
+	return m_declarations;
 }

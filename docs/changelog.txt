@@ -2,3 +2,5 @@ Alpha 0.1.0 (17.07.2024 - ?)
 - Created the project
 - Written some preliminary language specs (in the form of poorly structured notes).
 - Written the first version of lexer and parser.
+- Added Core high-level IR and Core IR.
+- Added primitive error handling.

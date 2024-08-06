@@ -48,9 +48,8 @@ std::optional<utf::String> utils::readFileUnchecked(const utf::String& path) {
             .selectionLength = 0,
             .description = "Encountered an error when trying to open file " + path,
             .explanation = "-"
-    });
+        });
 
-        std::fclose(file);
         return std::nullopt;
     }
 

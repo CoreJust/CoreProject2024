@@ -5,7 +5,7 @@
 #include "VariableDeclaration.hpp"
 
 ast::VariableDeclaration::VariableDeclaration(utf::StringView name, ast::Type type, utils::NoNull<Expression> initialValue) noexcept
-    : Declaration(NodeType::VARIABLE_DECLARATION), m_name(name), m_type(type), m_initialValue(initialValue) {
+    : Declaration(NodeKind::VARIABLE_DECLARATION), m_name(name), m_type(type), m_initialValue(initialValue) {
     Node::setParent(m_initialValue.get(), this);
 }
 

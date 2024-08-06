@@ -14,7 +14,7 @@
 namespace ast {
 	class Statement : public Node {
 	protected:
-		Statement(NodeType type) noexcept;
+		Statement(NodeKind type) noexcept;
 
 	public:
 

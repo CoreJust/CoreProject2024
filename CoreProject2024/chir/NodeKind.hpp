@@ -3,7 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 /*
-*	NodeType.hpp by CoreJust
+*	NodeKind.hpp by CoreJust
 *	Created on 03.08.2024
 *	Contains the enumeration of possible CHIR node types.
 */
@@ -12,7 +12,7 @@
 #include <cstdint>
 
 namespace chir {
-	enum class NodeType : uint8_t {
+	enum class NodeKind : uint8_t {
 		// Value node types
 
 		/*
@@ -94,17 +94,17 @@ namespace chir {
 	};
 
 	// Checks if the given node type is an expression.
-	constexpr bool isExpression(NodeType type) noexcept {
-		return static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeType::VALUE_STATEMENT);
+	constexpr bool isExpression(NodeKind type) noexcept {
+		return static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeKind::VALUE_STATEMENT);
 	}
 
 	// Checks if the given node type is a statement.
-	constexpr bool isStatement(NodeType type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeType::VALUE_STATEMENT) && static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeType::VARIABLE_DECLARATION);
+	constexpr bool isStatement(NodeKind type) noexcept {
+		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::VALUE_STATEMENT) && static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeKind::VARIABLE_DECLARATION);
 	}
 
 	// Checks if the given node type is a declaration, i.e. statement of the highest level.
-	constexpr bool isDeclaration(NodeType type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeType::VARIABLE_DECLARATION);
+	constexpr bool isDeclaration(NodeKind type) noexcept {
+		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::VARIABLE_DECLARATION);
 	}
 }

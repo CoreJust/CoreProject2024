@@ -45,6 +45,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -187,6 +188,31 @@
     <ClCompile Include="chir\values\ChirSymbolValue.cpp" />
     <ClCompile Include="chir\values\ChirUnaryOperator.cpp" />
     <ClCompile Include="chir_visitor\ChirPrinter.cpp" />
+    <ClCompile Include="chir_visitor\CirGenerator.cpp" />
+    <ClCompile Include="chir_visitor\CirGlobalsLoader.cpp" />
+    <ClCompile Include="cir\CirBuilder.cpp" />
+    <ClCompile Include="cir\CirModule.cpp" />
+    <ClCompile Include="cir\value\constant\CirBasicBlock.cpp" />
+    <ClCompile Include="cir\value\constant\CirConstanNumber.cpp" />
+    <ClCompile Include="cir\value\constant\CirConstant.cpp" />
+    <ClCompile Include="cir\value\constant\CirFunction.cpp" />
+    <ClCompile Include="cir\value\constant\CirCommonFunction.cpp" />
+    <ClCompile Include="cir\value\constant\CirGlobalValue.cpp" />
+    <ClCompile Include="cir\type\CirType.cpp" />
+    <ClCompile Include="cir\value\CirFunctionArgument.cpp" />
+    <ClCompile Include="cir\value\CirValue.cpp" />
+    <ClCompile Include="cir\value\constant\CirGlobalVariable.cpp" />
+    <ClCompile Include="cir\value\constant\CirNativeFunction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirBinaryInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirInvocationInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirLocalVariable.cpp" />
+    <ClCompile Include="cir\value\instruction\CirRetInstuction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirTerminator.cpp" />
+    <ClCompile Include="cir\value\instruction\CirUnaryInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirUnitInvocationInstruction.cpp" />
+    <ClCompile Include="cir_pass\CirPassAdapters.cpp" />
+    <ClCompile Include="cir_pass\CirPrinterPass.cpp" />
     <ClCompile Include="lexer\Token.cpp" />
     <ClCompile Include="lexer\Tokenizer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -221,7 +247,7 @@
     <ClInclude Include="ast\expressions\LiteralValue.hpp" />
     <ClInclude Include="ast\expressions\UnaryOperator.hpp" />
     <ClInclude Include="ast\Node.hpp" />
-    <ClInclude Include="ast\NodeType.hpp" />
+    <ClInclude Include="ast\NodeKind.hpp" />
     <ClInclude Include="ast\Statement.hpp" />
     <ClInclude Include="ast\statements\ExpressionStatement.hpp" />
     <ClInclude Include="ast\expressions\ReturnOperator.hpp" />
@@ -240,7 +266,7 @@
     <ClInclude Include="chir\ChirValue.hpp" />
     <ClInclude Include="chir\declarations\ChirFunctionDeclaration.hpp" />
     <ClInclude Include="chir\declarations\ChirVariableDeclaration.hpp" />
-    <ClInclude Include="chir\NodeType.hpp" />
+    <ClInclude Include="chir\NodeKind.hpp" />
     <ClInclude Include="chir\statements\ChirScopeStatement.hpp" />
     <ClInclude Include="chir\statements\ChirValueStatement.hpp" />
     <ClInclude Include="chir\statements\ChirVariableStatement.hpp" />
@@ -252,6 +278,37 @@
     <ClInclude Include="chir\values\ChirInvocationOperator.hpp" />
     <ClInclude Include="chir_visitor\ChirPrinter.hpp" />
     <ClInclude Include="chir_visitor\ChirVisitor.hpp" />
+    <ClInclude Include="chir_visitor\CirGenerator.hpp" />
+    <ClInclude Include="chir_visitor\CirGlobalsLoader.hpp" />
+    <ClInclude Include="cir\CirAllocator.hpp" />
+    <ClInclude Include="cir\CirBuilder.hpp" />
+    <ClInclude Include="cir\CirModule.hpp" />
+    <ClInclude Include="cir\value\CirValueClassDeclarations.hpp" />
+    <ClInclude Include="cir\value\CirValueClassImplementations.hpp" />
+    <ClInclude Include="cir\value\constant\CirBasicBlock.hpp" />
+    <ClInclude Include="cir\value\constant\CirConstanNumber.hpp" />
+    <ClInclude Include="cir\value\constant\CirConstant.hpp" />
+    <ClInclude Include="cir\value\constant\CirFunction.hpp" />
+    <ClInclude Include="cir\value\constant\CirCommonFunction.hpp" />
+    <ClInclude Include="cir\value\constant\CirGlobalValue.hpp" />
+    <ClInclude Include="cir\value\constant\CirGlobalVariable.hpp" />
+    <ClInclude Include="cir\type\CirType.hpp" />
+    <ClInclude Include="cir\type\CirTypeKind.hpp" />
+    <ClInclude Include="cir\value\CirFunctionArgument.hpp" />
+    <ClInclude Include="cir\value\CirValue.hpp" />
+    <ClInclude Include="cir\value\CirValueKind.hpp" />
+    <ClInclude Include="cir\value\constant\CirNativeFunction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirBinaryInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirLocalVariable.hpp" />
+    <ClInclude Include="cir\value\instruction\CirUnaryInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirTerminator.hpp" />
+    <ClInclude Include="cir\value\instruction\CirInvocationInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirUnitInvocationInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirRetInstuction.hpp" />
+    <ClInclude Include="cir_pass\CirPass.hpp" />
+    <ClInclude Include="cir_pass\CirPassAdapters.hpp" />
+    <ClInclude Include="cir_pass\CirPrinterPass.hpp" />
     <ClInclude Include="lexer\Token.hpp" />
     <ClInclude Include="lexer\TokenizationUtils.hpp" />
     <ClInclude Include="lexer\Tokenizer.hpp" />
@@ -265,7 +322,7 @@
     <ClInclude Include="symbol\VariableSymbol.hpp" />
     <ClInclude Include="test\BenchmarkMain.hpp" />
     <ClInclude Include="test\SourceCodeGenerator.hpp" />
-    <ClInclude Include="symbol\types\BasicType.hpp" />
+    <ClInclude Include="symbol\types\TypeKind.hpp" />
     <ClInclude Include="symbol\types\Type.hpp" />
     <ClInclude Include="utf\StringUtils.hpp" />
     <ClInclude Include="utf\UtfIterator.hpp" />
@@ -284,6 +341,7 @@
     <ClInclude Include="utils\CollectionUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="symbol\SymbolId.hpp" />
     <None Include="test.core" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

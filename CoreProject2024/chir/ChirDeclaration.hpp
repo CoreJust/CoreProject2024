@@ -15,7 +15,7 @@
 namespace chir {
 	class Declaration : public Node {
 	protected:
-		Declaration(NodeType type) noexcept;
+		Declaration(NodeKind type) noexcept;
 
 	public:
 

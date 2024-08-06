@@ -16,7 +16,7 @@ symbol::SymbolTable::SymbolTable()
 }
 
 symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::String name, symbol::Type type) {
-    VariableSymbol* variable = SymbolAllocator::make<VariableSymbol>(std::move(path), std::move(name), std::move(type));
+    utils::NoNull<VariableSymbol> variable = SymbolAllocator::make<VariableSymbol>(std::move(path), std::move(name), std::move(type));
 
     if (m_currentScope->isGlobal()) {
         std::vector<utils::NoNull<Symbol>>& symbolsWithSuchName = m_symbolsByName
@@ -26,14 +26,14 @@ symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::S
         symbolsWithSuchName.push_back(variable);
     }
 
-    m_symbolsById.emplace(variable->getId(), variable);
-    m_currentScope->symbols().push_back(variable);
+    m_symbolsById.try_emplace(variable->getId(), variable);
+    m_currentScope->symbols().emplace_back(variable);
 
     return *variable;
 }
 
 symbol::FunctionSymbol& symbol::SymbolTable::addFunction(SymbolPath path, utf::String name, symbol::Type returnType, std::vector<utils::NoNull<VariableSymbol>> arguments) {
-    FunctionSymbol* function = SymbolAllocator::make<FunctionSymbol>(
+    utils::NoNull<FunctionSymbol> function = SymbolAllocator::make<FunctionSymbol>(
         std::move(path), 
         std::move(name), 
         std::move(returnType), 
@@ -48,21 +48,21 @@ symbol::FunctionSymbol& symbol::SymbolTable::addFunction(SymbolPath path, utf::S
         symbolsWithSuchName.push_back(function);
     }
 
-    m_symbolsById.emplace(function->getId(), function);
-    m_currentScope->symbols().push_back(function);
+    m_symbolsById.try_emplace(function->getId(), function);
+    m_currentScope->symbols().emplace_back(function);
     
     return *function;
 }
 
 symbol::Scope& symbol::SymbolTable::pushScope(utf::String name, FunctionSymbol* function) {
-    m_currentScope = &m_currentScope->addScope(name, function == nullptr ? m_currentScope->getFunction() : function);
+    m_currentScope = &m_currentScope->addScope(std::move(name), function == nullptr ? m_currentScope->getFunction() : function);
     return *m_currentScope;
 }
 
 symbol::Scope& symbol::SymbolTable::pushFunctionScope(FunctionSymbol& function) {
     Scope& result = pushScope(function.getName(), &function);
     for (auto argument : function.getArguments()) {
-        m_symbolsById.emplace(argument->getId(), argument.get());
+        m_symbolsById.try_emplace(argument->getId(), argument.get());
     }
 
     return result;
@@ -79,7 +79,7 @@ symbol::Scope& symbol::SymbolTable::getCurrentScope() noexcept {
     return *m_currentScope;
 }
 
-const std::vector<utils::NoNull<symbol::Symbol>> symbol::SymbolTable::getSymbols(utf::StringView name) const {
+std::vector<utils::NoNull<symbol::Symbol>> symbol::SymbolTable::getSymbols(utf::StringView name) const {
     std::vector<utils::NoNull<Symbol>> result;
     Scope* scope = m_currentScope;
 
@@ -126,12 +126,12 @@ const symbol::FunctionSymbol* symbol::SymbolTable::getFunction(utf::StringView n
         return nullptr;
     }
 
-    for (const Symbol* symbol : symbols) {
+    for (utils::NoNull<Symbol> symbol : symbols) {
         if (symbol->getKind() != symbol::FUNCTION) {
             continue; // Just in case
         } 
 
-        const FunctionSymbol& function = *reinterpret_cast<const FunctionSymbol*>(symbol);
+        const FunctionSymbol& function = *symbol.as<FunctionSymbol>();
         if (utils::areEqual(function.getArguments(), argumentTypes, [](utils::NoNull<VariableSymbol> var, const symbol::Type& type) -> bool { // Check the argument types for match.
             return var->getType() == type;
         })) {
@@ -144,5 +144,5 @@ const symbol::FunctionSymbol* symbol::SymbolTable::getFunction(utf::StringView n
 
 symbol::Symbol* symbol::SymbolTable::getSymbolById(SymbolId id) const noexcept {
     auto it = m_symbolsById.find(id);
-    return it != m_symbolsById.end() ? it->second : nullptr;
+    return it != m_symbolsById.end() ? it->second.get() : nullptr;
 }

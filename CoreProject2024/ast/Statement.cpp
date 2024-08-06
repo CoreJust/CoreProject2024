@@ -5,6 +5,6 @@
 #include "Statement.hpp"
 #include <cassert>
 
-ast::Statement::Statement(NodeType type) noexcept : Node(type) {
+ast::Statement::Statement(NodeKind type) noexcept : Node(type) {
 	assert(isStatement());
 }

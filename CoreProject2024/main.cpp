@@ -62,10 +62,18 @@
 #include "error/ErrorPrinter.hpp"
 #include "lexer/Tokenizer.hpp"
 #include "parser/Parser.hpp"
+#include "symbol/SymbolAllocator.hpp"
 #include "ast_visitor/AstPrinter.hpp"
 #include "ast_visitor/SymbolLoader.hpp"
 #include "ast_visitor/CHIRGenerator.hpp"
 #include "ast/AstAllocator.hpp"
+#include "chir/ChirAllocator.hpp"
+#include "chir_visitor/CirGlobalsLoader.hpp"
+#include "chir_visitor/CirGenerator.hpp"
+#include "cir/CirModule.hpp"
+
+constexpr char SOURCE_FILE[] = "test.core";
+constexpr bool PRINT = true;
 
 // The entry point of the CoreProject2024.
 int main() {
@@ -75,7 +83,7 @@ int main() {
 	}
 
 	// Loading the source file.
-	std::optional<utf::String> program = utils::readFile("test.core");
+	std::optional<utf::String> program = utils::readFile(SOURCE_FILE);
 	if (!program) {
 		exit(1);
 	}
@@ -97,8 +105,10 @@ int main() {
 		utils::IndentPrinter printer(std::cout, "    ");
 		ast_visitor::AstPrinter astPrinter(printer);
 
-		std::cout << "AST:\n\n";
-		astPrinter.print(programAst);
+		if (PRINT) {
+			std::cout << "AST:\n\n";
+			astPrinter.print(programAst);
+		}
 		
 		// Loading symbols of the code.
 		ast_visitor::SymbolLoader symbolLoader(symbol::g_symbolTable);
@@ -112,18 +122,44 @@ int main() {
 		ast_visitor::CHIRGenerator chirGenerator(symbol::g_symbolTable);
 		chir::Module chirModule = chirGenerator.generateCHIRModule(programAst);
 
+		// It is safe to clear memory for AST now.
+		ast::AstAllocator::tryRelease();
+
 		if (error::ErrorPrinter::hasErrors()) {
 			throw 0;
 		}
 
 		// Printing the CHIR
-		std::cout << "\n\nCHIR:\n\n";
-		chirModule.print(printer);
+		if (PRINT) {
+			std::cout << "\n\nCHIR:\n\n";
+			chirModule.print(printer);
+		}
+
+		// Generating CIR.
+		cir::Module cirModule(SOURCE_FILE);
+
+		chir_visitor::CirGlobalsLoader globalsLoader(cirModule);
+		globalsLoader.visitRoot(chirModule);
+
+		chir_visitor::CirGenerator cirGenerator(cirModule, globalsLoader.getGlobalsMap());
+		cirGenerator.visitRoot(chirModule);
+
+		chir::ChirAllocator::tryRelease();
+		symbol::SymbolAllocator::tryRelease();
+
+		// Printing the CIR
+		if (PRINT) {
+			std::cout << "\n\nCIR:\n\n";
+			cirModule.print(std::cout);
+		}
 	} catch (...) {
 		std::cerr << "Build failed!\n";
 	}
 
-	ast::AstAllocator::clear();
+	ast::AstAllocator::tryRelease();
+	chir::ChirAllocator::tryRelease();
+	symbol::SymbolAllocator::tryRelease();
+	cir::CirAllocator::tryRelease();
 
 	return 0;
 }

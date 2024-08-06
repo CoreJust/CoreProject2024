@@ -19,7 +19,7 @@ namespace chir {
 		symbol::Type m_type;
 
 	protected:
-		Value(NodeType type, symbol::Type valueType) noexcept;
+		Value(NodeKind type, symbol::Type valueType) noexcept;
 
 	public:
 		symbol::Type& getValueType() noexcept;

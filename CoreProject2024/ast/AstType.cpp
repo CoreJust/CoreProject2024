@@ -10,11 +10,11 @@ ast::Type::Type(utf::StringView typeName) noexcept : m_typeName(typeName) { }
 
 symbol::Type ast::Type::makeSymbolType() const {
     if (m_typeName == "i32") {
-        return symbol::BasicType::I32;
+        return symbol::TypeKind::I32;
     } else if (m_typeName == "unit") {
-        return symbol::BasicType::UNIT;
+        return symbol::TypeKind::UNIT;
     } else {
-        return symbol::BasicType::NO_TYPE;
+        return symbol::TypeKind::NO_TYPE;
     }
 }
 

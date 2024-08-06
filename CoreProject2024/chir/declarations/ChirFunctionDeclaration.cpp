@@ -5,15 +5,15 @@
 #include "ChirFunctionDeclaration.hpp"
 
 chir::FunctionDeclaration::FunctionDeclaration(const symbol::FunctionSymbol& function, utils::NoNull<Statement> body) noexcept
-    : Declaration(NodeType::FUNCTION_DECLARATION), m_function(function), m_body(body) {
+    : Declaration(NodeKind::FUNCTION_DECLARATION), m_function(function), m_body(body) {
     Node::setParent(body, this);
 }
 
 chir::FunctionDeclaration::FunctionDeclaration(const symbol::FunctionSymbol& function, utf::String nativeFunctionName) noexcept
-    : Declaration(NodeType::FUNCTION_DECLARATION), m_function(function), m_body(std::move(nativeFunctionName)) {
+    : Declaration(NodeKind::FUNCTION_DECLARATION), m_function(function), m_body(std::move(nativeFunctionName)) {
 }
 
-const symbol::FunctionSymbol& chir::FunctionDeclaration::getFunction() noexcept {
+const symbol::FunctionSymbol& chir::FunctionDeclaration::getFunction() const noexcept {
     return m_function;
 }
 

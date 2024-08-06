@@ -5,7 +5,7 @@
 #include "ModuleDeclarations.hpp"
 
 ast::ModuleDeclarations::ModuleDeclarations(std::vector<utils::NoNull<ast::Declaration>> declarations) noexcept
-    : Declaration(NodeType::MODULE_DECLARATIONS), m_declarations(std::move(declarations)) {
+    : Declaration(NodeKind::MODULE_DECLARATIONS), m_declarations(std::move(declarations)) {
     for (auto& declaration : m_declarations) {
         Node::setParent(declaration, this);
     }

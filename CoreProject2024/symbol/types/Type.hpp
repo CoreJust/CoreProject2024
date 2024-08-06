@@ -10,7 +10,8 @@
 
 #pragma once
 #include "utf/String.hpp"
-#include "BasicType.hpp"
+#include "TypeKind.hpp"
+#include "cir/type/CirType.hpp"
 
 namespace symbol {
 	/*
@@ -21,14 +22,17 @@ namespace symbol {
 	*/
 	class Type {
 	private:
-		BasicType m_basicType;
+		TypeKind m_typeKind;
 
 	public:
-		Type(BasicType basicType) noexcept;
+		Type(TypeKind typeKind) noexcept;
+
+		// Creates the CIR type from CHIR type.
+		cir::Type makeCirType() const;
 
 		bool operator==(const Type& other) const noexcept;
 
-		BasicType getBasicType() const noexcept;
+		TypeKind getTypeKind() const noexcept;
 
 		// Returns the size of the type in bytes.
 		uint32_t getTypeSize() const noexcept;

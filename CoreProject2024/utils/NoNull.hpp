@@ -46,8 +46,18 @@ namespace utils {
 					.explanation = "-"
 				});
 
-				assert(ptr != nullptr); // For debug mode.
+				assert(false); // For debug mode.
 			}
+		}
+
+		constexpr NoNull& operator=(const NoNull& other) noexcept {
+			m_ptr = other.m_ptr;
+			return *this;
+		}
+
+		constexpr NoNull& operator=(NoNull&& other) noexcept {
+			m_ptr = other.m_ptr;
+			return *this;
 		}
 
 		constexpr auto operator<=>(const T* other) const noexcept {
@@ -62,13 +72,18 @@ namespace utils {
 			return *m_ptr;
 		}
 
-		constexpr operator T* () const noexcept {
+		constexpr explicit operator T* () const noexcept {
 			return m_ptr;
 		}
 
 		template<class Base> requires std::is_base_of_v<Base, T>
 		constexpr operator NoNull<Base>() const noexcept {
 			return NoNull<Base>(m_ptr);
+		}
+
+		template<class To>
+		constexpr NoNull<To> as() const noexcept {
+			return NoNull<To>(reinterpret_cast<To*>(m_ptr));
 		}
 
 		constexpr T* get() const noexcept {

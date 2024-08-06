@@ -34,7 +34,7 @@ void ast_visitor::SymbolLoader::visit(ast::FunctionDeclaration& node) {
 	arguments.reserve(node.getArguments().size());
 
 	for (auto& argument : node.getArguments()) {
-		arguments.push_back(symbol::SymbolAllocator::make<symbol::VariableSymbol>(
+		arguments.emplace_back(symbol::SymbolAllocator::make<symbol::VariableSymbol>(
 			symbol::SymbolPath { }, 
 			utf::String(argument.name), 
 			argument.type.makeSymbolType()

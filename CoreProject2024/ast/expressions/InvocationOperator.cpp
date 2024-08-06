@@ -5,7 +5,7 @@
 #include "InvocationOperator.hpp"
 
 ast::InvocationOperator::InvocationOperator(utils::NoNull<Expression> callee, std::vector<utils::NoNull<Expression>> arguments) noexcept
-	: Expression(NodeType::INVOCATION_OPERATOR), m_callee(callee), m_arguments(std::move(arguments)) {
+	: Expression(NodeKind::INVOCATION_OPERATOR), m_callee(callee), m_arguments(std::move(arguments)) {
 	// Setting the current node as the parent.
 	Node::setParent(m_callee, this);
 	for (auto argument : m_arguments) {

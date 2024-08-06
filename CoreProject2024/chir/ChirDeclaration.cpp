@@ -5,6 +5,6 @@
 #include "ChirDeclaration.hpp"
 #include <cassert>
 
-chir::Declaration::Declaration(NodeType type) noexcept : Node(type) {
+chir::Declaration::Declaration(NodeKind type) noexcept : Node(type) {
 	assert(isDeclaration());
 }

@@ -6,12 +6,15 @@
 #include <format>
 #include "utils/CollectionUtils.hpp"
 #include "chir/ChirClassImplementations.hpp"
+#include "chir/ChirModule.hpp"
 
 chir_visitor::ChirPrinter::ChirPrinter(utils::IndentPrinter& printer) noexcept
 	: Parent(*this), m_printer(printer) { }
 
-void chir_visitor::ChirPrinter::print(utils::NoNull<chir::Node> node) {
-	Parent::visitRoot(node);
+void chir_visitor::ChirPrinter::visitRoot(chir::Module& module) {
+	for (utils::NoNull<chir::Declaration> declaration : module.getDeclarations()) {
+		Parent::visit(declaration);
+	}
 }
 
 void chir_visitor::ChirPrinter::visit(chir::ConstantValue& node) {

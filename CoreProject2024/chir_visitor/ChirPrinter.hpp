@@ -27,7 +27,7 @@ namespace chir_visitor {
 		ChirPrinter(utils::IndentPrinter& printer) noexcept;
 
 		// Prints the given CHIR to the given IndentPrinter in a human-friendly format.
-		void print(utils::NoNull<chir::Node> node);
+		void visitRoot(chir::Module& module) override;
 
 	protected:
 		void visit(chir::ConstantValue& node) override;

@@ -22,7 +22,7 @@ namespace chir {
 	public:
 		VariableDeclaration(const symbol::VariableSymbol& variable, utils::NoNull<Value> initialValue) noexcept;
 
-		const symbol::VariableSymbol& getVariable() noexcept;
+		const symbol::VariableSymbol& getVariable() const noexcept;
 		utils::NoNull<Value>& getInitialValue() noexcept;
 	};
 }

@@ -5,7 +5,7 @@
 /*
 *	ChirAllocator.hpp by CoreJust
 *	Created on 03.08.2024
-*	Contains the ChirAllocator class that incapsulates a pool allocator for AST nodes allocations.
+*	Contains the ChirAllocator class that incapsulates a pool allocator for CHIR nodes allocations.
 */
 
 #pragma once
@@ -13,7 +13,7 @@
 #include "ChirNode.hpp"
 
 namespace chir {
-	class ChirAllocator final : public utils::PooledAllocator<ast::Node> {
+	class ChirAllocator final : public utils::PooledAllocator<chir::Node> {
 	public:
 		// Creates a new CHIR node using the current memory resource.
 		template<class T, class... Args> requires std::is_base_of_v<Node, T>
