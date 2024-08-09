@@ -3,6 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Own additions
+bench.core
+*.exe
+*.o
+*.i
+*.cfg
+*.cmd
+
 # User-specific files
 *.rsuser
 *.suo

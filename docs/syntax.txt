@@ -1,0 +1,119 @@
+This file contains the relevant features of the language (currently it is only a small subset of Core language).
+
+###  Characters  ###
+A Core program is written in UTF-8 encoding.
+In the code only some of ASCII characters might be used:
+a-zA-Z0-9_+-*/%=:;,(){}"
+As well as spaces and new lines (those can be non-ASCII as well).
+All of the UTF-8 symbols are allowed in string literals.
+
+###  Program structure  ###
+A program consists of a single .core file.
+The file can contain a number of functions, among which there must be the main function.
+<program> :=
+	<declaration>...
+<declaration> :=
+	<function-declaration>
+	|<variable-declaration>
+
+###  Function declaration  ###
+TO declare a function, one must use the following syntax:
+<function> :=
+	fn <name>([<argument-name>: <type>[, other arguments...]])[: <return-type>] [<function-body>]|[= native("<extern-function-name>")]
+<function-body> :=
+	= <expression>
+	|<scope>
+<scope> :=
+	{ [<statement>]... }
+
+Function name and arguments must be valid identifiers.
+Function can have no or any number of arguments.
+If function return type is not specified explicitly, then it will be unit type (unless the = <expression> 
+is used as a function body, then the return type can be inferred).
+One can use = native("<extern-function-name>") instead of body to state that the function is external and 
+will be linked to the program later.
+Example: fn putc(ch: i32): i32 = native("putc")
+This allows to deal with mangling.
+Function body can be written as either a code scope {...} or assignment = ...
+Assignment like this fn <name>(<args>): <return-type> = <expression>
+is equivalent to: fn <name>(<argg>): <return-type> { return expression }
+
+###  Statements  ###
+Within a code scope there can be one of those three statements:
+<statement> :=
+	<function> # Internal function declaration
+	|let <variable-name>[: <variable-type>] = <expression> # Variable declaration
+	|<scope>
+	|<expression>
+It is possible to explicitly separate statements with semicolon,
+otherwise statements must be separated with a new line.
+
+###  Variable declaration  ###
+let <variable-name>[: <variable-type>] = <expression>
+With the syntax demonstrated above, one can declare a local variable on the stack.
+Such a variable will only exist within the scope.
+Also, it is allowed to do shadowing, thus overriding an existing variable with another of the same name.
+
+###  Types  ###
+There are only two variable types available:
+<type> :=
+	i32
+	|unit.
+The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used 
+as function return type (so all the variables and arguments are actually i32 as of now).
+
+###  Expressions  ###
+There are following expressions available:
+<expression> :=
+	return <expression> # Returns the expression result from the function. Has the never type. Cannot be used in another return statement.
+	|<additive>
+<additive> :=
+	<multiplicative> + <multiplicative>
+	|<multiplicative> - <multiplicative>
+	|<multiplicative>
+<multiplicative> :=
+	<unary> * <unary>
+	|<unary> / <unary>
+	|<unary> % <unary>
+	|<unary>
+<unary> :=
+	+<unary>
+	|-<unary>
+	|<postprimary>
+<postprimary> :=
+	<primary>([<expression>[, <expression>]...])
+	|<primary>
+<primary> :=
+	(<expression>)
+	|<identifier>
+	|<literal>
+
+###  Literals  ###
+There are currently only two type of literals: numbers and strings.
+<literal> := <number>|<text>
+<number> :=
+	[<numeric-system>]<number>
+<numeric-system> :=
+	0x|0o|0b
+<number> :=
+	<digit>[<digit>|']
+<digit> :=
+	0-9
+<text> :=
+	[r]"<characters without new line>..." # Single line string
+	|[r]"""<characters with possibly new line>...""" # Multiline string
+r before the string literal stands for raw string, where all the characters are understood as is, whereas in
+common strings there can be escape sequences:
+	\n, \t, \v, \f, \e, \a, \b, \', \", \\, \{, \}, \r, \[o]<octal value>, \o{...}, \x<hexadecimal value>, \x{...}, \uDDDD, \u{<unicode code point>}
+	
+###  Identifiers  ###
+Any name must be a valid identifier:
+<identifier> :=
+	(<a-z>|<A-Z>|_)[(<a-z>|<A-Z>|_|<0-9>)]...
+But identifier cannot match any of the keywords.
+
+###  Comments  ###
+In any place within the code there can be a comment, which is ignored by the compiler:
+<comment> :=
+	#<any-symbols>\n
+	###<any-symbols>###

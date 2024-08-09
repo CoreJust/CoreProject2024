@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -45,6 +45,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -52,6 +53,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -103,20 +105,22 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BENCHMARK_STATIC_DEFINE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libs\llvm\llvm-project\llvm\include;C:\libs\llvm\llvm-project\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libs\llvm\llvm\llvm\include;C:\Users\egor2\source\repos\CoreProject2024\CoreProject2024;C:\libs\google-benchmark\benchmark\include;C:\libs\llvm\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\libs\llvm\llvm-project\build\Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LLVMBPFDisassembler.lib;LLVMBPFInfo.lib;LLVMBPFDesc.lib;LLVMBPFCodeGen.lib;LLVMRuntimeDyld.lib;LLVMDemangle.lib;LLVMSupport.lib;LLVMTableGen.lib;LLVMCore.lib;LLVMIRReader.lib;LLVMCodeGen.lib;LLVMSelectionDAG.lib;LLVMAsmPrinter.lib;LLVMMIRParser.lib;LLVMGlobalISel.lib;LLVMBinaryFormat.lib;LLVMBitReader.lib;LLVMBitWriter.lib;LLVMTransformUtils.lib;LLVMInstrumentation.lib;LLVMInstCombine.lib;LLVMScalarOpts.lib;LLVMipo.lib;LLVMVectorize.lib;LLVMObjCARCOpts.lib;LLVMCoroutines.lib;LLVMLinker.lib;LLVMAnalysis.lib;LLVMLTO.lib;LLVMMC.lib;LLVMMCParser.lib;LLVMMCDisassembler.lib;LLVMObject.lib;LLVMObjectYAML.lib;LLVMOption.lib;LLVMDebugInfoDWARF.lib;LLVMDebugInfoMSF.lib;LLVMDebugInfoCodeView.lib;LLVMDebugInfoPDB.lib;LLVMSymbolize.lib;LLVMExecutionEngine.lib;LLVMInterpreter.lib;LLVMMCJIT.lib;LLVMOrcJIT.lib;LLVMTarget.lib;LLVMAArch64CodeGen.lib;LLVMAArch64Info.lib;LLVMAArch64AsmParser.lib;LLVMAArch64Disassembler.lib;LLVMAArch64Desc.lib;LLVMAArch64Utils.lib;LLVMAMDGPUCodeGen.lib;LLVMAMDGPUAsmParser.lib;LLVMAMDGPUDisassembler.lib;LLVMAMDGPUInfo.lib;LLVMAMDGPUDesc.lib;LLVMAMDGPUUtils.lib;LLVMARMCodeGen.lib;LLVMARMInfo.lib;LLVMARMAsmParser.lib;LLVMARMDisassembler.lib;LLVMARMDesc.lib;LLVMHexagonCodeGen.lib;LLVMHexagonAsmParser.lib;LLVMHexagonInfo.lib;LLVMHexagonDesc.lib;LLVMHexagonDisassembler.lib;LLVMLanaiCodeGen.lib;LLVMLanaiAsmParser.lib;LLVMLanaiInfo.lib;LLVMLanaiDesc.lib;LLVMLanaiDisassembler.lib;LLVMMipsCodeGen.lib;LLVMMipsDisassembler.lib;LLVMMipsInfo.lib;LLVMMipsDesc.lib;LLVMMipsAsmParser.lib;LLVMMSP430CodeGen.lib;LLVMMSP430Info.lib;LLVMMSP430Desc.lib;LLVMNVPTXCodeGen.lib;LLVMNVPTXInfo.lib;LLVMNVPTXDesc.lib;LLVMPowerPCCodeGen.lib;DynamicLibraryLib.lib;ExampleIRTransforms.lib;lldCOFF.lib;lldCommon.lib;lldELF.lib;lldMachO.lib;lldMinGW.lib;lldWasm.lib;LLVM-C.lib;LLVMAggressiveInstCombine.lib;LLVMAMDGPUTargetMCA.lib;LLVMARMUtils.lib;LLVMAsmParser.lib;LLVMAVRAsmParser.lib;LLVMAVRCodeGen.lib;LLVMAVRDesc.lib;LLVMAVRDisassembler.lib;LLVMAVRInfo.lib;LLVMBitstreamReader.lib;LLVMBPFAsmParser.lib;LLVMCFGuard.lib;LLVMCFIVerify.lib;LLVMCoverage.lib;LLVMDebuginfod.lib;LLVMDebugInfoGSYM.lib;LLVMDiff.lib;LLVMDlltoolDriver.lib;LLVMDWARFLinker.lib;LLVMDWP.lib;LLVMExegesis.lib;LLVMExegesisAArch64.lib;LLVMExegesisMips.lib;LLVMExegesisPowerPC.lib;LLVMExegesisX86.lib;LLVMExtensions.lib;LLVMFileCheck.lib;LLVMFrontendOpenACC.lib;LLVMFrontendOpenMP.lib;LLVMFuzzerCLI.lib;LLVMFuzzMutate.lib;LLVMInterfaceStub.lib;LLVMJITLink.lib;LLVMLibDriver.lib;LLVMLineEditor.lib;LLVMMCA.lib;LLVMMSP430AsmParser.lib;LLVMMSP430Disassembler.lib;LLVMObjCopy.lib;LLVMOrcShared.lib;LLVMOrcTargetProcess.lib;LLVMPasses.lib;LLVMPowerPCAsmParser.lib;LLVMPowerPCDesc.lib;LLVMPowerPCDisassembler.lib;LLVMPowerPCInfo.lib;LLVMProfileData.lib;LLVMRemarks.lib;LLVMRISCVAsmParser.lib;LLVMRISCVCodeGen.lib;LLVMRISCVDesc.lib;LLVMRISCVDisassembler.lib;LLVMRISCVInfo.lib;LLVMSparcAsmParser.lib;LLVMSparcCodeGen.lib;LLVMSparcDesc.lib;LLVMSparcDisassembler.lib;LLVMSparcInfo.lib;LLVMSystemZAsmParser.lib;LLVMSystemZCodeGen.lib;LLVMSystemZDesc.lib;LLVMSystemZDisassembler.lib;LLVMSystemZInfo.lib;LLVMTableGenGlobalISel.lib;LLVMTestingSupport.lib;LLVMTextAPI.lib;LLVMVEAsmParser.lib;LLVMVECodeGen.lib;LLVMVEDesc.lib;LLVMVEDisassembler.lib;LLVMVEInfo.lib;LLVMWebAssemblyAsmParser.lib;LLVMWebAssemblyCodeGen.lib;LLVMWebAssemblyDesc.lib;LLVMWebAssemblyDisassembler.lib;LLVMWebAssemblyInfo.lib;LLVMWebAssemblyUtils.lib;LLVMWindowsDriver.lib;LLVMWindowsManifest.lib;LLVMX86AsmParser.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Disassembler.lib;LLVMX86Info.lib;LLVMX86TargetMCA.lib;LLVMXCoreCodeGen.lib;LLVMXCoreDesc.lib;LLVMXCoreDisassembler.lib;LLVMXCoreInfo.lib;LLVMXRay.lib;llvm_gtest.lib;llvm_gtest_main.lib;LTO.lib;Remarks.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;oleaut32.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\libs\llvm\build\RelWithDebInfo\lib;C:\libs\google-benchmark\benchmark\build\src\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>benchmark.lib;Shlwapi.lib;libclang.lib;DynamicLibraryLib.lib;advapi32.lib;LLVMAggressiveInstCombine.lib;LLVMAnalysis.lib;LLVMAsmParser.lib;LLVMAsmPrinter.lib;LLVMBinaryFormat.lib;LLVMBitReader.lib;LLVMBitstreamReader.lib;LLVMBitWriter.lib;LLVMCFGuard.lib;LLVMCFIVerify.lib;LLVMCodeGen.lib;LLVMCodeGenData.lib;LLVMCodeGenTypes.lib;LLVMCore.lib;LLVMCoroutines.lib;LLVMCoverage.lib;LLVMDebugInfoBTF.lib;LLVMDebugInfoCodeView.lib;LLVMDebuginfod.lib;LLVMDebugInfoDWARF.lib;LLVMDebugInfoGSYM.lib;LLVMDebugInfoLogicalView.lib;LLVMDebugInfoMSF.lib;LLVMDebugInfoPDB.lib;LLVMDemangle.lib;LLVMDiff.lib;LLVMDlltoolDriver.lib;LLVMDWARFLinker.lib;LLVMDWARFLinkerClassic.lib;LLVMDWARFLinkerParallel.lib;LLVMDWP.lib;LLVMExecutionEngine.lib;LLVMExegesis.lib;LLVMExegesisX86.lib;LLVMExtensions.lib;LLVMFileCheck.lib;LLVMFrontendDriver.lib;LLVMFrontendHLSL.lib;LLVMFrontendOffloading.lib;LLVMFrontendOpenACC.lib;LLVMFrontendOpenMP.lib;LLVMFuzzerCLI.lib;LLVMFuzzMutate.lib;LLVMGlobalISel.lib;LLVMHipStdPar.lib;LLVMInstCombine.lib;LLVMInstrumentation.lib;LLVMInterfaceStub.lib;LLVMInterpreter.lib;LLVMipo.lib;LLVMIRPrinter.lib;LLVMIRReader.lib;LLVMJITLink.lib;LLVMLibDriver.lib;LLVMLineEditor.lib;LLVMLinker.lib;LLVMLTO.lib;LLVMMC.lib;LLVMMCA.lib;LLVMMCDisassembler.lib;LLVMMCJIT.lib;LLVMMCParser.lib;LLVMMIRParser.lib;LLVMObjCARCOpts.lib;LLVMObjCopy.lib;LLVMObject.lib;LLVMObjectYAML.lib;LLVMOptDriver.lib;LLVMOption.lib;LLVMOrcDebugging.lib;LLVMOrcJIT.lib;LLVMOrcShared.lib;LLVMOrcTargetProcess.lib;LLVMPasses.lib;LLVMProfileData.lib;LLVMRemarks.lib;LLVMRuntimeDyld.lib;LLVMSandboxIR.lib;LLVMScalarOpts.lib;LLVMSelectionDAG.lib;LLVMSupport.lib;LLVMSymbolize.lib;LLVMTableGen.lib;LLVMTableGenBasic.lib;LLVMTableGenCommon.lib;LLVMTarget.lib;LLVMTargetParser.lib;LLVMTestingAnnotations.lib;LLVMTestingSupport.lib;LLVMTextAPI.lib;LLVMTextAPIBinaryReader.lib;LLVMTransformUtils.lib;LLVMVectorize.lib;LLVMWindowsDriver.lib;LLVMWindowsManifest.lib;LLVMX86AsmParser.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Disassembler.lib;LLVMX86Info.lib;LLVMX86TargetMCA.lib;LLVMXRay.lib;llvm_gtest.lib;llvm_gtest_main.lib;LTO.lib;Remarks.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;oleaut32.lib;comdlg32.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,9 +129,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BENCHMARK_STATIC_DEFINE;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libs\llvm\llvm-project\llvm\include;C:\libs\llvm\llvm-project\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libs\llvm\llvm\llvm\include;C:\Users\egor2\source\repos\CoreProject2024\CoreProject2024;C:\libs\google-benchmark\benchmark\include;C:\libs\llvm\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
@@ -136,18 +140,226 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\libs\llvm\llvm-project\build\Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LLVMBPFDisassembler.lib;LLVMBPFInfo.lib;LLVMBPFDesc.lib;LLVMBPFCodeGen.lib;LLVMRuntimeDyld.lib;LLVMDemangle.lib;LLVMSupport.lib;LLVMTableGen.lib;LLVMCore.lib;LLVMIRReader.lib;LLVMCodeGen.lib;LLVMSelectionDAG.lib;LLVMAsmPrinter.lib;LLVMMIRParser.lib;LLVMGlobalISel.lib;LLVMBinaryFormat.lib;LLVMBitReader.lib;LLVMBitWriter.lib;LLVMTransformUtils.lib;LLVMInstrumentation.lib;LLVMInstCombine.lib;LLVMScalarOpts.lib;LLVMipo.lib;LLVMVectorize.lib;LLVMObjCARCOpts.lib;LLVMCoroutines.lib;LLVMLinker.lib;LLVMAnalysis.lib;LLVMLTO.lib;LLVMMC.lib;LLVMMCParser.lib;LLVMMCDisassembler.lib;LLVMObject.lib;LLVMObjectYAML.lib;LLVMOption.lib;LLVMDebugInfoDWARF.lib;LLVMDebugInfoMSF.lib;LLVMDebugInfoCodeView.lib;LLVMDebugInfoPDB.lib;LLVMSymbolize.lib;LLVMExecutionEngine.lib;LLVMInterpreter.lib;LLVMMCJIT.lib;LLVMOrcJIT.lib;LLVMTarget.lib;LLVMAArch64CodeGen.lib;LLVMAArch64Info.lib;LLVMAArch64AsmParser.lib;LLVMAArch64Disassembler.lib;LLVMAArch64Desc.lib;LLVMAArch64Utils.lib;LLVMAMDGPUCodeGen.lib;LLVMAMDGPUAsmParser.lib;LLVMAMDGPUDisassembler.lib;LLVMAMDGPUInfo.lib;LLVMAMDGPUDesc.lib;LLVMAMDGPUUtils.lib;LLVMARMCodeGen.lib;LLVMARMInfo.lib;LLVMARMAsmParser.lib;LLVMARMDisassembler.lib;LLVMARMDesc.lib;LLVMHexagonCodeGen.lib;LLVMHexagonAsmParser.lib;LLVMHexagonInfo.lib;LLVMHexagonDesc.lib;LLVMHexagonDisassembler.lib;LLVMLanaiCodeGen.lib;LLVMLanaiAsmParser.lib;LLVMLanaiInfo.lib;LLVMLanaiDesc.lib;LLVMLanaiDisassembler.lib;LLVMMipsCodeGen.lib;LLVMMipsDisassembler.lib;LLVMMipsInfo.lib;LLVMMipsDesc.lib;LLVMMipsAsmParser.lib;LLVMMSP430CodeGen.lib;LLVMMSP430Info.lib;LLVMMSP430Desc.lib;LLVMNVPTXCodeGen.lib;LLVMNVPTXInfo.lib;LLVMNVPTXDesc.lib;LLVMPowerPCCodeGen.lib;DynamicLibraryLib.lib;ExampleIRTransforms.lib;lldCOFF.lib;lldCommon.lib;lldELF.lib;lldMachO.lib;lldMinGW.lib;lldWasm.lib;LLVM-C.lib;LLVMAggressiveInstCombine.lib;LLVMAMDGPUTargetMCA.lib;LLVMARMUtils.lib;LLVMAsmParser.lib;LLVMAVRAsmParser.lib;LLVMAVRCodeGen.lib;LLVMAVRDesc.lib;LLVMAVRDisassembler.lib;LLVMAVRInfo.lib;LLVMBitstreamReader.lib;LLVMBPFAsmParser.lib;LLVMCFGuard.lib;LLVMCFIVerify.lib;LLVMCoverage.lib;LLVMDebuginfod.lib;LLVMDebugInfoGSYM.lib;LLVMDiff.lib;LLVMDlltoolDriver.lib;LLVMDWARFLinker.lib;LLVMDWP.lib;LLVMExegesis.lib;LLVMExegesisAArch64.lib;LLVMExegesisMips.lib;LLVMExegesisPowerPC.lib;LLVMExegesisX86.lib;LLVMExtensions.lib;LLVMFileCheck.lib;LLVMFrontendOpenACC.lib;LLVMFrontendOpenMP.lib;LLVMFuzzerCLI.lib;LLVMFuzzMutate.lib;LLVMInterfaceStub.lib;LLVMJITLink.lib;LLVMLibDriver.lib;LLVMLineEditor.lib;LLVMMCA.lib;LLVMMSP430AsmParser.lib;LLVMMSP430Disassembler.lib;LLVMObjCopy.lib;LLVMOrcShared.lib;LLVMOrcTargetProcess.lib;LLVMPasses.lib;LLVMPowerPCAsmParser.lib;LLVMPowerPCDesc.lib;LLVMPowerPCDisassembler.lib;LLVMPowerPCInfo.lib;LLVMProfileData.lib;LLVMRemarks.lib;LLVMRISCVAsmParser.lib;LLVMRISCVCodeGen.lib;LLVMRISCVDesc.lib;LLVMRISCVDisassembler.lib;LLVMRISCVInfo.lib;LLVMSparcAsmParser.lib;LLVMSparcCodeGen.lib;LLVMSparcDesc.lib;LLVMSparcDisassembler.lib;LLVMSparcInfo.lib;LLVMSystemZAsmParser.lib;LLVMSystemZCodeGen.lib;LLVMSystemZDesc.lib;LLVMSystemZDisassembler.lib;LLVMSystemZInfo.lib;LLVMTableGenGlobalISel.lib;LLVMTestingSupport.lib;LLVMTextAPI.lib;LLVMVEAsmParser.lib;LLVMVECodeGen.lib;LLVMVEDesc.lib;LLVMVEDisassembler.lib;LLVMVEInfo.lib;LLVMWebAssemblyAsmParser.lib;LLVMWebAssemblyCodeGen.lib;LLVMWebAssemblyDesc.lib;LLVMWebAssemblyDisassembler.lib;LLVMWebAssemblyInfo.lib;LLVMWebAssemblyUtils.lib;LLVMWindowsDriver.lib;LLVMWindowsManifest.lib;LLVMX86AsmParser.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Disassembler.lib;LLVMX86Info.lib;LLVMX86TargetMCA.lib;LLVMXCoreCodeGen.lib;LLVMXCoreDesc.lib;LLVMXCoreDisassembler.lib;LLVMXCoreInfo.lib;LLVMXRay.lib;llvm_gtest.lib;llvm_gtest_main.lib;LTO.lib;Remarks.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;oleaut32.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\libs\llvm\build\RelWithDebInfo\lib;C:\libs\google-benchmark\benchmark\build\src\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>benchmark.lib;Shlwapi.lib;libclang.lib;DynamicLibraryLib.lib;advapi32.lib;LLVMAggressiveInstCombine.lib;LLVMAnalysis.lib;LLVMAsmParser.lib;LLVMAsmPrinter.lib;LLVMBinaryFormat.lib;LLVMBitReader.lib;LLVMBitstreamReader.lib;LLVMBitWriter.lib;LLVMCFGuard.lib;LLVMCFIVerify.lib;LLVMCodeGen.lib;LLVMCodeGenData.lib;LLVMCodeGenTypes.lib;LLVMCore.lib;LLVMCoroutines.lib;LLVMCoverage.lib;LLVMDebugInfoBTF.lib;LLVMDebugInfoCodeView.lib;LLVMDebuginfod.lib;LLVMDebugInfoDWARF.lib;LLVMDebugInfoGSYM.lib;LLVMDebugInfoLogicalView.lib;LLVMDebugInfoMSF.lib;LLVMDebugInfoPDB.lib;LLVMDemangle.lib;LLVMDiff.lib;LLVMDlltoolDriver.lib;LLVMDWARFLinker.lib;LLVMDWARFLinkerClassic.lib;LLVMDWARFLinkerParallel.lib;LLVMDWP.lib;LLVMExecutionEngine.lib;LLVMExegesis.lib;LLVMExegesisX86.lib;LLVMExtensions.lib;LLVMFileCheck.lib;LLVMFrontendDriver.lib;LLVMFrontendHLSL.lib;LLVMFrontendOffloading.lib;LLVMFrontendOpenACC.lib;LLVMFrontendOpenMP.lib;LLVMFuzzerCLI.lib;LLVMFuzzMutate.lib;LLVMGlobalISel.lib;LLVMHipStdPar.lib;LLVMInstCombine.lib;LLVMInstrumentation.lib;LLVMInterfaceStub.lib;LLVMInterpreter.lib;LLVMipo.lib;LLVMIRPrinter.lib;LLVMIRReader.lib;LLVMJITLink.lib;LLVMLibDriver.lib;LLVMLineEditor.lib;LLVMLinker.lib;LLVMLTO.lib;LLVMMC.lib;LLVMMCA.lib;LLVMMCDisassembler.lib;LLVMMCJIT.lib;LLVMMCParser.lib;LLVMMIRParser.lib;LLVMObjCARCOpts.lib;LLVMObjCopy.lib;LLVMObject.lib;LLVMObjectYAML.lib;LLVMOptDriver.lib;LLVMOption.lib;LLVMOrcDebugging.lib;LLVMOrcJIT.lib;LLVMOrcShared.lib;LLVMOrcTargetProcess.lib;LLVMPasses.lib;LLVMProfileData.lib;LLVMRemarks.lib;LLVMRuntimeDyld.lib;LLVMSandboxIR.lib;LLVMScalarOpts.lib;LLVMSelectionDAG.lib;LLVMSupport.lib;LLVMSymbolize.lib;LLVMTableGen.lib;LLVMTableGenBasic.lib;LLVMTableGenCommon.lib;LLVMTarget.lib;LLVMTargetParser.lib;LLVMTestingAnnotations.lib;LLVMTestingSupport.lib;LLVMTextAPI.lib;LLVMTextAPIBinaryReader.lib;LLVMTransformUtils.lib;LLVMVectorize.lib;LLVMWindowsDriver.lib;LLVMWindowsManifest.lib;LLVMX86AsmParser.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Disassembler.lib;LLVMX86Info.lib;LLVMX86TargetMCA.lib;LLVMXRay.lib;llvm_gtest.lib;llvm_gtest_main.lib;LTO.lib;Remarks.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;oleaut32.lib;comdlg32.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ast\AstType.cpp" />
+    <ClCompile Include="ast\Declaration.cpp" />
+    <ClCompile Include="ast\declarations\FunctionDeclaration.cpp" />
+    <ClCompile Include="ast\declarations\ModuleDeclarations.cpp" />
+    <ClCompile Include="ast\declarations\VariableDeclaration.cpp" />
+    <ClCompile Include="ast\Expression.cpp" />
+    <ClCompile Include="ast\expressions\BinaryOperator.cpp" />
+    <ClCompile Include="ast\expressions\IdentifierValue.cpp" />
+    <ClCompile Include="ast\expressions\InvocationOperator.cpp" />
+    <ClCompile Include="ast\expressions\LiteralValue.cpp" />
+    <ClCompile Include="ast\expressions\UnaryOperator.cpp" />
+    <ClCompile Include="ast\Node.cpp" />
+    <ClCompile Include="ast\Statement.cpp" />
+    <ClCompile Include="ast\statements\ExpressionStatement.cpp" />
+    <ClCompile Include="ast\expressions\ReturnOperator.cpp" />
+    <ClCompile Include="ast\statements\ScopeStatement.cpp" />
+    <ClCompile Include="ast_visitor\AstPrinter.cpp" />
+    <ClCompile Include="ast_visitor\CHIRGenerator.cpp" />
+    <ClCompile Include="ast_visitor\SymbolLoader.cpp" />
+    <ClCompile Include="chir\ChirDeclaration.cpp" />
+    <ClCompile Include="chir\ChirModule.cpp" />
+    <ClCompile Include="chir\ChirNode.cpp" />
+    <ClCompile Include="chir\ChirStatement.cpp" />
+    <ClCompile Include="chir\ChirValue.cpp" />
+    <ClCompile Include="chir\declarations\ChirFunctionDeclaration.cpp" />
+    <ClCompile Include="chir\declarations\ChirVariableDeclaration.cpp" />
+    <ClCompile Include="chir\statements\ChirScopeStatement.cpp" />
+    <ClCompile Include="chir\statements\ChirValueStatement.cpp" />
+    <ClCompile Include="chir\statements\ChirVariableStatement.cpp" />
+    <ClCompile Include="chir\values\ChirBinaryOperator.cpp" />
+    <ClCompile Include="chir\values\ChirConstantValue.cpp" />
+    <ClCompile Include="chir\values\ChirInvocationOperator.cpp" />
+    <ClCompile Include="chir\values\ChirReturnOperator.cpp" />
+    <ClCompile Include="chir\values\ChirSymbolValue.cpp" />
+    <ClCompile Include="chir\values\ChirUnaryOperator.cpp" />
+    <ClCompile Include="chir_visitor\ChirPrinter.cpp" />
+    <ClCompile Include="chir_visitor\CirGenerator.cpp" />
+    <ClCompile Include="chir_visitor\CirGlobalsLoader.cpp" />
+    <ClCompile Include="cir\CirBuilder.cpp" />
+    <ClCompile Include="cir\CirModule.cpp" />
+    <ClCompile Include="cir\value\constant\CirBasicBlock.cpp" />
+    <ClCompile Include="cir\value\constant\CirConstanNumber.cpp" />
+    <ClCompile Include="cir\value\constant\CirConstant.cpp" />
+    <ClCompile Include="cir\value\constant\CirFunction.cpp" />
+    <ClCompile Include="cir\value\constant\CirCommonFunction.cpp" />
+    <ClCompile Include="cir\value\constant\CirGlobalValue.cpp" />
+    <ClCompile Include="cir\type\CirType.cpp" />
+    <ClCompile Include="cir\value\CirFunctionArgument.cpp" />
+    <ClCompile Include="cir\value\CirValue.cpp" />
+    <ClCompile Include="cir\value\constant\CirGlobalVariable.cpp" />
+    <ClCompile Include="cir\value\constant\CirNativeFunction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirBinaryInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirInvocationInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirLocalVariable.cpp" />
+    <ClCompile Include="cir\value\instruction\CirRetInstuction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirTerminator.cpp" />
+    <ClCompile Include="cir\value\instruction\CirUnaryInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirUnitInvocationInstruction.cpp" />
+    <ClCompile Include="cir_pass\CirPassAdapters.cpp" />
+    <ClCompile Include="cir_pass\CirPrinterPass.cpp" />
+    <ClCompile Include="cir_pass\CirVerificationPass.cpp" />
+    <ClCompile Include="cir_pass\LLVMGenerator.cpp" />
+    <ClCompile Include="cir_pass\LLVMGlobalsLoaderPass.cpp" />
+    <ClCompile Include="compiler\Compiler.cpp" />
+    <ClCompile Include="compiler\CompilerOptions.cpp" />
+    <ClCompile Include="compiler\Target.cpp" />
+    <ClCompile Include="lexer\Token.cpp" />
+    <ClCompile Include="lexer\Tokenizer.cpp" />
+    <ClCompile Include="llvm_utils\LLVMModule.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="error\ErrorPrinter.cpp" />
+    <ClCompile Include="parser\Parser.cpp" />
+    <ClCompile Include="symbol\FunctionSymbol.cpp" />
+    <ClCompile Include="symbol\Scope.cpp" />
+    <ClCompile Include="symbol\Symbol.cpp" />
+    <ClCompile Include="symbol\SymbolPath.cpp" />
+    <ClCompile Include="symbol\SymbolTable.cpp" />
+    <ClCompile Include="symbol\VariableSymbol.cpp" />
+    <ClCompile Include="test\SourceCodeGenerator.cpp" />
+    <ClCompile Include="symbol\types\Type.cpp" />
+    <ClCompile Include="utf\StringUtils.cpp" />
+    <ClCompile Include="utils\File.cpp" />
+    <ClCompile Include="utf\String.cpp" />
+    <ClCompile Include="utils\IndentPrinter.cpp" />
+    <ClCompile Include="utils\TextPosition.cpp" />
+    <ClCompile Include="utf\UtfIO.cpp" />
+    <ClInclude Include="ast\AstAllocator.hpp" />
+    <ClInclude Include="ast\AstClassDeclarations.hpp" />
+    <ClInclude Include="ast\AstClassImplementations.hpp" />
+    <ClInclude Include="ast\AstType.hpp" />
+    <ClInclude Include="ast\Declaration.hpp" />
+    <ClInclude Include="ast\declarations\FunctionDeclaration.hpp" />
+    <ClInclude Include="ast\declarations\ModuleDeclarations.hpp" />
+    <ClInclude Include="ast\declarations\VariableDeclaration.hpp" />
+    <ClInclude Include="ast\Expression.hpp" />
+    <ClInclude Include="ast\expressions\BinaryOperator.hpp" />
+    <ClInclude Include="ast\expressions\IdentifierValue.hpp" />
+    <ClInclude Include="ast\expressions\InvocationOperator.hpp" />
+    <ClInclude Include="ast\expressions\LiteralValue.hpp" />
+    <ClInclude Include="ast\expressions\UnaryOperator.hpp" />
+    <ClInclude Include="ast\Node.hpp" />
+    <ClInclude Include="ast\NodeKind.hpp" />
+    <ClInclude Include="ast\Statement.hpp" />
+    <ClInclude Include="ast\statements\ExpressionStatement.hpp" />
+    <ClInclude Include="ast\expressions\ReturnOperator.hpp" />
+    <ClInclude Include="ast\statements\ScopeStatement.hpp" />
+    <ClInclude Include="ast_visitor\AstPrinter.hpp" />
+    <ClInclude Include="ast_visitor\AstVisitor.hpp" />
+    <ClInclude Include="ast_visitor\CHIRGenerator.hpp" />
+    <ClInclude Include="ast_visitor\SymbolLoader.hpp" />
+    <ClInclude Include="chir\ChirAllocator.hpp" />
+    <ClInclude Include="chir\ChirClassDeclarations.hpp" />
+    <ClInclude Include="chir\ChirClassImplementations.hpp" />
+    <ClInclude Include="chir\ChirDeclaration.hpp" />
+    <ClInclude Include="chir\ChirModule.hpp" />
+    <ClInclude Include="chir\ChirNode.hpp" />
+    <ClInclude Include="chir\ChirStatement.hpp" />
+    <ClInclude Include="chir\ChirValue.hpp" />
+    <ClInclude Include="chir\declarations\ChirFunctionDeclaration.hpp" />
+    <ClInclude Include="chir\declarations\ChirVariableDeclaration.hpp" />
+    <ClInclude Include="chir\NodeKind.hpp" />
+    <ClInclude Include="chir\statements\ChirScopeStatement.hpp" />
+    <ClInclude Include="chir\statements\ChirValueStatement.hpp" />
+    <ClInclude Include="chir\statements\ChirVariableStatement.hpp" />
+    <ClInclude Include="chir\values\ChirBinaryOperator.hpp" />
+    <ClInclude Include="chir\values\ChirConstantValue.hpp" />
+    <ClInclude Include="chir\values\ChirSymbolValue.hpp" />
+    <ClInclude Include="chir\values\ChirUnaryOperator.hpp" />
+    <ClInclude Include="chir\values\ChirReturnOperator.hpp" />
+    <ClInclude Include="chir\values\ChirInvocationOperator.hpp" />
+    <ClInclude Include="chir_visitor\ChirPrinter.hpp" />
+    <ClInclude Include="chir_visitor\ChirVisitor.hpp" />
+    <ClInclude Include="chir_visitor\CirGenerator.hpp" />
+    <ClInclude Include="chir_visitor\CirGlobalsLoader.hpp" />
+    <ClInclude Include="cir\CirAllocator.hpp" />
+    <ClInclude Include="cir\CirBuilder.hpp" />
+    <ClInclude Include="cir\CirModule.hpp" />
+    <ClInclude Include="cir\value\CirValueId.hpp" />
+    <ClInclude Include="cir\value\CirValueClassDeclarations.hpp" />
+    <ClInclude Include="cir\value\CirValueClassImplementations.hpp" />
+    <ClInclude Include="cir\value\constant\CirBasicBlock.hpp" />
+    <ClInclude Include="cir\value\constant\CirConstanNumber.hpp" />
+    <ClInclude Include="cir\value\constant\CirConstant.hpp" />
+    <ClInclude Include="cir\value\constant\CirFunction.hpp" />
+    <ClInclude Include="cir\value\constant\CirCommonFunction.hpp" />
+    <ClInclude Include="cir\value\constant\CirGlobalValue.hpp" />
+    <ClInclude Include="cir\value\constant\CirGlobalVariable.hpp" />
+    <ClInclude Include="cir\type\CirType.hpp" />
+    <ClInclude Include="cir\type\CirTypeKind.hpp" />
+    <ClInclude Include="cir\value\CirFunctionArgument.hpp" />
+    <ClInclude Include="cir\value\CirValue.hpp" />
+    <ClInclude Include="cir\value\CirValueKind.hpp" />
+    <ClInclude Include="cir\value\constant\CirNativeFunction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirBinaryInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirLocalVariable.hpp" />
+    <ClInclude Include="cir\value\instruction\CirUnaryInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirTerminator.hpp" />
+    <ClInclude Include="cir\value\instruction\CirInvocationInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirUnitInvocationInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirRetInstuction.hpp" />
+    <ClInclude Include="cir_pass\CirPass.hpp" />
+    <ClInclude Include="cir_pass\CirPassAdapters.hpp" />
+    <ClInclude Include="cir_pass\CirPrinterPass.hpp" />
+    <ClInclude Include="cir_pass\CirVerificationPass.hpp" />
+    <ClInclude Include="cir_pass\LLVMGenerator.hpp" />
+    <ClInclude Include="cir_pass\LLVMGlobalsLoaderPass.hpp" />
+    <ClInclude Include="compiler\Compiler.hpp" />
+    <ClInclude Include="compiler\CompilerOptions.hpp" />
+    <ClInclude Include="compiler\Target.hpp" />
+    <ClInclude Include="lexer\Token.hpp" />
+    <ClInclude Include="lexer\TokenizationUtils.hpp" />
+    <ClInclude Include="lexer\Tokenizer.hpp" />
+    <ClInclude Include="llvm_utils\LLVMModule.hpp" />
+    <ClInclude Include="parser\Parser.hpp" />
+    <ClInclude Include="symbol\FunctionSymbol.hpp" />
+    <ClInclude Include="symbol\Scope.hpp" />
+    <ClInclude Include="symbol\Symbol.hpp" />
+    <ClInclude Include="symbol\SymbolAllocator.hpp" />
+    <ClInclude Include="symbol\SymbolPath.hpp" />
+    <ClInclude Include="symbol\SymbolTable.hpp" />
+    <ClInclude Include="symbol\VariableSymbol.hpp" />
+    <ClInclude Include="test\BenchmarkMain.hpp" />
+    <ClInclude Include="test\SourceCodeGenerator.hpp" />
+    <ClInclude Include="symbol\types\TypeKind.hpp" />
+    <ClInclude Include="symbol\types\Type.hpp" />
+    <ClInclude Include="utf\FastFmt.hpp" />
+    <ClInclude Include="utf\StringUtils.hpp" />
+    <ClInclude Include="utf\UtfIterator.hpp" />
+    <ClInclude Include="utils\Bit.hpp" />
+    <ClInclude Include="utils\Concept.hpp" />
+    <ClInclude Include="error\ErrorPrinter.hpp" />
+    <ClInclude Include="utils\NoNull.hpp" />
+    <ClInclude Include="utils\PooledAllocator.hpp" />
+    <ClInclude Include="utf\StringHash.hpp" />
+    <ClInclude Include="utils\File.hpp" />
+    <ClInclude Include="utils\IndentPrinter.hpp" />
+    <ClInclude Include="utils\Macro.hpp" />
+    <ClInclude Include="utf\String.hpp" />
+    <ClInclude Include="utils\TextPosition.hpp" />
+    <ClInclude Include="utf\UtfIO.hpp" />
+    <ClInclude Include="utils\CollectionUtils.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="symbol\SymbolId.hpp" />
+    <None Include="test.core" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
