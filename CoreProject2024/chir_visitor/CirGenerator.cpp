@@ -130,6 +130,12 @@ void chir_visitor::CirGenerator::visit(chir::FunctionDeclaration& node) {
 
     m_builder.setFunction(functionValue);
     utils::NoNull<cir::BasicBlock> entry = m_builder.makeAnsSetBasicBlock("entry");
+
+    const std::vector<utils::NoNull<symbol::VariableSymbol>>& arguments = function.getArguments();
+    for (uint32_t i = 0; i < arguments.size(); ++i) {
+        m_symbols.try_emplace(arguments[i]->getId(), functionValue->getArguments()[i]);
+    }
+
     Parent::visit(node.getBodyAsStatement());
 
     if (function.getReturnType() == symbol::TypeKind::UNIT && !m_builder.getCurrentBasicBlock()->hasTerminator()) {

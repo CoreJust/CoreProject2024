@@ -57,6 +57,10 @@
 
 #if CURRENT_COMPILATION_MODE == CORE_BUILD_MODE
 #include <iostream>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Target/TargetMachine.h>
 #include "utf/UtfIO.hpp"
 #include "utils/File.hpp"
 #include "error/ErrorPrinter.hpp"
@@ -71,19 +75,24 @@
 #include "chir_visitor/CirGlobalsLoader.hpp"
 #include "chir_visitor/CirGenerator.hpp"
 #include "cir/CirModule.hpp"
+#include "cir_pass/CirVerificationPass.hpp"
+#include "cir_pass/LLVMGlobalsLoaderPass.hpp"
+#include "cir_pass/LLVMGenerator.hpp"
+#include "llvm_utils/LLVMModule.hpp"
 
-constexpr char SOURCE_FILE[] = "test.core";
+const utf::String SOURCE_FILE = "test";
 constexpr bool PRINT = true;
 
 // The entry point of the CoreProject2024.
 int main() {
+	// Temporary contents for test purpose, will be rewritten later.
 	// Initializing Utf I/O.
 	if (int code = utf::initUtfIO(); code != 0) {
 		exit(code);
 	}
 
 	// Loading the source file.
-	std::optional<utf::String> program = utils::readFile(SOURCE_FILE);
+	std::optional<utf::String> program = utils::readFile(SOURCE_FILE + ".core");
 	if (!program) {
 		exit(1);
 	}
@@ -147,11 +156,70 @@ int main() {
 		chir::ChirAllocator::tryRelease();
 		symbol::SymbolAllocator::tryRelease();
 
+		if (error::ErrorPrinter::hasErrors()) {
+			throw 0;
+		}
+
 		// Printing the CIR
 		if (PRINT) {
 			std::cout << "\n\nCIR:\n\n";
 			cirModule.print(std::cout);
 		}
+
+		// CIR verification.
+		cir_pass::VerificationPass verifier;
+		verifier.pass(&cirModule);
+
+		if (error::ErrorPrinter::hasErrors()) {
+			throw 0;
+		}
+
+		// LLVM IR generation
+		llvm::LLVMContext llvmContext;
+		llvm_utils::LLVMModule llvmModule(&llvmContext, SOURCE_FILE);
+
+		cir_pass::LLVMGlobalsLoaderPass llvmGlobalLoaderPass(llvmModule);
+		llvmGlobalLoaderPass.pass(&cirModule);
+
+		// Generating LLVM IR.
+		llvm::InitializeAllTargetInfos();
+		llvm::InitializeAllTargets();
+		llvm::InitializeAllTargetMCs();
+		llvm::InitializeAllAsmParsers();
+		llvm::InitializeAllAsmPrinters();
+
+		cir_pass::LLVMGenerator llvmGenerator(llvmModule, llvmGlobalLoaderPass.getLLVMGlobals());
+		llvmGenerator.pass(&cirModule);
+
+		// Printing LLVM IR.
+		if (PRINT) {
+			std::cout << "\n\nLLVM IR:\n\n";
+			llvmModule.getModule().print(llvm::errs(), nullptr);
+		}
+
+		// Machine code generation.=
+		std::error_code objectCodeError;
+		llvm::raw_fd_ostream objectCodeOutput(SOURCE_FILE + ".o", objectCodeError, llvm::sys::fs::OF_None);
+		if (objectCodeError) {
+			std::cerr << "Failed to open " << (SOURCE_FILE + ".o") << ": " << objectCodeError.message() << std::endl;
+			throw 0;
+		}
+
+		llvm::legacy::PassManager passManager;
+		if (llvmGenerator.getTargetMachine()->addPassesToEmitFile(passManager, objectCodeOutput, nullptr, llvm::CodeGenFileType::ObjectFile)) {
+			throw 0;
+		}
+
+		passManager.run(llvmModule.getModule());
+		objectCodeOutput.flush();
+		objectCodeOutput.close();
+
+		// Linking
+		system((utf::String("clang++ -o ") + SOURCE_FILE + ".exe " + SOURCE_FILE + ".o").c_str());
+
+		// Execution
+		system((SOURCE_FILE + ".exe").c_str());
+		system("pause");
 	} catch (...) {
 		std::cerr << "Build failed!\n";
 	}

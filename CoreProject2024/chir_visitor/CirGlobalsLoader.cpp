@@ -22,8 +22,8 @@ chir_visitor::CirGlobalsLoader::CirGlobalsLoader(cir::Module& cirModule) noexcep
 void chir_visitor::CirGlobalsLoader::visitRoot(chir::Module& module) {
 	for (utils::NoNull<chir::Declaration> declaration : module.getDeclarations()) {
 		switch (declaration->getKind()) {
-			case chir::NodeKind::VARIABLE_DECLARATION: visit(*declaration.as<chir::VariableDeclaration>());
-			case chir::NodeKind::FUNCTION_DECLARATION: visit(*declaration.as<chir::FunctionDeclaration>());
+			case chir::NodeKind::VARIABLE_DECLARATION: visit(*declaration.as<chir::VariableDeclaration>()); break;
+			case chir::NodeKind::FUNCTION_DECLARATION: visit(*declaration.as<chir::FunctionDeclaration>()); break;
 		default: unreachable();
 		}
 	}

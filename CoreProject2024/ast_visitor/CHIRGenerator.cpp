@@ -25,6 +25,29 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& 
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
+	if (!m_typeInquire.empty()) { // Has requirements for function argument types.
+		const symbol::FunctionSymbol* function = m_symbols.getFunction(node.getIdentifier(), m_typeInquire);
+		if (function == nullptr) {
+			error::ErrorPrinter::error({
+				.code = error::ErrorCode::UNRESOLVED_SYMBOL,
+				.name = "Semantic error: Unresolved symbol",
+				.selectionStart = node.getPosition(),
+				.selectionLength = node.getIdentifier().size(),
+				.description = std::format(
+					"Failed to find function {} with argument types <{}>.",
+					node.getIdentifier(),
+					utils::joinToString(m_typeInquire)
+				),
+				.explanation = "Maybe you forgot to declare this function or made a mistake in its name, or forgot to convert argument types."
+			});
+
+			return nullptr;
+		}
+
+		return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), const_cast<symbol::FunctionSymbol*>(function));
+	}
+
+	// No requirements, but it can still be a function.
 	std::vector<utils::NoNull<symbol::Symbol>> symbols = m_symbols.getSymbols(node.getIdentifier());
 	if (symbols.empty()) {
 		error::ErrorPrinter::error({
@@ -38,28 +61,6 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValu
 
 		return nullptr;
 	} else if (symbols.size() > 1) {
-		if (!m_typeInquire.empty()) { // Has requirements for function argument types.
-			const symbol::FunctionSymbol* function = m_symbols.getFunction(node.getIdentifier(), m_typeInquire);
-			if (function == nullptr) {
-				error::ErrorPrinter::error({
-					.code = error::ErrorCode::UNRESOLVED_SYMBOL,
-					.name = "Semantic error: Unresolved symbol",
-					.selectionStart = node.getPosition(),
-					.selectionLength = node.getIdentifier().size(),
-					.description = std::format(
-						"Failed to find function {} with argument types <{}>.", 
-						node.getIdentifier(),
-						utils::joinToString(m_typeInquire)
-					),
-					.explanation = "Maybe you forgot to declare this function or made a mistake in its name, or forgot to convert argument types."
-				});
-
-				return nullptr;
-			}
-
-			return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), const_cast<symbol::FunctionSymbol*>(function));
-		}
-
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::TOO_MANY_SYMBOLS,
 			.name = "Semantic error: Cannot choose function",

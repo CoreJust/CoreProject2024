@@ -34,6 +34,9 @@ namespace cir {
 		// Creates and returns a new BasicBlock, and makes it the current one.
 		utils::NoNull<BasicBlock> makeAnsSetBasicBlock(utf::String name) noexcept;
 
+		// Generates the FunctionArgument value.
+		utils::NoNull<FunctionArgument> makeFunctionArgument(utf::String name, Type type);
+
 		// Functions that create an Instruction. append it to the current BasicBlock, and return it.
 		utils::NoNull<UnaryInstruction> makeNeg(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<BinaryInstruction> makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");

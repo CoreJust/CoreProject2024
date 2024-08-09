@@ -13,11 +13,10 @@
 #include <vector>
 #include "utils/NoNull.hpp"
 #include "../type/CirType.hpp"
+#include "CirValueId.hpp"
 #include "CirValueKind.hpp"
 
 namespace cir {
-	using ValueId = uint64_t;
-
 	/*
 	*	Almost everything in CIR is a value (apart from types).
 	*	There are 2 general kinds of Value:

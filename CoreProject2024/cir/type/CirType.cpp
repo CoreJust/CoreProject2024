@@ -3,9 +3,20 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirType.hpp"
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/DerivedTypes.h>
 
 cir::Type::Type(TypeKind kind) noexcept : m_typeKind(kind) {
 
+}
+
+llvm::Type* cir::Type::makeLLVMType(llvm::LLVMContext& context) const {
+	switch (m_typeKind) {
+		case TypeKind::I32: return llvm::Type::getInt32Ty(context);
+		case TypeKind::UNIT: return llvm::Type::getVoidTy(context);
+		case TypeKind::BASIC_BLOCK: return llvm::Type::getLabelTy(context);
+	default: unreachable();
+	}
 }
 
 bool cir::Type::operator==(const Type& other) const noexcept {

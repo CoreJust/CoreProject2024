@@ -21,8 +21,9 @@ namespace cir {
 		RetInstruction() noexcept;
 		RetInstruction(utils::NoNull<Value> operand) noexcept;
 
-		bool isRetVoid() const noexcept;
+		bool isRetUnit() const noexcept;
 		Value*& getOperand() noexcept;
+		const Type& getReturnType() noexcept;
 
 		utf::String toInstuctionString() const override;
 	};

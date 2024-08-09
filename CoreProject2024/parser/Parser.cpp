@@ -57,7 +57,7 @@ ast::Declaration* parser::Parser::functionDeclaration() {
         }
     }
 
-    ast::Type returnType;
+    ast::Type returnType = ast::Type("unit");
     if (m_toks.match(lexer::COLON)) {
         returnType = parseType();
     }

@@ -5,6 +5,8 @@
 
 # Own additions
 bench.core
+*.exe
+*.o
 
 # User-specific files
 *.rsuser

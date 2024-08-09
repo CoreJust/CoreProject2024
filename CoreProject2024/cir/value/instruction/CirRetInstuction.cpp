@@ -14,12 +14,22 @@ cir::RetInstruction::RetInstruction(utils::NoNull<Value> operand) noexcept
     Value::addUser(m_operand, *this);
 }
 
-bool cir::RetInstruction::isRetVoid() const noexcept {
+bool cir::RetInstruction::isRetUnit() const noexcept {
     return m_operand == nullptr;
 }
 
 cir::Value*& cir::RetInstruction::getOperand() noexcept {
     return m_operand;
+}
+
+const cir::Type& cir::RetInstruction::getReturnType() noexcept {
+    static Type s_unitType = TypeKind::UNIT;
+
+    if (m_operand == nullptr) {
+        return s_unitType;
+    } else {
+        return m_operand->getType();
+    }
 }
 
 utf::String cir::RetInstruction::toInstuctionString() const {

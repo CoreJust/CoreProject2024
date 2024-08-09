@@ -53,6 +53,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -213,8 +214,12 @@
     <ClCompile Include="cir\value\instruction\CirUnitInvocationInstruction.cpp" />
     <ClCompile Include="cir_pass\CirPassAdapters.cpp" />
     <ClCompile Include="cir_pass\CirPrinterPass.cpp" />
+    <ClCompile Include="cir_pass\CirVerificationPass.cpp" />
+    <ClCompile Include="cir_pass\LLVMGenerator.cpp" />
+    <ClCompile Include="cir_pass\LLVMGlobalsLoaderPass.cpp" />
     <ClCompile Include="lexer\Token.cpp" />
     <ClCompile Include="lexer\Tokenizer.cpp" />
+    <ClCompile Include="llvm_utils\LLVMModule.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="error\ErrorPrinter.cpp" />
     <ClCompile Include="parser\Parser.cpp" />
@@ -283,6 +288,7 @@
     <ClInclude Include="cir\CirAllocator.hpp" />
     <ClInclude Include="cir\CirBuilder.hpp" />
     <ClInclude Include="cir\CirModule.hpp" />
+    <ClInclude Include="cir\value\CirValueId.hpp" />
     <ClInclude Include="cir\value\CirValueClassDeclarations.hpp" />
     <ClInclude Include="cir\value\CirValueClassImplementations.hpp" />
     <ClInclude Include="cir\value\constant\CirBasicBlock.hpp" />
@@ -309,9 +315,13 @@
     <ClInclude Include="cir_pass\CirPass.hpp" />
     <ClInclude Include="cir_pass\CirPassAdapters.hpp" />
     <ClInclude Include="cir_pass\CirPrinterPass.hpp" />
+    <ClInclude Include="cir_pass\CirVerificationPass.hpp" />
+    <ClInclude Include="cir_pass\LLVMGenerator.hpp" />
+    <ClInclude Include="cir_pass\LLVMGlobalsLoaderPass.hpp" />
     <ClInclude Include="lexer\Token.hpp" />
     <ClInclude Include="lexer\TokenizationUtils.hpp" />
     <ClInclude Include="lexer\Tokenizer.hpp" />
+    <ClInclude Include="llvm_utils\LLVMModule.hpp" />
     <ClInclude Include="parser\Parser.hpp" />
     <ClInclude Include="symbol\FunctionSymbol.hpp" />
     <ClInclude Include="symbol\Scope.hpp" />

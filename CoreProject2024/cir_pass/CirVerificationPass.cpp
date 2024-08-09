@@ -6,6 +6,7 @@
 #include "cir/CirModule.hpp"
 #include "cir/value/constant/CirCommonFunction.hpp"
 #include "cir/value/constant/CirGlobalVariable.hpp"
+#include "cir/value/instruction/CirRetInstuction.hpp"
 
 void cir_pass::VerificationPass::pass(utils::NoNull<cir::Module> module) {
 	for (utils::NoNull<cir::GlobalValue> value : module->getGlobals()) {
@@ -36,7 +37,7 @@ void cir_pass::VerificationPass::verifyBasicBlock(utils::NoNull<cir::BasicBlock>
 	} else if (!instructions.back()->isTerminator()) {
 		onVerificationFail("No terminator at the end of basic block");
 	} else if (instructions.back()->getKind() == cir::ValueKind::RET_INSTRUCTION) {
-		if (basicBlock->getParentFunction().getReturnType() != instructions.back()->getType()) {
+		if (basicBlock->getParentFunction().getReturnType() != instructions.back().as<cir::RetInstruction>()->getReturnType()) {
 			onVerificationFail("Ret operand and function return type mismatch");
 		}
 	}

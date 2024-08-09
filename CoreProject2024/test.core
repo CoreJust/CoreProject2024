@@ -1,12 +1,33 @@
 fn putchar(ch: i32): i32 = native("putchar")
 
-fn main(): i32 {
-	let a = 42
-	let space: i32 = 32; let b = 0x40
+fn print1(v1: i32) {
+	putchar(v1)
+	putchar(v1 + 1)
+}
 
-	putchar(a)
-	putchar(space)
-	putchar(b)
+fn print2(v1: i32) {
+	print1(v1)
+	print1(v1 + 2)
+}
+
+fn print3(v1: i32) {
+	print2(v1)
+	print2(v1 + 4)
+}
+
+fn print4(v1: i32) {
+	print3(v1)
+	print3(v1 + 8)
+}
+
+fn print(ch: i32) {
+	print4(ch)
+	print4(ch + 16)
+	putchar(10)
+}
+
+fn main(): i32 {
+	print(32)
 
 	return 0
 }

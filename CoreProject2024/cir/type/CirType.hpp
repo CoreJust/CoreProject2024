@@ -13,6 +13,11 @@
 #include "utf/String.hpp"
 #include "CirTypeKind.hpp"
 
+namespace llvm {
+	class Type;
+	class LLVMContext;
+}
+
 namespace cir {
 	/*
 	*	The cir::Type is used in Core IR.
@@ -25,6 +30,8 @@ namespace cir {
 
 	public:
 		Type(TypeKind typeKind) noexcept;
+
+		llvm::Type* makeLLVMType(llvm::LLVMContext& context) const;
 
 		bool operator==(const Type& other) const noexcept;
 

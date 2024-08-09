@@ -10,7 +10,6 @@
 */
 
 #pragma once
-#include "utils/IndentPrinter.hpp"
 #include "CirPass.hpp"
 
 namespace cir {

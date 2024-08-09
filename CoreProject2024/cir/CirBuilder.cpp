@@ -23,6 +23,10 @@ utils::NoNull<cir::BasicBlock> cir::CirBuilder::makeAnsSetBasicBlock(utf::String
     return m_currentBasicBlock = m_currentFunction->makeBasicBlock(std::move(name)).get();
 }
 
+utils::NoNull<cir::FunctionArgument> cir::CirBuilder::makeFunctionArgument(utf::String name, Type type) {
+    return CirAllocator::make<FunctionArgument>(std::move(name), std::move(type));
+}
+
 utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeNeg(utils::NoNull<Value> operand, utf::String name) {
     return makeInstruction<UnaryInstruction>(UnaryInstruction::NEG, operand, std::move(name));
 }

@@ -63,6 +63,7 @@ symbol::Scope& symbol::SymbolTable::pushFunctionScope(FunctionSymbol& function) 
     Scope& result = pushScope(function.getName(), &function);
     for (auto argument : function.getArguments()) {
         m_symbolsById.try_emplace(argument->getId(), argument.get());
+        m_currentScope->symbols().emplace_back(argument.get());
     }
 
     return result;
