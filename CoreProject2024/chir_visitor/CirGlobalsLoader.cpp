@@ -58,7 +58,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::FunctionDeclaration& node) {
 	symbol::FunctionSymbol functionSymbol = node.getFunction();
 	if (node.isNative()) {
 		utils::NoNull<cir::NativeFunction> function = m_cirModule.addNativeFunction(
-			functionSymbol.getName(),
+			utf::String(node.getBodyAsNative()),
 			functionSymbol.getReturnType().makeCirType(),
 			utils::map<std::vector<utils::NoNull<cir::FunctionArgument>>>(
 				functionSymbol.getArguments(),
@@ -69,7 +69,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::FunctionDeclaration& node) {
 		);
 
 		m_globalsMap.try_emplace(functionSymbol.getId(), function);
-	} else {
+	} else { // Common function
 		utils::NoNull<cir::CommonFunction> function = m_cirModule.addCommonFunction(
 			functionSymbol.makeMangledName(),
 			functionSymbol.getReturnType().makeCirType(),

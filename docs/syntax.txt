@@ -1,5 +1,12 @@
 This file contains the relevant features of the language (currently it is only a small subset of Core language).
 
+###  Characters  ###
+A Core program is written in UTF-8 encoding.
+In the code only some of ASCII characters might be used:
+a-zA-Z0-9_+-*/%=:;,(){}"
+As well as spaces and new lines (those can be non-ASCII as well).
+All of the UTF-8 symbols are allowed in string literals.
+
 ###  Program structure  ###
 A program consists of a single .core file.
 The file can contain a number of functions, among which there must be the main function.
@@ -21,25 +28,28 @@ TO declare a function, one must use the following syntax:
 
 Function name and arguments must be valid identifiers.
 Function can have no or any number of arguments.
-If function return type is not specified explicitly, then it will be unit type (unless the = <expression> is used as a function body, then the return type can be inferred).
-One can use = native("<extern-function-name>") instead of body to state that the function is external and will be linked to the program later.
+If function return type is not specified explicitly, then it will be unit type (unless the = <expression> 
+is used as a function body, then the return type can be inferred).
+One can use = native("<extern-function-name>") instead of body to state that the function is external and 
+will be linked to the program later.
 Example: fn putc(ch: i32): i32 = native("putc")
 This allows to deal with mangling.
 Function body can be written as either a code scope {...} or assignment = ...
-Assignment like this fn func(<args>): <return-type> = <expression>
-is equivalent to: fn func(<argg>): <return-type> { return expression }
+Assignment like this fn <name>(<args>): <return-type> = <expression>
+is equivalent to: fn <name>(<argg>): <return-type> { return expression }
 
 ###  Statements  ###
 Within a code scope there can be one of those three statements:
 <statement> :=
 	<function> # Internal function declaration
-	return <expression> # Makes a return from the function with the given value.
 	|let <variable-name>[: <variable-type>] = <expression> # Variable declaration
 	|<scope>
 	|<expression>
-It is possible to explicitly separate statements with semicolon.
+It is possible to explicitly separate statements with semicolon,
+otherwise statements must be separated with a new line.
 
 ###  Variable declaration  ###
+let <variable-name>[: <variable-type>] = <expression>
 With the syntax demonstrated above, one can declare a local variable on the stack.
 Such a variable will only exist within the scope.
 Also, it is allowed to do shadowing, thus overriding an existing variable with another of the same name.
@@ -49,30 +59,34 @@ There are only two variable types available:
 <type> :=
 	i32
 	|unit.
-The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used as function return type (so all the variables and arguments are actually i32 as of now).
+The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used 
+as function return type (so all the variables and arguments are actually i32 as of now).
 
 ###  Expressions  ###
 There are following expressions available:
 <expression> :=
+	return <expression> # Returns the expression result from the function. Has the never type. Cannot be used in another return statement.
+	|<additive>
+<additive> :=
+	<multiplicative> + <multiplicative>
+	|<multiplicative> - <multiplicative>
+	|<multiplicative>
+<multiplicative> :=
+	<unary> * <unary>
+	|<unary> / <unary>
+	|<unary> % <unary>
+	|<unary>
+<unary> :=
+	+<unary>
+	|-<unary>
+	|<postprimary>
+<postprimary> :=
+	<primary>([<expression>[, <expression>]...])
+	|<primary>
+<primary> :=
 	(<expression>)
-	<expression> <binary-operator> <expression>
-	<unary-operator> <expression>
-	<function-call>
-	<variable-name>
-	<literal>
-<binary-operator> :=
-	+|-|*|/|%
-<unary-operator> :=
-	+|-
-<function-call> :=
-	<function-name>([<expression>]...)
-	
-###  Operator precedence  ###
-1. a, <literal>
-2. a()
-3. -a, +a
-4. a * b, a / b, a % be
-5. a + b, a - b
+	|<identifier>
+	|<literal>
 
 ###  Literals  ###
 There are currently only two type of literals: numbers and strings.
@@ -95,7 +109,7 @@ common strings there can be escape sequences:
 ###  Identifiers  ###
 Any name must be a valid identifier:
 <identifier> :=
-	(<a-z>|<A-Z>|_|$)[(<a-z>|<A-Z>|_|$|<0-9>)]...
+	(<a-z>|<A-Z>|_)[(<a-z>|<A-Z>|_|<0-9>)]...
 But identifier cannot match any of the keywords.
 
 ###  Comments  ###

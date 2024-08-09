@@ -34,8 +34,6 @@ namespace utils {
 				error::ErrorPrinter::error({
 					.code = error::ErrorCode::INTERNAL_ERROR,
 					.name = "Internal compiler error: Unexpected null pointer",
-					.selectionStart = utils::TextPosition(),
-					.selectionLength = 0,
 					.description = std::format(
 						"Passed nullptr to NoNull class, source: {} at {}:{}, function {}.", 
 						location.file_name(), 
@@ -43,7 +41,6 @@ namespace utils {
 						location.column(), 
 						location.function_name()
 					),
-					.explanation = "-"
 				});
 
 				assert(false); // For debug mode.

@@ -4,11 +4,11 @@
 
 #include "LLVMModule.hpp"
 
-llvm_utils::LLVMModule::LLVMModule(utils::NoNull<llvm::LLVMContext> context, utf::String name) 
-    : m_context(context), m_module(name, *context) { }
+llvm_utils::LLVMModule::LLVMModule(utf::String name) 
+    : m_context(), m_module(name, m_context) { }
 
 llvm::LLVMContext& llvm_utils::LLVMModule::getContext() noexcept {
-    return *m_context;
+    return m_context;
 }
 
 llvm::Module& llvm_utils::LLVMModule::getModule() noexcept {

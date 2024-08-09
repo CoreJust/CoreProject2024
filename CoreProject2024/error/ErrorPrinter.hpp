@@ -43,6 +43,9 @@ namespace error {
 			INVALID_UTF_IN_FILE,
 			INTERNAL_ERROR, // For all the other internal errors
 
+			// Project settings errors
+			BAD_TARGET,
+
 			// Lexer errors
 			UNEXPECTED_CHARACTER,
 			UNEXPECTED_TOKEN,
@@ -63,10 +66,15 @@ namespace error {
 			UNEXPECTED_TYPE,
 			TYPE_MISMATCH,
 			NON_FUNCTION_CONTEXT,
+			RETURN_IN_RETURN,
+			NO_MAIN_FUNCTION,
 
-			// CIR Errors
+			// CIR errors
 			INSTRUCTION_AFTER_TERMINATOR,
 			VERIFICATION_FAILED,
+
+			// LLVM errors
+			OBJECT_FILE_OPEN_FAILURE,
 
 			ERROR_CODES_COUNT
 		};
@@ -85,15 +93,15 @@ namespace error {
 		struct ErrorStruct {
 			int code;
 			utf::String name;
-			utils::TextPosition selectionStart;
-			uint64_t selectionLength;
+			utils::TextPosition selectionStart = utils::TextPosition { };
+			uint64_t selectionLength = 0;
 			utf::String description;
-			utf::String explanation;
+			utf::String explanation = "-";
 		};
 
 	private:
 		// Contains the source file text currently being compiled.
-		inline static thread_local utf::StringView s_currentSource = "";
+		inline static thread_local utf::String s_currentSource = "";
 
 		// Set to true upon any error.
 		inline static thread_local bool s_hasErrors = false;
@@ -104,6 +112,10 @@ namespace error {
 
 	public:
 		// Prints the error to the standard output stream.
+		// Terminates the compilation process.
+		static void fatalError(const ErrorStruct& err);
+
+		// Prints the error to the standard output stream.
 		static void error(const ErrorStruct& err);
 
 		// Prints the warning to the standard output stream.
@@ -111,7 +123,7 @@ namespace error {
 
 		// Sets the currently compiled source string, which is used to print source code lines on errors.
 		// Must be called on new file compilation start.
-		static void setSource(utf::StringView source) noexcept;
+		static utf::StringView setSource(utf::String source) noexcept;
 
 		// Returns true if there were any errors.
 		static bool hasErrors() noexcept;

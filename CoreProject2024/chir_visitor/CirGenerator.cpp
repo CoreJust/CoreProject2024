@@ -107,10 +107,7 @@ void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
         error::ErrorPrinter::error({
             .code = error::ErrorCode::INTERNAL_ERROR,
             .name = "Internal error: Cannot use non-constant value for global variable initialization",
-            .selectionStart = utils::TextPosition(),
-            .selectionLength = 0,
-            .description = "Not supported yet.",
-            .explanation = "-"
+            .description = "Not supported yet."
         });
 
         assert(false); // For debug mode.
@@ -149,10 +146,7 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::getSymbolValue(symbol::Sym
         error::ErrorPrinter::error({
             .code = error::ErrorCode::INTERNAL_ERROR,
             .name = "Internal error: Tried to get a symbol by unknown ID",
-            .selectionStart = utils::TextPosition(),
-            .selectionLength = 0,
             .description = std::format( "Symbols map in CIR generators doesn't have symbol with ID {}.", symbolId),
-            .explanation = "-"
         });
 
         assert(false); // For debug mode.

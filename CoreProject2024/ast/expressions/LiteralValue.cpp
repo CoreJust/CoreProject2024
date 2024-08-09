@@ -39,7 +39,6 @@ int64_t ast::LiteralValue::tryParseAsI64(int base) const noexcept {
 			.selectionStart = m_position,
 			.selectionLength = m_value.size(),
 			.description = "Cannot convert the number literal to a number: invalid argument.",
-			.explanation = "-"
 		});
 	} else if (convertionResult.ec == std::errc::result_out_of_range) {
 		error::ErrorPrinter::error({
@@ -48,7 +47,6 @@ int64_t ast::LiteralValue::tryParseAsI64(int base) const noexcept {
 			.selectionStart = m_position,
 			.selectionLength = m_value.size(),
 			.description = "Cannot convert the number literal to a number: result out of range.",
-			.explanation = "-"
 		});
 	}
 

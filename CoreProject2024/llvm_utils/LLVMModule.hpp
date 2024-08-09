@@ -17,11 +17,12 @@
 namespace llvm_utils {
 	class LLVMModule final {
 	private:
-		utils::NoNull<llvm::LLVMContext> m_context;
+		llvm::LLVMContext m_context;
 		llvm::Module m_module;
 
 	public:
-		LLVMModule(utils::NoNull<llvm::LLVMContext> context, utf::String name);
+		LLVMModule(LLVMModule&&) = default;
+		LLVMModule(utf::String name);
 
 		llvm::LLVMContext& getContext() noexcept;
 		llvm::Module& getModule() noexcept;

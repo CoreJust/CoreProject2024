@@ -1,33 +1,41 @@
 fn putchar(ch: i32): i32 = native("putchar")
 
-fn print1(v1: i32) {
-	putchar(v1)
-	putchar(v1 + 1)
+fn next(ch: i32): i32 = ch + 1
+
+fn print(c: i32): i32 {
+	let t1 = next(c)
+	putchar(c)
+	
+	let t2 = next(t1)
+	putchar(t1)
+	putchar(t2)
+	
+	return next(t2)
 }
 
-fn print2(v1: i32) {
-	print1(v1)
-	print1(v1 + 2)
+fn print1(c: i32): i32 {
+	let t1 = print(c)
+	let t2 = print(t1)
+	let t3 = print(t2)
+	let t4 = print(t3)
+	
+	return print(t4)
 }
 
-fn print3(v1: i32) {
-	print2(v1)
-	print2(v1 + 4)
+fn print2(c: i32): i32 {
+	let t1 = print1(c)
+	let t2 = print1(t1)
+	let t3 = print1(t2)
+	let t4 = print1(t3)
+	
+	return print1(t4)
 }
 
-fn print4(v1: i32) {
-	print3(v1)
-	print3(v1 + 8)
-}
-
-fn print(ch: i32) {
-	print4(ch)
-	print4(ch + 16)
-	putchar(10)
-}
+fn print3(c: i32): i32 = print2(print2(c))
 
 fn main(): i32 {
-	print(32)
+	print3(32)
+	putchar(10)
 
 	return 0
 }

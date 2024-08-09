@@ -12,24 +12,13 @@
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/TargetParser/Host.h>
 #include "utils/CollectionUtils.hpp"
+#include "compiler/CompilerOptions.hpp"
 #include "cir/CirModule.hpp"
 #include "cir/value/CirValueClassImplementations.hpp"
 
 cir_pass::LLVMGenerator::LLVMGenerator(llvm_utils::LLVMModule& llvmModule, std::unordered_map<cir::ValueId, llvm::Value*> globals) 
 	: m_llvmModule(llvmModule), m_symbols(std::move(globals)), m_builder(llvmModule.getContext()) {
-		std::string targetTriple = llvm::sys::getDefaultTargetTriple();
-	m_llvmModule.getModule().setTargetTriple(targetTriple);
-
-	std::string targetLookupError;
-	const llvm::Target* target = llvm::TargetRegistry::lookupTarget(targetTriple, targetLookupError);
-	if (target == nullptr) {
-		llvm::errs() << targetLookupError;
-		throw 0;
-	}
-
-	llvm::TargetOptions targetOptions;
-	std::optional<llvm::Reloc::Model> RM = std::optional<llvm::Reloc::Model>();
-	m_targetMachine = target->createTargetMachine(targetTriple, "generic", "", targetOptions, RM);
+	m_targetMachine = compiler::CompilerOptions::getTarget().makeLLVMTargetMachine();
 	m_llvmModule.getModule().setDataLayout(m_targetMachine->createDataLayout());
 
 	m_passBuilder = llvm::PassBuilder(m_targetMachine);
@@ -44,7 +33,17 @@ cir_pass::LLVMGenerator::LLVMGenerator(llvm_utils::LLVMModule& llvmModule, std::
 		m_moduleAnalysisManager
 	);
 
-	m_modulePassManager = m_passBuilder.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O3);
+	llvm::OptimizationLevel optLevel = llvm::OptimizationLevel::O2;
+	switch (compiler::CompilerOptions::getOptimizationLevel()) {
+		case compiler::OptimizationLevel::O0: optLevel = llvm::OptimizationLevel::O0;
+		case compiler::OptimizationLevel::O1: optLevel = llvm::OptimizationLevel::O1;
+		case compiler::OptimizationLevel::O2: optLevel = llvm::OptimizationLevel::O2;
+		case compiler::OptimizationLevel::O3: optLevel = llvm::OptimizationLevel::O3;
+		case compiler::OptimizationLevel::OSIZE: optLevel = llvm::OptimizationLevel::Oz;
+	default: break;
+	}
+
+	m_modulePassManager = m_passBuilder.buildPerModuleDefaultPipeline(optLevel);
 }
 
 void cir_pass::LLVMGenerator::pass(utils::NoNull<cir::Module> module) {
@@ -53,7 +52,9 @@ void cir_pass::LLVMGenerator::pass(utils::NoNull<cir::Module> module) {
 			compileFunction(value.as<cir::Function>());
 		}
 	}
+}
 
+void cir_pass::LLVMGenerator::optimize() {
 	m_modulePassManager.run(m_llvmModule.getModule(), m_moduleAnalysisManager);
 }
 
@@ -125,7 +126,7 @@ llvm::Value* cir_pass::LLVMGenerator::getLLVMValue(utils::NoNull<cir::Value> val
 llvm::Value* cir_pass::LLVMGenerator::compileConstant(utils::NoNull<cir::Constant> constant) {
 	switch (constant->getKind()) {
 		case cir::ValueKind::CONSTANT_NUMBER: return llvm::ConstantInt::get(m_llvmModule.getContext(), llvm::APInt(32, constant.as<cir::ConstantNumber>()->getValue(), true));
-		case cir::ValueKind::GLOBAL_VARIABLE: [[fallthrough]];
+		case cir::ValueKind::GLOBAL_VARIABLE: return m_builder.CreateLoad(constant->getType().makeLLVMType(m_llvmModule.getContext()), m_symbols[constant->getId()]);
 		case cir::ValueKind::COMMON_FUNCTION: [[fallthrough]];
 		case cir::ValueKind::NATIVE_FUNCTION: return m_symbols[constant->getId()];
 	default: unreachable();

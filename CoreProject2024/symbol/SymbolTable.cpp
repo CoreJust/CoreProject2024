@@ -8,8 +8,6 @@
 #include "utils/CollectionUtils.hpp"
 #include "SymbolAllocator.hpp"
 
-symbol::SymbolTable symbol::g_symbolTable;
-
 symbol::SymbolTable::SymbolTable()
     : m_rootScope(std::make_unique<Scope>()) {
     m_currentScope = m_rootScope.get();

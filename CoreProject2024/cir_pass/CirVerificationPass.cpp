@@ -47,10 +47,7 @@ void cir_pass::VerificationPass::onVerificationFail(utf::String message) {
 	error::ErrorPrinter::error({
 		.code = error::ErrorCode::VERIFICATION_FAILED,
 		.name = "CIR error: Failed CIR verification",
-		.selectionStart = utils::TextPosition(),
-		.selectionLength = 0,
 		.description = message,
-		.explanation = "-"
 	});
 
 	assert(false); // For debug mode.

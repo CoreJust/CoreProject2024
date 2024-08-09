@@ -6,16 +6,24 @@
 #include <format>
 #include <iostream>
 
+void error::ErrorPrinter::fatalError(const ErrorStruct& err) {
+	printMessage('E', err);
+	s_hasErrors = true;
+
+	throw 0;
+}
+
 void error::ErrorPrinter::error(const ErrorStruct& err) {
 	printMessage('E', err);
+	s_hasErrors = true;
 }
 
 void error::ErrorPrinter::warning(const ErrorStruct& err) {
 	printMessage('W', err);
 }
 
-void error::ErrorPrinter::setSource(utf::StringView source) noexcept {
-	s_currentSource = source;
+utf::StringView error::ErrorPrinter::setSource(utf::String source) noexcept {
+	return s_currentSource = std::move(source);
 }
 
 bool error::ErrorPrinter::hasErrors() noexcept {

@@ -18,10 +18,7 @@ void cir::BasicBlock::addInstruction(utils::NoNull<Instruction> instruction) noe
         error::ErrorPrinter::error({
             .code = error::ErrorCode::INSTRUCTION_AFTER_TERMINATOR,
             .name = "CIR error: Instruction after a terminator",
-            .selectionStart = utils::TextPosition(),
-            .selectionLength = 0,
             .description = std::format("Tried to append an instruction after a terminator."),
-            .explanation = "-"
         });
 
         assert(false); // For debug mode.

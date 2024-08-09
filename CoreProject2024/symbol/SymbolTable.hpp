@@ -74,6 +74,4 @@ namespace symbol {
 		// If no such symbol exists, returns nullptr.
 		Symbol* getSymbolById(SymbolId id) const noexcept;
 	};
-
-	extern SymbolTable g_symbolTable;
 }

@@ -26,7 +26,6 @@ ast::Declaration* parser::Parser::parse() {
                 .selectionStart = m_toks.current().position,
                 .selectionLength = m_toks.current().text.size(),
                 .description = std::format("Encountered unexpected token {}, while a global declaration was expected.",  m_toks.current().toString()),
-                .explanation = "-"
             });
 
             m_toks.next();
@@ -72,7 +71,11 @@ ast::Declaration* parser::Parser::functionDeclaration() {
             return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), nativeName).get();
         } else { // = <return expression>
             utils::NoNull<ast::ReturnOperator> returnOperator = ast::AstAllocator::make<ast::ReturnOperator>(m_toks.current().position, expression());
-            utils::NoNull<ast::ExpressionStatement> functionBody = ast::AstAllocator::make<ast::ExpressionStatement>(m_toks.current().position, returnOperator);
+            utils::NoNull<ast::ExpressionStatement> returnStatement = ast::AstAllocator::make<ast::ExpressionStatement>(m_toks.current().position, returnOperator);
+            utils::NoNull<ast::ScopeStatement> functionBody = ast::AstAllocator::make<ast::ScopeStatement>(
+                m_toks.current().position, 
+                std::vector<utils::NoNull<ast::Statement>>{ returnStatement }
+            );
 
             return ast::AstAllocator::make<ast::FunctionDeclaration>(position, name, std::move(returnType), std::move(arguments), functionBody).get();
         }
@@ -116,7 +119,6 @@ ast::Statement* parser::Parser::statement() {
             .selectionStart = m_toks.current().position,
             .selectionLength = m_toks.current().text.size(),
             .description = std::format("Encountered unexpected token {}, while a statement was expected.", m_toks.current().toString()),
-            .explanation = "-"
         });
 
         return nullptr;
@@ -140,7 +142,6 @@ ast::Statement* parser::Parser::scopeStatement() {
                 .selectionStart = m_toks.current().position,
                 .selectionLength = m_toks.current().text.size(),
                 .description = "Encountered unexpected end of file, when looking for the closing right brace.",
-                .explanation = "-"
             });
 
             break;
@@ -269,7 +270,6 @@ ast::Type parser::Parser::parseType() {
             .selectionStart = m_toks.current().position,
             .selectionLength = m_toks.current().text.size(),
             .description = std::format("Encountered unexpected token {}, while a type was expected.",  m_toks.current().toString()),
-            .explanation = "-"
         });
 
         return ast::Type();

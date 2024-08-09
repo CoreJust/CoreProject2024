@@ -48,6 +48,7 @@ namespace cir_pass {
 		LLVMGenerator(llvm_utils::LLVMModule& llvmModule, std::unordered_map<cir::ValueId, llvm::Value*> globals);
 
 		void pass(utils::NoNull<cir::Module> module) override;
+		void optimize();
 
 		llvm::TargetMachine* getTargetMachine() noexcept;
 

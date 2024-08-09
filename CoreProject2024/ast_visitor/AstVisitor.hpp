@@ -43,7 +43,7 @@ namespace ast_visitor {
 		}
 
 		INLINE ExpressionResult visit(utils::NoNull<ast::Expression> node) {
-			switch (node->getType()) {
+			switch (node->getKind()) {
 				case ast::NodeKind::LITERAL_VALUE:			return m_self.visit(*node.as<ast::LiteralValue>());
 				case ast::NodeKind::IDENTIFIER_VALUE:		return m_self.visit(*node.as<ast::IdentifierValue>());
 				case ast::NodeKind::INVOCATION_OPERATOR:	return m_self.visit(*node.as<ast::InvocationOperator>());
@@ -55,7 +55,7 @@ namespace ast_visitor {
 		}
 
 		INLINE StatementResult visit(utils::NoNull<ast::Statement> node) {
-			switch (node->getType()) {
+			switch (node->getKind()) {
 				case ast::NodeKind::EXPRESSION_STATEMENT:	return m_self.visit(*node.as<ast::ExpressionStatement>());
 				case ast::NodeKind::SCOPE_STATEMENT:		return m_self.visit(*node.as<ast::ScopeStatement>());
 				case ast::NodeKind::VARIABLE_DECLARATION:	return m_self.visit(*node.as<ast::VariableDeclaration>());

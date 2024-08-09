@@ -17,10 +17,7 @@ void utils::IndentPrinter::decreaseIndent() {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INTERNAL_ERROR,
 			.name = "Syntax error: Unexpected token",
-			.selectionStart = utils::TextPosition{ },
-			.selectionLength = 0,
 			.description = "Tried to decrease indentation when it already was zero in IndentPrinter.",
-			.explanation = "-"
 		});
 
 		return;

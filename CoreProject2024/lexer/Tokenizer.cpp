@@ -155,7 +155,6 @@ const Token& lexer::Tokenizer::next() {
 				.selectionStart = m_position,
 				.selectionLength = 1,
 				.description = std::format("Encountered unexpected character while tokenizing the source code: '{}' [code U+{:0>4X}]", utf::asString(m_char), utf::decodeUtf(m_char)),
-				.explanation = "-"
 			});
 
 			nextChar();
@@ -214,7 +213,6 @@ void lexer::Tokenizer::tokenizeNumberLiteral() {
 				.selectionStart = tokenPosition,
 				.selectionLength = 2,
 				.description = std::format("Encountered numeric system, after which a number is expected, but no number was found."),
-				.explanation = "-"
 		});
 	}
 
@@ -272,7 +270,6 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 				.selectionStart = tokenPosition,
 				.selectionLength = 1,
 				.description = std::format("Encountered unexpected end of line, but have not reached the closing double quotes for the string literal."),
-				.explanation = "-"
 			});
 
 			break;
@@ -283,7 +280,6 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 				.selectionStart = tokenPosition,
 				.selectionLength = 1,
 				.description = std::format("Encountered unexpected end of file, but have not reached the closing double quotes for the string literal."),
-				.explanation = "-"
 			});
 
 			break;

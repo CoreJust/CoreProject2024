@@ -217,6 +217,9 @@
     <ClCompile Include="cir_pass\CirVerificationPass.cpp" />
     <ClCompile Include="cir_pass\LLVMGenerator.cpp" />
     <ClCompile Include="cir_pass\LLVMGlobalsLoaderPass.cpp" />
+    <ClCompile Include="compiler\Compiler.cpp" />
+    <ClCompile Include="compiler\CompilerOptions.cpp" />
+    <ClCompile Include="compiler\Target.cpp" />
     <ClCompile Include="lexer\Token.cpp" />
     <ClCompile Include="lexer\Tokenizer.cpp" />
     <ClCompile Include="llvm_utils\LLVMModule.cpp" />
@@ -318,6 +321,9 @@
     <ClInclude Include="cir_pass\CirVerificationPass.hpp" />
     <ClInclude Include="cir_pass\LLVMGenerator.hpp" />
     <ClInclude Include="cir_pass\LLVMGlobalsLoaderPass.hpp" />
+    <ClInclude Include="compiler\Compiler.hpp" />
+    <ClInclude Include="compiler\CompilerOptions.hpp" />
+    <ClInclude Include="compiler\Target.hpp" />
     <ClInclude Include="lexer\Token.hpp" />
     <ClInclude Include="lexer\TokenizationUtils.hpp" />
     <ClInclude Include="lexer\Tokenizer.hpp" />

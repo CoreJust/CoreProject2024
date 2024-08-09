@@ -18,7 +18,7 @@ namespace lexer {
 		std::array<bool, 256> result;
 
 		for (int ch = 0; ch < 256; ch++) {
-			result[ch] = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '$';
+			result[ch] = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 		}
 
 		return result;
@@ -29,7 +29,7 @@ namespace lexer {
 		std::array<bool, 256> result;
 
 		for (int ch = 0; ch < 256; ch++) {
-			result[ch] = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '$';
+			result[ch] = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_';
 		}
 
 		return result;

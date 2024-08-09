@@ -75,7 +75,7 @@ namespace ast {
 			return m_nodeId;
 		}
 
-		constexpr NodeKind getType() const noexcept {
+		constexpr NodeKind getKind() const noexcept {
 			return m_nodeKind;
 		}
 	};

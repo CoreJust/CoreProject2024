@@ -4,3 +4,4 @@ Alpha 0.1.0 (17.07.2024 - ?)
 - Written the first version of lexer and parser.
 - Added Core high-level IR and Core IR.
 - Added primitive error handling.
+- Completed simple compiler pipeline.

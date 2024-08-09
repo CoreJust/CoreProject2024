@@ -17,10 +17,7 @@ std::optional<utf::String> utils::readFile(const utf::String& path) {
         error::ErrorPrinter::error({
             .code = error::ErrorCode::INVALID_UTF_IN_FILE,
             .name = "Compiler error: Invalid Utf-8 encoding of file",
-            .selectionStart = TextPosition(),
-            .selectionLength = 0,
             .description = "Encountered an invalid Utf-8 code when reading file " + path,
-            .explanation = "-"
         });
 
         return std::nullopt;
@@ -44,10 +41,7 @@ std::optional<utf::String> utils::readFileUnchecked(const utf::String& path) {
         error::ErrorPrinter::error({
             .code = error::ErrorCode::CANNOT_OPEN_FILE_ERROR,
             .name = "Compiler error: Failed to open file",
-            .selectionStart = TextPosition(),
-            .selectionLength = 0,
             .description = "Encountered an error when trying to open file " + path,
-            .explanation = "-"
         });
 
         return std::nullopt;
@@ -57,10 +51,7 @@ std::optional<utf::String> utils::readFileUnchecked(const utf::String& path) {
         error::ErrorPrinter::error({
             .code = error::ErrorCode::CANNOT_OPEN_FILE_ERROR,
             .name = "Compiler error: Failed to read file",
-            .selectionStart = TextPosition(),
-            .selectionLength = 0,
             .description = "Encountered an error when trying to read file " + path,
-            .explanation = "-"
         });
 
         std::fclose(file);
