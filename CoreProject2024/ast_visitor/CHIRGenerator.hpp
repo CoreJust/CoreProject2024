@@ -10,6 +10,7 @@
 */
 
 #pragma once
+#include <llvm/ADT/SmallVector.h>
 #include "AstVisitor.hpp"
 #include "symbol/SymbolTable.hpp"
 #include "chir/ChirModule.hpp"

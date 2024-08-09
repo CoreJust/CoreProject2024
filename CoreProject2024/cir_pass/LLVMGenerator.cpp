@@ -71,7 +71,7 @@ void cir_pass::LLVMGenerator::compileFunction(utils::NoNull<cir::Function> funct
 		m_values.clear();
 
 		// Adding function arguments to variable list.
-		std::vector<utils::NoNull<cir::FunctionArgument>> functionArguments = function->getArguments();
+		std::vector<utils::NoNull<cir::FunctionArgument>>& functionArguments = function->getArguments();
 		for (uint32_t i = 0; i < functionArguments.size(); i++) {
 			llvm::Value* llvmArgument = m_builder.CreateAlloca(llvmFunction->getArg(i)->getType(), 0, "arg$" + utf::String(functionArguments[i]->getName()));
 			m_builder.CreateStore(llvmFunction->getArg(i), llvmArgument);

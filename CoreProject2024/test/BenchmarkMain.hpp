@@ -9,55 +9,50 @@
 *	Cannot coexist with the other main functions.
 */
 
-#include <map>
 #include <benchmark/benchmark.h>
-#include "utils/StringHash.hpp"
+#include <vector>
+#include <random>
+#include <llvm/ADT/SmallVector.h>
+#include "utf/String.hpp"
 
-std::map<utf::StringView, int> TOKENS = {
-	{ "ja", 10 },
-	{ "nein", 1 },
-	{ "+", 13 },
-	{ "-", 63 },
-	{ "function", 785 },
-	{ "native", 3624 },
-	{ "return", 672674 },
-	{ "?", 375 },
-	{ ">>>", 264 }
+uint8_t COUNTS[] = {
+	1, 0, 1, 2, 3, 1, 2, 1, 4, 5, 8, 0, 1, 5, 1, 5, 4, 10, 11, 3, 2, 4, 2, 4, 6, 7, 2, 2, 1, 3, 2, 15, 1, 1, 2, 3, 2, 3, 4, 4, 4, 5, 29
 };
 
-constexpr int getValue(utf::StringView str) noexcept {
-	switch (utils::hashOf(str)) {
-		case utils::hashOf("ja"): return 10;
-		case utils::hashOf("nein"): return 1;
-		case utils::hashOf("+"): return 13;
-		case utils::hashOf("-"): return 63;
-		case utils::hashOf("function"): return 785;
-		case utils::hashOf("native"): return 3624;
-		case utils::hashOf("return"): return 672674;
-		case utils::hashOf("?"): return 375;
-		case utils::hashOf(">>>"): return 264;
-	default: return 0;
-	}
-}
-
-static void BM_Map(benchmark::State& state) {
-	utf::String ARR[] = { "ja", "nein", "+", "-", "function", "native", "return", "?", ">>>" };
-
-	uint64_t i = 0;
+static void BM_StdVector(benchmark::State& state) {
+	srand(42);
 	for (auto _ : state) {
-		benchmark::DoNotOptimize(TOKENS.find(ARR[(i += 5) % std::size(ARR)]));
+		int cnt = rand() % std::size(COUNTS);
+		std::vector<utf::String> vec;
+		for (int i = 0; i < cnt; i++) {
+			benchmark::DoNotOptimize(vec.emplace_back());
+		}
 	}
 }
-BENCHMARK(BM_Map);
+BENCHMARK(BM_StdVector);
 
-static void BM_Switch(benchmark::State& state) {
-	utf::String ARR[] = { "ja", "nein", "+", "-", "function", "native", "return", "?", ">>>" };
-
-	uint64_t i = 0;
+static void BM_DefaultSmallVector(benchmark::State& state) {
+	srand(42);
 	for (auto _ : state) {
-		benchmark::DoNotOptimize(getValue(ARR[(i += 5) % std::size(ARR)]));
+		int cnt = rand() % std::size(COUNTS);
+		std::vector<utf::String> vec;
+		for (int i = 0; i < cnt; i++) {
+			benchmark::DoNotOptimize(vec.emplace_back());
+		}
 	}
 }
-BENCHMARK(BM_Switch);
+BENCHMARK(BM_DefaultSmallVector);
+
+static void BM_LargerSmallVector(benchmark::State& state) {
+	srand(42);
+	for (auto _ : state) {
+		int cnt = rand() % std::size(COUNTS);
+		std::vector<utf::String, 5> vec;
+		for (int i = 0; i < cnt; i++) {
+			benchmark::DoNotOptimize(vec.emplace_back());
+		}
+	}
+}
+BENCHMARK(BM_LargerSmallVector);
 
 BENCHMARK_MAIN();

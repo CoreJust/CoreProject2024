@@ -20,7 +20,7 @@ utf::String symbol::FunctionSymbol::makeMangledName() const {
 		"{}::{}${}${}", 
 		utils::joinToString(m_path.internalPath.path, "."),
 		m_name, 
-		utils::joinToString(m_arguments, ":", "", "", [](utils::NoNull<VariableSymbol> argument) -> utf::String {
+		utils::joinToString(m_arguments, ":", "", "", [](auto argument) -> auto {
 			return argument->getType().toMangleString();
 		}),
 		m_returnType.toMangleString()

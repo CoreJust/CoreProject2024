@@ -623,6 +623,9 @@
     <ClInclude Include="compiler\Compiler.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="utf\FastFmt.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.core" />

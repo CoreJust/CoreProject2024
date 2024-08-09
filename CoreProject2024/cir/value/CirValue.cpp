@@ -7,7 +7,7 @@
 #include "constant/CirConstanNumber.hpp"
 
 cir::Value::Value(utf::String name, Type type, ValueKind kind) noexcept
-    : m_name(name), m_type(std::move(type)), m_kind(kind), m_id(generateUniqueId()) {
+    : m_name(std::move(name)), m_type(std::move(type)), m_kind(kind), m_id(generateUniqueId()) {
     assert((type == TypeKind::UNIT) == !cir::isUsable(kind));
 }
 

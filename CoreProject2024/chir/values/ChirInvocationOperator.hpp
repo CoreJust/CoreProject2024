@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include <vector>
+#include <llvm/ADT/SmallVector.h>
 #include "../ChirValue.hpp"
 
 namespace chir {

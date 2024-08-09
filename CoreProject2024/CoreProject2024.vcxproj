@@ -340,6 +340,7 @@
     <ClInclude Include="test\SourceCodeGenerator.hpp" />
     <ClInclude Include="symbol\types\TypeKind.hpp" />
     <ClInclude Include="symbol\types\Type.hpp" />
+    <ClInclude Include="utf\FastFmt.hpp" />
     <ClInclude Include="utf\StringUtils.hpp" />
     <ClInclude Include="utf\UtfIterator.hpp" />
     <ClInclude Include="utils\Bit.hpp" />

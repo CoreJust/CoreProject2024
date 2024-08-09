@@ -9,6 +9,7 @@
 */
 
 #pragma once
+#include <llvm/ADT/SmallVector.h>
 #include "utils/NoNull.hpp"
 #include "VariableSymbol.hpp"
 

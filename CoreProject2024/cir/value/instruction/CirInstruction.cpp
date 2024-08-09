@@ -4,6 +4,7 @@
 
 #include "CirInstruction.hpp"
 #include <cassert>
+#include "utf/FastFmt.hpp"
 
 cir::Instruction::Instruction(utf::String name, Type type, ValueKind kind) noexcept 
 	: Value(std::move(name), std::move(type), kind) {
@@ -11,5 +12,5 @@ cir::Instruction::Instruction(utf::String name, Type type, ValueKind kind) noexc
 }
 
 void cir::Instruction::appendInstructionIndexToName(uint64_t index) {
-	m_name += std::to_string(index);
+	m_name.append(utf::fastToString(index));
 }

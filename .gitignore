@@ -7,6 +7,9 @@
 bench.core
 *.exe
 *.o
+*.i
+*.cfg
+*.cmd
 
 # User-specific files
 *.rsuser
