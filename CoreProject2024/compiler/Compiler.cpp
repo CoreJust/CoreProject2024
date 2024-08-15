@@ -227,6 +227,18 @@ void compiler::Compiler::generateObjectFile(llvm_utils::LLVMModule&& llvmModule,
 		throw 0;
 	}
 
+	// Emitting the assembly.
+	if (CompilerOptions::shallEmitAssembly()) {
+		llvm::legacy::PassManager emitPassManager;
+		if (targetMachine->addPassesToEmitFile(emitPassManager, llvm::errs(), nullptr, llvm::CodeGenFileType::AssemblyFile)) {
+			throw 0;
+		}
+
+		std::cout << "\n\nAssembly:\n\n";
+		emitPassManager.run(llvmModule.getModule());
+		llvm::errs().flush();
+	}
+
 	// Generating the object code.
 	passManager.run(llvmModule.getModule());
 	objectCodeOutput.flush();

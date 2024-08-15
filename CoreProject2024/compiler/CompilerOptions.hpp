@@ -44,11 +44,12 @@ namespace compiler {
 		OPTIMIZED_CIR = 0x8,
 		LLVM_IR = 0x10,
 		OPTIMIZED_LLVM_IR = 0x20,
-		OBJECT_FILE = 0x40,
-		EXECUTABLE_FILE = 0x80, // Includes OBJECT_FILE
-		EXECUTION_RESULTS = 0x100, // Includes OBJECT_FILE and EXECUTABLE_FILE
+		ASSEMBLY = 0x40,
+		OBJECT_FILE = 0x80,
+		EXECUTABLE_FILE = 0x100, // Includes OBJECT_FILE
+		EXECUTION_RESULTS = 0x200, // Includes OBJECT_FILE and EXECUTABLE_FILE
 
-		ALL = 0x1ff
+		ALL = 0x3ff
 	};
 
 	/*
@@ -177,6 +178,7 @@ namespace compiler {
 		static bool shallEmitOptimizedCIR() noexcept;
 		static bool shallEmitLLVMIR() noexcept;
 		static bool shallEmitOptimizedLLVMIR() noexcept;
+		static bool shallEmitAssembly() noexcept;
 		static bool shallEmitObjectFile() noexcept;
 		static bool shallEmitExecutableFile() noexcept;
 		static bool shallEmitExecutionResult() noexcept;

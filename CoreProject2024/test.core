@@ -1,7 +1,12 @@
+// A function of the standard C runtime library.
 fn putchar(ch: i32): i32 = native("putchar")
 
+// Test /*
 fn next(ch: i32): i32 = ch + 1
 
+/*
+	This is a multiline comment.
+*/
 fn print(c: i32): i32 {
 	let t1 = next(c)
 	putchar(c)

@@ -124,6 +124,17 @@ const Token& lexer::Tokenizer::next() {
 			continue;
 		}
 
+		// Checking for comment start.
+		if (m_char == utf::encodeUtf('/') && m_ptr < m_end) {
+			if (*m_ptr == '/') {
+				skipSinglelineComment();
+				continue;
+			} else if (*m_ptr == '*') {
+				skipMultilineComment();
+				continue;
+			}
+		}
+
 		if (m_char == 0 && m_ptr >= m_end) { // Reached end of source string.
 			break;
 		}
@@ -320,6 +331,67 @@ void lexer::Tokenizer::tokenizeOperator() {
 		.position = tokenPosition,
 		.type = operatorTokenType
 	};
+}
+
+void lexer::Tokenizer::skipSinglelineComment() {
+	// Skipping the initial //
+	nextChar();
+	nextChar();
+
+	utf::skipToNextLine(m_char, m_ptr, m_end);
+}
+
+void lexer::Tokenizer::skipMultilineComment() {
+	uint32_t depth = 1; // Current nestedness of the comment.
+	bool isInString = false; // So as not to mistaken a */ or /* within a string literal for a comment.
+
+	// Skipping the initial /*
+	nextChar();
+	nextChar();
+
+	while (depth && m_ptr < m_end) {
+		if (isInString) {
+			// No need to separately handle multiline strings, since """...""" would be considered "" "..." "" and work as expected.
+			if (m_char == utf::encodeUtf('"')) {
+				isInString = false;
+			}
+
+			nextChar();
+			continue;
+		}
+
+		switch (m_char) {
+			case utf::encodeUtf('/'): 
+				if (*m_ptr == '*') {
+					depth += 1;
+					nextChar();
+					nextChar();
+				} break;
+			case utf::encodeUtf('*'):
+				if (*m_ptr == '/') {
+					depth -= 1;
+					nextChar();
+					nextChar();
+				} break;
+			case utf::encodeUtf('"'):
+				isInString = true;
+				nextChar();
+				break;
+		default: 
+			nextChar(); // Skip the custom character.
+			break;
+		}
+	}
+
+	if (depth) {
+		error::ErrorPrinter::error({
+			.code = error::ErrorCode::NO_COMMENT_END,
+			.name = "Syntax error: No closing */ for a multiline comment",
+			.selectionStart = m_position,
+			.selectionLength = 0,
+			.description = std::format("Encountered unexpected end of file, but have not reached the closing */ for the multiline comment."),
+		});
+	}
 }
 
 void lexer::Tokenizer::skipWhitespaces() {

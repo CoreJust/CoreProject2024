@@ -5,3 +5,8 @@ Alpha 0.1.0 (17.07.2024 - 09.08.2024)
 - Added Core high-level IR and Core IR.
 - Added primitive error handling.
 - Completed simple compiler pipeline.
+- Added language features: functions (common and native), immutable variables (local and global), i32 and unit types, arithmetic operations.
+
+Alpha 0.1.1 (15.08.2024 - ?)
+- Added comments.
+- Added target assembly emitting.

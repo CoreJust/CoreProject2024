@@ -96,6 +96,10 @@ bool compiler::CompilerOptions::shallEmitOptimizedLLVMIR() noexcept {
     return static_cast<uint32_t>(s_emitMode) & static_cast<uint32_t>(EmitMode::OPTIMIZED_LLVM_IR);
 }
 
+bool compiler::CompilerOptions::shallEmitAssembly() noexcept {
+    return static_cast<uint32_t>(s_emitMode) & static_cast<uint32_t>(EmitMode::ASSEMBLY);
+}
+
 bool compiler::CompilerOptions::shallEmitObjectFile() noexcept {
     return static_cast<uint32_t>(s_emitMode) & static_cast<uint32_t>(EmitMode::OBJECT_FILE);
 }

@@ -7,6 +7,15 @@ a-zA-Z0-9_+-*/%=:;,(){}"
 As well as spaces and new lines (those can be non-ASCII as well).
 All of the UTF-8 symbols are allowed in string literals.
 
+###  Comments  ###
+In any place within the program (apart from within string literals) it is allowed to write comments.
+There can be comments of 2 types:
+1) Single-line comments //<any characters>[<new line>]
+2) Multiline comments /*<any characters>|<nested comments>*/
+It is allowed to have nested multiline comments.
+Single-line comments might include the /* character combination, it wouldn't cause a multiline comment.
+All the comments are ingored by compiler and do not affect the token stream (apart from the new lines within).
+
 ###  Program structure  ###
 A program consists of a single .core file.
 The file can contain a number of functions, among which there must be the main function.
