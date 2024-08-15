@@ -10,6 +10,7 @@
 
 #pragma once
 #include "String.hpp"
+#include "Utf.hpp"
 
 namespace utf {
 	/*

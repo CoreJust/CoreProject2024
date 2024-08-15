@@ -11,3 +11,5 @@ Alpha 0.1.1 (15.08.2024 - ?)
 - Added comments.
 - Added target assembly emitting.
 - Added bool type, added true and false literals.
+- Slightly increased project compilation speed.
+- Fixed bug with local variables names in CIR (they had indices appended to their name).

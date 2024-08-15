@@ -47,6 +47,13 @@ namespace ast {
 		BINARY_OPERATOR,
 
 		/*
+		*	Conditional binary operator that can be chained:
+		*	<first expression> <op> <second expression> [<op> <nth expression>]...
+		*	e.g. a == b == c, x != y, x < y > z
+		*/
+		COMPARATIVE_BINARY_OPERATOR,
+
+		/*
 		*	Return operator that returns the result from the function:
 		*	return [<expr>] # <expr> is omitted in functions returning unit type.
 		*	Also, it is implicitly used in expressions like fn...(...) = <expr>

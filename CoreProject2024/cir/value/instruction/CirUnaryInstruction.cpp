@@ -18,5 +18,5 @@ utils::NoNull<cir::Value>& cir::UnaryInstruction::getOperand() noexcept {
 }
 
 utf::String cir::UnaryInstruction::toInstuctionString() const {
-    return std::format("tmp {} = {} {}", m_name, "-"[m_instuctionKind], m_operand->toString());
+    return std::format("tmp {} = {} {}", m_name, "-!"[m_instuctionKind], m_operand->toString());
 }

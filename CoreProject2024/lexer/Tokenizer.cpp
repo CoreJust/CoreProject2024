@@ -5,6 +5,7 @@
 #include "Tokenizer.hpp"
 #include <cassert>
 #include <format>
+#include "utf/Utf.hpp"
 #include "utf/StringHash.hpp"
 #include "error/ErrorPrinter.hpp"
 #include "TokenizationUtils.hpp"
@@ -39,6 +40,17 @@ constexpr TokenType getOperatorTokenType(const utils::StringHashBuilder& hashBui
 		case utils::hashOf("*"): return TokenType::STAR;
 		case utils::hashOf("/"): return TokenType::SLASH;
 		case utils::hashOf("%"): return TokenType::PERCENT;
+		case utils::hashOf("&"): return TokenType::AND;
+		case utils::hashOf("|"): return TokenType::OR;
+		case utils::hashOf("=="): return TokenType::EQEQ;
+		case utils::hashOf("!="): return TokenType::NOTEQ;
+		case utils::hashOf("<="): return TokenType::LESSEQ;
+		case utils::hashOf(">="): return TokenType::GREATEREQ;
+		case utils::hashOf("<"): return TokenType::LESS;
+		case utils::hashOf(">"): return TokenType::GREATER;
+		case utils::hashOf("!"): return TokenType::NOT;
+		case utils::hashOf("&&"): return TokenType::LOGIC_AND;
+		case utils::hashOf("||"): return TokenType::LOGIC_OR;
 		case utils::hashOf("("): return TokenType::LPAREN;
 		case utils::hashOf(")"): return TokenType::RPAREN;
 		case utils::hashOf("{"): return TokenType::LBRACE;
@@ -288,7 +300,7 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 
 			break;
 		} else if (m_ptr >= m_end) { // Reached the end of source file but have not found the closing "
-			error::ErrorPrinter::error({
+			error::ErrorPrinter::fatalError({
 				.code = error::ErrorCode::NO_CLOSING_QUOTES,
 				.name = "Syntax error: No closing double quotes",
 				.selectionStart = tokenPosition,
@@ -387,7 +399,7 @@ void lexer::Tokenizer::skipMultilineComment() {
 	}
 
 	if (depth) {
-		error::ErrorPrinter::error({
+		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::NO_COMMENT_END,
 			.name = "Syntax error: No closing */ for a multiline comment",
 			.selectionStart = m_position,

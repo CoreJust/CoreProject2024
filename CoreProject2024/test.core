@@ -39,9 +39,12 @@ fn print2(c: i32): i32 {
 fn print3(c: i32, b: bool): i32 = print2(print2(c))
 
 fn main(): i32 {
-	let bool_test = false
+	let a = 10
+	let b = 11
+	let c = 13
+	let bool_test = !(a > b > c) || false
 	
-	print3(32, true)
+	print3(32, bool_test)
 	putchar(10)
 
 	return 0

@@ -18,6 +18,7 @@ namespace chir {
 		enum UnaryOperatorType : uint8_t {
 			PLUS = 0,
 			MINUS,
+			LOGIC_NOT,
 
 			UNARY_OPERATOR_TYPES_COUNT
 		};

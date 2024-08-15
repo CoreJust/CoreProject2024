@@ -16,3 +16,11 @@ utils::NoNull<ast::Expression>& ast::UnaryOperator::getExpression() noexcept {
 ast::UnaryOperator::UnaryOperatorType ast::UnaryOperator::getOperator() const noexcept {
 	return m_operator;
 }
+
+bool ast::UnaryOperator::isArithmetical() const noexcept {
+	return m_operator <= UnaryOperatorType::MINUS;
+}
+
+bool ast::UnaryOperator::isLogical() const noexcept {
+	return m_operator > UnaryOperatorType::MINUS;
+}

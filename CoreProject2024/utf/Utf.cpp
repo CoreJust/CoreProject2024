@@ -2,7 +2,7 @@
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-#include "String.hpp"
+#include "Utf.hpp"
 
 using namespace utf;
 
@@ -68,7 +68,7 @@ bool utf::isValidUtf(StringView str) {
 			case 0b01110000: [[fallthrough]];
 			case 0b01111000: ptr += 1; break;
 			// 2-byte sequence
-			case 0b11000000: 
+			case 0b11000000:
 				if (*ptr < 0b11000100) return false; // Overlong character
 				[[fallthrough]];
 			case 0b11001000: [[fallthrough]];
@@ -136,23 +136,23 @@ bool utf::skipToNextLine(Char& ch, char const*& ptr, const char* end) {
 	return false;
 }
 
-String& operator+=(String& str, Char ch) {
-	switch (getCharSize(ch)) {
-		case 4:
-			str += std::bit_cast<char>(getFirstByteOf(ch));
-			ch <<= 8;
-			[[fallthrough]];
-		case 3:
-			str += std::bit_cast<char>(getFirstByteOf(ch));
-			ch <<= 8;
-			[[fallthrough]];
-		case 2:
-			str += std::bit_cast<char>(getFirstByteOf(ch));
-			ch <<= 8;
-			[[fallthrough]];
-		case 1:
-			str += std::bit_cast<char>(getFirstByteOf(ch));
-			break;
+utf::String& operator+=(utf::String& str, utf::Char ch) {
+	switch (utf::getCharSize(ch)) {
+	case 4:
+		str += std::bit_cast<char>(utf::getFirstByteOf(ch));
+		ch <<= 8;
+		[[fallthrough]];
+	case 3:
+		str += std::bit_cast<char>(utf::getFirstByteOf(ch));
+		ch <<= 8;
+		[[fallthrough]];
+	case 2:
+		str += std::bit_cast<char>(utf::getFirstByteOf(ch));
+		ch <<= 8;
+		[[fallthrough]];
+	case 1:
+		str += std::bit_cast<char>(utf::getFirstByteOf(ch));
+		break;
 	default: unreachable();
 	}
 

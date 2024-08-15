@@ -156,7 +156,7 @@ ast::Expression* parser::Parser::expression() {
         return returnOperator();
     }
 
-    return additive();
+    return logical();
 }
 
 ast::Expression* parser::Parser::returnOperator() {
@@ -166,6 +166,70 @@ ast::Expression* parser::Parser::returnOperator() {
     } else {
         return ast::AstAllocator::make<ast::ReturnOperator>(position, expression()).get();
     }
+}
+
+ast::Expression* parser::Parser::logical() {
+    ast::Expression* result = comparative();
+    while (true) {
+        if (m_toks.match(lexer::LOGIC_AND)) {
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::LOGIC_AND, result, comparative()).get();
+            continue;
+        } else if (m_toks.match(lexer::LOGIC_OR)) {
+            result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::LOGIC_OR, result, comparative()).get();
+            continue;
+        }
+
+        break;
+    }
+
+    return result;
+}
+
+ast::Expression* parser::Parser::comparative() {
+    static thread_local std::vector<utils::NoNull<ast::Expression>> s_comparedExpressions;
+    static thread_local std::vector<ast::ComparativeBinaryOperator::ComparativeOperatorType> s_operators;
+
+    ast::Expression* result = additive();
+    s_comparedExpressions.clear();
+    s_comparedExpressions.emplace_back(result);
+
+    while (true) {
+        if (m_toks.match(lexer::EQEQ)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::EQUALS);
+            continue;
+        } else if (m_toks.match(lexer::NOTEQ)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::NOT_EQUALS);
+            continue;
+        } else if (m_toks.match(lexer::LESSEQ)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::LESS_EQUALS);
+            continue;
+        } else if (m_toks.match(lexer::GREATEREQ)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::GREATER_EQUALS);
+            continue;
+        } else if (m_toks.match(lexer::LESS)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::LESS);
+            continue;
+        } else if (m_toks.match(lexer::GREATER)) {
+            s_comparedExpressions.emplace_back(additive());
+            s_operators.emplace_back(ast::ComparativeBinaryOperator::GREATER);
+            continue;
+        }
+
+        break;
+    }
+
+    // Now check if there were no comparisons.
+    if (s_operators.empty()) {
+        return result;
+    }
+
+    // There was at least one comparison.
+    return ast::AstAllocator::make<ast::ComparativeBinaryOperator>(result->getPosition(), std::exchange(s_operators, { }), std::exchange(s_comparedExpressions, { })).get();
 }
 
 ast::Expression* parser::Parser::additive() {
@@ -210,6 +274,8 @@ ast::Expression* parser::Parser::unary() {
         return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::PLUS, unary()).get();
     } else if (m_toks.match(lexer::MINUS)) {
         return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::MINUS, unary()).get();
+    } else if (m_toks.match(lexer::NOT)) {
+        return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::LOGIC_NOT, unary()).get();
     }
 
     return postprimary();

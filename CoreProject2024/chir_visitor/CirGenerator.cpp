@@ -52,7 +52,8 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::UnaryOperator&
     utils::NoNull<cir::Value> operand = Parent::visit(node.getValue());
 
     switch (node.getOperator()) {
-        case chir::UnaryOperator::MINUS: return m_builder.makeNeg(operand);
+        case chir::UnaryOperator::MINUS:     return m_builder.makeNeg(operand);
+        case chir::UnaryOperator::LOGIC_NOT: return m_builder.makeLogicNot(operand);
     default: return operand;
     }
 }
@@ -67,6 +68,14 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::BinaryOperator
         case chir::BinaryOperator::MULTIPLY:    return m_builder.makeMul(left, right);
         case chir::BinaryOperator::DIVIDE:      return m_builder.makeDiv(left, right);
         case chir::BinaryOperator::REMAINDER:   return m_builder.makeRem(left, right);
+        case chir::BinaryOperator::LOGICAL_AND: return m_builder.makeLogicAnd(left, right);
+        case chir::BinaryOperator::LOGICAL_OR:  return m_builder.makeLogicOr(left, right);
+        case chir::BinaryOperator::EQUALS:      return m_builder.makeEq(left, right);
+        case chir::BinaryOperator::NOT_EQUALS:  return m_builder.makeNeq(left, right);
+        case chir::BinaryOperator::LESS_EQUALS: return m_builder.makeLeq(left, right);
+        case chir::BinaryOperator::GREATER_EQUALS: return m_builder.makeGeq(left, right);
+        case chir::BinaryOperator::LESS:        return m_builder.makeLt(left, right);
+        case chir::BinaryOperator::GREATER:     return m_builder.makeGt(left, right);
     default: unreachable();
     }
 }

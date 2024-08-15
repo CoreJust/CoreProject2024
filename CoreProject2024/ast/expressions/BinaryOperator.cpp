@@ -21,3 +21,11 @@ utils::NoNull<ast::Expression>& ast::BinaryOperator::getRight() noexcept {
 ast::BinaryOperator::BinaryOperatorType ast::BinaryOperator::getOperator() const noexcept {
     return m_operator;
 }
+
+bool ast::BinaryOperator::isArithmetical() const noexcept {
+    return m_operator <= BinaryOperatorType::REMAINDER;
+}
+
+bool ast::BinaryOperator::isLogical() const noexcept {
+    return m_operator > BinaryOperatorType::REMAINDER;
+}

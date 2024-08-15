@@ -58,8 +58,9 @@ void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
 
 void chir_visitor::ChirPrinter::visit(chir::UnaryOperator& node) {
 	switch (node.getOperator()) {
-		case chir::UnaryOperator::PLUS:  m_printer.stream() << "+("; break;
-		case chir::UnaryOperator::MINUS: m_printer.stream() << "-("; break;
+		case chir::UnaryOperator::PLUS:		 m_printer.stream() << "+("; break;
+		case chir::UnaryOperator::MINUS:	 m_printer.stream() << "-("; break;
+		case chir::UnaryOperator::LOGIC_NOT: m_printer.stream() << "!("; break;
 	default: unreachable();
 	}
 
@@ -72,11 +73,19 @@ void chir_visitor::ChirPrinter::visit(chir::BinaryOperator& node) {
 	Parent::visit(node.getLeft());
 
 	switch (node.getOperator()) {
-		case chir::BinaryOperator::PLUS:	  m_printer.stream() << ") + ("; break;
-		case chir::BinaryOperator::MINUS:	  m_printer.stream() << ") - ("; break;
-		case chir::BinaryOperator::MULTIPLY:  m_printer.stream() << ") * ("; break;
-		case chir::BinaryOperator::DIVIDE:	  m_printer.stream() << ") / ("; break;
-		case chir::BinaryOperator::REMAINDER: m_printer.stream() << ") % ("; break;
+		case chir::BinaryOperator::PLUS:		m_printer.stream() << ") + ("; break;
+		case chir::BinaryOperator::MINUS:		m_printer.stream() << ") - ("; break;
+		case chir::BinaryOperator::MULTIPLY:	m_printer.stream() << ") * ("; break;
+		case chir::BinaryOperator::DIVIDE:		m_printer.stream() << ") / ("; break;
+		case chir::BinaryOperator::REMAINDER:	m_printer.stream() << ") % ("; break;
+		case chir::BinaryOperator::LOGICAL_AND: m_printer.stream() << ") && ("; break;
+		case chir::BinaryOperator::LOGICAL_OR:	m_printer.stream() << ") || ("; break;
+		case chir::BinaryOperator::EQUALS:		m_printer.stream() << ") == ("; break;
+		case chir::BinaryOperator::NOT_EQUALS:	m_printer.stream() << ") != ("; break;
+		case chir::BinaryOperator::LESS_EQUALS: m_printer.stream() << ") <= ("; break;
+		case chir::BinaryOperator::GREATER_EQUALS: m_printer.stream() << ") >= ("; break;
+		case chir::BinaryOperator::LESS:		m_printer.stream() << ") < ("; break;
+		case chir::BinaryOperator::GREATER:		m_printer.stream() << ") > ("; break;
 	default: unreachable();
 	}
 

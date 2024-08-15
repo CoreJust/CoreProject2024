@@ -4,6 +4,7 @@
 
 #include "TextPosition.hpp"
 #include <format>
+#include "utf/Utf.hpp"
 
 utf::String utils::TextPosition::getTextSelection(utf::StringView text, uint64_t selectionLength, bool allowMultipleLines, bool empasize) const {
     uint64_t selectionStart = getIndexInText(TextPosition { .line = line, .character = 0 }, text);

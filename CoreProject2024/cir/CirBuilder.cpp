@@ -31,6 +31,10 @@ utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeNeg(utils::NoNull<Valu
     return makeInstruction<UnaryInstruction>(UnaryInstruction::NEG, operand, std::move(name));
 }
 
+utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeLogicNot(utils::NoNull<Value> operand, utf::String name) {
+    return makeInstruction<UnaryInstruction>(UnaryInstruction::LOGIC_NOT, operand, std::move(name));
+}
+
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
     return makeInstruction<BinaryInstruction>(BinaryInstruction::ADD, left, right, std::move(name));
 }
@@ -49,6 +53,38 @@ utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeDiv(utils::NoNull<Val
 
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeRem(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
     return makeInstruction<BinaryInstruction>(BinaryInstruction::REM, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeLogicAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::LOGIC_AND, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeLogicOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::LOGIC_OR, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeEq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_EQ, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeNeq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_NEQ, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeLeq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_LEQ, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeGeq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_GEQ, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeLt(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_LT, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeGt(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+    return makeInstruction<BinaryInstruction>(BinaryInstruction::CMP_GT, left, right, std::move(name));
 }
 
 utils::NoNull<cir::InvocationInstruction> cir::CirBuilder::makeInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name) {

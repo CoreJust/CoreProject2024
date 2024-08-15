@@ -136,7 +136,8 @@ llvm::Value* cir_pass::LLVMGenerator::compileConstant(utils::NoNull<cir::Constan
 llvm::Value* cir_pass::LLVMGenerator::compileUnaryInstruction(utils::NoNull<cir::UnaryInstruction> instruction) {
 	llvm::Value* operand = getLLVMValue(instruction->getOperand());
 	switch (instruction->getInstructionKind()) {
-		case cir::UnaryInstruction::NEG: return m_builder.CreateNeg(operand, instruction->getName());
+		case cir::UnaryInstruction::NEG:	   return m_builder.CreateNeg(operand, instruction->getName());
+		case cir::UnaryInstruction::LOGIC_NOT: return m_builder.CreateNot(operand, instruction->getName());
 	default: unreachable();
 	}
 }
@@ -150,6 +151,14 @@ llvm::Value* cir_pass::LLVMGenerator::compileBinaryInstruction(utils::NoNull<cir
 		case cir::BinaryInstruction::MUL: return m_builder.CreateMul(left, right, instruction->getName());
 		case cir::BinaryInstruction::DIV: return m_builder.CreateSDiv(left, right, instruction->getName());
 		case cir::BinaryInstruction::REM: return m_builder.CreateSRem(left, right, instruction->getName());
+		case cir::BinaryInstruction::LOGIC_AND: return m_builder.CreateAnd(left, right, instruction->getName());
+		case cir::BinaryInstruction::LOGIC_OR: return m_builder.CreateOr(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_EQ: return m_builder.CreateICmpEQ(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_NEQ: return m_builder.CreateICmpNE(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_LEQ: return m_builder.CreateICmpSLE(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_GEQ: return m_builder.CreateICmpSGE(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_LT: return m_builder.CreateICmpSLT(left, right, instruction->getName());
+		case cir::BinaryInstruction::CMP_GT: return m_builder.CreateICmpSGT(left, right, instruction->getName());
 	default: unreachable();
 	}
 }

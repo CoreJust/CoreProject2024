@@ -3,9 +3,9 @@ This file contains the relevant features of the language (currently it is only a
 ###  Characters  ###
 A Core program is written in UTF-8 encoding.
 In the code only some of ASCII characters might be used:
-a-zA-Z0-9_+-*/%=:;,(){}"
+a-zA-Z0-9_+-*/%=<>|&!:;,(){}"
 As well as spaces and new lines (those can be non-ASCII as well).
-All of the UTF-8 symbols are allowed in string literals.
+All the UTF-8 symbols are allowed in string literals.
 
 ###  Comments  ###
 In any place within the program (apart from within string literals) it is allowed to write comments.
@@ -75,27 +75,41 @@ bool is the boolean type with 2 possible values: true and false.
 There are following expressions available:
 <expression> :=
 	return <expression> # Returns the expression result from the function. Has the never type. Cannot be used in another return statement.
+	|<comparative>
+<logical> :=
+	<comparative> || <logical>
+	|<comparative> && <logical>
+	|<comparative>
+<comparative> :=
+	<additive> == <comparative>
+	|<additive> != <comparative>
+	|<additive> <= <comparative>
+	|<additive> >= <comparative>
+	|<additive> < <comparative>
+	|<additive> > <comparative>
 	|<additive>
 <additive> :=
-	<multiplicative> + <multiplicative>
-	|<multiplicative> - <multiplicative>
+	<multiplicative> + <additive>
+	|<multiplicative> - <additive>
 	|<multiplicative>
 <multiplicative> :=
-	<unary> * <unary>
-	|<unary> / <unary>
-	|<unary> % <unary>
+	<unary> * <multiplicative>
+	|<unary> / <multiplicative>
+	|<unary> % <multiplicative>
 	|<unary>
 <unary> :=
 	+<unary>
 	|-<unary>
+	|!<unary>
 	|<postprimary>
 <postprimary> :=
-	<primary>([<expression>[, <expression>]...])
+	<postprimary>([<expression>[, <expression>]...])
 	|<primary>
 <primary> :=
 	(<expression>)
 	|<identifier>
 	|<literal>
+Conditional expressions may be chained: a < b < c is the same as a < b && b < c.
 
 ###  Literals  ###
 There are currently only two type of literals: numbers and strings.

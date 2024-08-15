@@ -35,6 +35,7 @@ namespace ast_visitor {
 		void visit(ast::InvocationOperator& node) override;
 		void visit(ast::UnaryOperator& node) override;
 		void visit(ast::BinaryOperator& node) override;
+		void visit(ast::ComparativeBinaryOperator& node) override;
 		void visit(ast::ReturnOperator& node) override;
 		void visit(ast::ExpressionStatement& node) override;
 		void visit(ast::ScopeStatement& node) override;

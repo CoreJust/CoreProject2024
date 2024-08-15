@@ -14,6 +14,7 @@
 #include "expressions/InvocationOperator.hpp"
 #include "expressions/UnaryOperator.hpp"
 #include "expressions/BinaryOperator.hpp"
+#include "expressions/ComparativeBinaryOperator.hpp"
 #include "expressions/ReturnOperator.hpp"
 #include "statements/ExpressionStatement.hpp"
 #include "statements/ScopeStatement.hpp"

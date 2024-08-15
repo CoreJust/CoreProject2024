@@ -18,6 +18,7 @@ namespace cir {
 	public:
 		enum UnaryInstructionKind : uint8_t {
 			NEG = 0,
+			LOGIC_NOT,
 
 			UNARY_INSTRUCTIONS_COUNT
 		};

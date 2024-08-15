@@ -18,6 +18,7 @@ namespace ast {
 		enum UnaryOperatorType : uint8_t {
 			PLUS = 0,
 			MINUS,
+			LOGIC_NOT,
 
 			UNARY_OPERATOR_TYPES_COUNT
 		};
@@ -31,5 +32,11 @@ namespace ast {
 
 		utils::NoNull<Expression>& getExpression() noexcept;
 		UnaryOperatorType getOperator() const noexcept;
+
+		// Returns whether the operator is arithmetical.
+		bool isArithmetical() const noexcept;
+
+		// Returns whether the operator is logical.
+		bool isLogical() const noexcept;
 	};
 }

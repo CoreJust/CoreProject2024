@@ -3,7 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "IndentPrinter.hpp"
-#include "error/ErrorPrinter.hpp"
+#include "error/InternalAssert.hpp"
 
 utils::IndentPrinter::IndentPrinter(std::ostream& stream, utf::String indentString) noexcept
 	: m_stream(stream), m_indentString(std::move(indentString)) { }
@@ -13,15 +13,7 @@ void utils::IndentPrinter::increaseIndent() {
 }
 
 void utils::IndentPrinter::decreaseIndent() {
-	if (m_currentIndentation.empty()) {
-		error::ErrorPrinter::error({
-			.code = error::ErrorCode::INTERNAL_ERROR,
-			.name = "Syntax error: Unexpected token",
-			.description = "Tried to decrease indentation when it already was zero in IndentPrinter.",
-		});
-
-		return;
-	}
+	error::internalAssert(!m_currentIndentation.empty(), "Tried to decrease indentation when it already was zero in IndentPrinter.");
 
 	for (char _ : m_indentString) {
 		m_currentIndentation.pop_back();

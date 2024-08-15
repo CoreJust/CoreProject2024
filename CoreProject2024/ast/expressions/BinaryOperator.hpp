@@ -22,6 +22,9 @@ namespace ast {
 			DIVIDE,
 			REMAINDER,
 
+			LOGIC_AND,
+			LOGIC_OR,
+
 			BINARY_OPERATOR_TYPES_COUNT
 		};
 
@@ -36,5 +39,11 @@ namespace ast {
 		utils::NoNull<Expression>& getLeft() noexcept;
 		utils::NoNull<Expression>& getRight() noexcept;
 		BinaryOperatorType getOperator() const noexcept;
+
+		// Returns whether the operator is arithmetical.
+		bool isArithmetical() const noexcept;
+
+		// Returns whether the operator is logical.
+		bool isLogical() const noexcept;
 	};
 }

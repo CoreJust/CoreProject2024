@@ -49,6 +49,7 @@ namespace ast_visitor {
 				case ast::NodeKind::INVOCATION_OPERATOR:	return m_self.visit(*node.as<ast::InvocationOperator>());
 				case ast::NodeKind::UNARY_OPERATOR:			return m_self.visit(*node.as<ast::UnaryOperator>());
 				case ast::NodeKind::BINARY_OPERATOR:		return m_self.visit(*node.as<ast::BinaryOperator>());
+				case ast::NodeKind::COMPARATIVE_BINARY_OPERATOR: return m_self.visit(*node.as<ast::ComparativeBinaryOperator>());
 				case ast::NodeKind::RETURN_OPERATOR:		return m_self.visit(*node.as<ast::ReturnOperator>());
 			default: unreachable();
 			}
@@ -71,6 +72,7 @@ namespace ast_visitor {
 		virtual ExpressionResult visit(ast::InvocationOperator& node) = 0;
 		virtual ExpressionResult visit(ast::UnaryOperator& node) = 0;
 		virtual ExpressionResult visit(ast::BinaryOperator& node) = 0;
+		virtual ExpressionResult visit(ast::ComparativeBinaryOperator& node) = 0;
 		virtual ExpressionResult visit(ast::ReturnOperator& node) = 0;
 		virtual StatementResult visit(ast::ExpressionStatement& node) = 0;
 		virtual StatementResult visit(ast::ScopeStatement& node) = 0;

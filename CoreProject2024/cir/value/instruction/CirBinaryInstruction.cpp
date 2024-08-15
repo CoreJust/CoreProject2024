@@ -5,7 +5,9 @@
 #include "CirBinaryInstruction.hpp"
 
 cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) noexcept
-    : Instruction(std::move(name), left->getType(), ValueKind::BINARY_INSTRUCTION), m_instuctionKind(instructionKind), m_left(left), m_right(right) {
+    : Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),
+    m_instuctionKind(instructionKind), m_left(left), m_right(right) 
+{
     Value::addUser(m_left, *this);
     Value::addUser(m_right, *this);
 }
@@ -23,5 +25,7 @@ utils::NoNull<cir::Value>& cir::BinaryInstruction::getRight() noexcept {
 }
 
 utf::String cir::BinaryInstruction::toInstuctionString() const {
-    return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), "+-*/%"[m_instuctionKind], m_right->toString());
+    static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
+
+    return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), OPERATORS[m_instuctionKind], m_right->toString());
 }

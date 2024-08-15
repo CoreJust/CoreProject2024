@@ -38,6 +38,8 @@ namespace parser {
 		// Expressions
 		ast::Expression* expression();
 		ast::Expression* returnOperator();
+		ast::Expression* logical();
+		ast::Expression* comparative();
 		ast::Expression* additive();
 		ast::Expression* multiplicative();
 		ast::Expression* unary();

@@ -23,6 +23,16 @@ namespace cir {
 			DIV,
 			REM,
 
+			LOGIC_AND,
+			LOGIC_OR,
+
+			CMP_EQ,
+			CMP_NEQ,
+			CMP_LEQ,
+			CMP_GEQ,
+			CMP_LT,
+			CMP_GT,
+
 			BINARY_INSTRUCTIONS_COUNT
 		};
 

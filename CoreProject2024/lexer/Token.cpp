@@ -16,7 +16,10 @@ utf::String lexer::tokenType2String(TokenType type) {
 		"I32", "BOOL", "UNIT",
 		"TRUE", "FALSE",
 		"EQ", "PLUS", "MINUS", "STAR",
-		"SLASH", "PERCENT",
+		"SLASH", "PERCENT", "AND", "OR",
+		"EQEQ", "NOTEQ", "LESSEQ", "GREATEREQ", 
+		"LESS", "GREATER",
+		"NOT", "LOGIC_AND", "LOGIC_OR",
 		"LPAREN", "RPAREN", "LBRACE", "RBRACE",
 		"COLON", "SEMICOLON", "COMMA",
 		"NEWLINE", "NO_TOKEN", "TOKEN_TYPES_COUNT"

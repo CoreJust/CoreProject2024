@@ -21,6 +21,7 @@ void ast_visitor::SymbolLoader::visit(ast::IdentifierValue& node) { }
 void ast_visitor::SymbolLoader::visit(ast::InvocationOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::UnaryOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::BinaryOperator& node) { }
+void ast_visitor::SymbolLoader::visit(ast::ComparativeBinaryOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::ReturnOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::ExpressionStatement& node) { }
 void ast_visitor::SymbolLoader::visit(ast::ScopeStatement& node) { }

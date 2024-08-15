@@ -39,6 +39,17 @@ namespace lexer {
 		STAR, // *
 		SLASH, // /
 		PERCENT, // %
+		AND, // &
+		OR, // |
+		EQEQ, // ==
+		NOTEQ, // !=
+		LESSEQ, // <=
+		GREATEREQ, // >=
+		LESS, // <
+		GREATER, // <
+		NOT, // !
+		LOGIC_AND, // &&
+		LOGIC_OR, // ||
 		LPAREN, // (
 		RPAREN, // )
 		LBRACE, // {

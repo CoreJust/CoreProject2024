@@ -19,6 +19,7 @@ namespace ast {
 	class InvocationOperator;
 	class UnaryOperator;
 	class BinaryOperator;
+	class ComparativeBinaryOperator;
 	class ReturnOperator;
 	class Statement;
 	class ExpressionStatement;

@@ -7,7 +7,7 @@
 #include "symbol/SymbolTable.hpp"
 
 chir::SymbolValue::SymbolValue(utils::NoNull<symbol::Symbol> symbol) noexcept
-    : Value(NodeKind::SYMBOL_VALUE, /* TMP */symbol::TypeKind::I32), m_symbol(symbol) { }
+    : Value(NodeKind::SYMBOL_VALUE, symbol->getKind() == symbol::SymbolKind::FUNCTION ? symbol::TypeKind::I32 : symbol.as<symbol::VariableSymbol>()->getType()), m_symbol(symbol) { }
 
 symbol::SymbolKind chir::SymbolValue::getSymbolKind() const noexcept {
     return m_symbol->getKind();

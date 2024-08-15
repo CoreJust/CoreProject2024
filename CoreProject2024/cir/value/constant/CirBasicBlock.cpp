@@ -25,7 +25,9 @@ void cir::BasicBlock::addInstruction(utils::NoNull<Instruction> instruction) noe
     }
 
     m_instructions.emplace_back(instruction);
-    instruction->appendInstructionIndexToName(m_instructionCounter++);
+    if (instruction->getKind() != ValueKind::LOCAL_VARIABLE) {
+        instruction->appendInstructionIndexToName(m_instructionCounter++);
+    }
 }
 
 cir::CommonFunction& cir::BasicBlock::getParentFunction() noexcept {

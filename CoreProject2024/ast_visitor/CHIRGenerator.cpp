@@ -112,12 +112,19 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator& node) {
 	utils::NoNull<chir::Value> value = Parent::visit(node.getExpression());
-	if (value->getValueType() != symbol::TypeKind::I32) {
+	if (node.isArithmetical() && value->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
 			.selectionStart = node.getPosition(),
 			.description = std::format("Expression type was expected to be i32, but {} was found.", value->getValueType().toString())
+		});
+	} else if (node.isLogical() && value->getValueType() != symbol::TypeKind::BOOL) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type was expected to be bool, but {} was found.", value->getValueType().toString())
 		});
 	}
 
@@ -137,16 +144,27 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 			.code = error::ErrorCode::TYPE_MISMATCH,
 			.name = "Semantic error: Type mismatch",
 			.selectionStart = node.getPosition(),
-			.description = std::format("Expression types in binary operator must match, but {} and {} were found.", left->getValueType().toString(), right->getValueType().toString())
+			.description = std::format(
+				"Expression types in binary operator must match, but {} and {} were found.", 
+				left->getValueType().toString(), 
+				right->getValueType().toString()
+			)
 		});
 	}
 
-	if (left->getValueType() != symbol::TypeKind::I32) {
+	if (node.isArithmetical() && left->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
 			.selectionStart = node.getPosition(),
-			.description = std::format("Expression type was expected to be i32, but {} was found.", left->getValueType().toString())
+			.description = std::format("Expression type in arithmetic operator expected to be i32, but {} was found.", left->getValueType().toString())
+		});
+	} else if (node.isLogical() && left->getValueType() != symbol::TypeKind::BOOL) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type in logical operator expected to be bool, but {} was found.", left->getValueType().toString())
 		});
 	}
 
@@ -157,6 +175,61 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 		right,
 		left->getValueType()
 	);
+}
+
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ComparativeBinaryOperator& node) {
+	const std::vector<ast::ComparativeBinaryOperator::ComparativeOperatorType>& operators = node.getOperators();
+	const std::vector<utils::NoNull<ast::Expression>>& expressions = node.getExpressions();
+
+	utils::NoNull<chir::Value> left = Parent::visit(expressions[0]);
+	chir::Value* result = nullptr;
+	for (uint32_t i = 0; i < operators.size(); ++i) {
+		utils::NoNull<chir::Value> right = Parent::visit(expressions[i + 1]);
+		if (left->getValueType() != right->getValueType()) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::TYPE_MISMATCH,
+				.name = "Semantic error: Type mismatch",
+				.selectionStart = node.getPosition(),
+				.description = std::format(
+					"Expression types in comparative binary operator must match, but {} and {} were found.", 
+					left->getValueType().toString(), 
+					right->getValueType().toString()
+				)
+			});
+		}
+
+		if (left->getValueType() == symbol::TypeKind::UNIT) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::UNEXPECTED_TYPE,
+				.name = "Semantic error: Unexpected type",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Expression type in comparative operator cannot be unit.")
+			});
+		}
+
+		utils::NoNull<chir::Value> comparisonValue = chir::ChirAllocator::make<chir::BinaryOperator>(
+			node.getPosition(),
+			static_cast<chir::BinaryOperator::BinaryOperatorType>(operators[i] + chir::BinaryOperator::EQUALS),
+			left,
+			right,
+			symbol::TypeKind::BOOL
+		);
+
+		left = right;
+		if (result == nullptr) {
+			result = comparisonValue.get();
+		} else {
+			result = chir::ChirAllocator::make<chir::BinaryOperator>(
+				node.getPosition(),
+				chir::BinaryOperator::LOGICAL_AND,
+				result,
+				comparisonValue,
+				symbol::TypeKind::BOOL
+			).get();
+		}
+	}
+
+	return result;
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {

@@ -5,6 +5,7 @@
 #include "File.hpp"
 #include <fstream>
 #include <filesystem>
+#include "utf/Utf.hpp"
 #include "error/ErrorPrinter.hpp"
 
 std::optional<utf::String> utils::readFile(const utf::String& path) {

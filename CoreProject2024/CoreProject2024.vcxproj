@@ -160,6 +160,7 @@
     <ClCompile Include="ast\declarations\VariableDeclaration.cpp" />
     <ClCompile Include="ast\Expression.cpp" />
     <ClCompile Include="ast\expressions\BinaryOperator.cpp" />
+    <ClCompile Include="ast\expressions\ComparativeBinaryOperator.cpp" />
     <ClCompile Include="ast\expressions\IdentifierValue.cpp" />
     <ClCompile Include="ast\expressions\InvocationOperator.cpp" />
     <ClCompile Include="ast\expressions\LiteralValue.cpp" />
@@ -220,6 +221,7 @@
     <ClCompile Include="compiler\Compiler.cpp" />
     <ClCompile Include="compiler\CompilerOptions.cpp" />
     <ClCompile Include="compiler\Target.cpp" />
+    <ClCompile Include="error\InternalAssert.cpp" />
     <ClCompile Include="lexer\Token.cpp" />
     <ClCompile Include="lexer\Tokenizer.cpp" />
     <ClCompile Include="llvm_utils\LLVMModule.cpp" />
@@ -235,8 +237,8 @@
     <ClCompile Include="test\SourceCodeGenerator.cpp" />
     <ClCompile Include="symbol\types\Type.cpp" />
     <ClCompile Include="utf\StringUtils.cpp" />
+    <ClCompile Include="utf\Utf.cpp" />
     <ClCompile Include="utils\File.cpp" />
-    <ClCompile Include="utf\String.cpp" />
     <ClCompile Include="utils\IndentPrinter.cpp" />
     <ClCompile Include="utils\TextPosition.cpp" />
     <ClCompile Include="utf\UtfIO.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="ast\declarations\VariableDeclaration.hpp" />
     <ClInclude Include="ast\Expression.hpp" />
     <ClInclude Include="ast\expressions\BinaryOperator.hpp" />
+    <ClInclude Include="ast\expressions\ComparativeBinaryOperator.hpp" />
     <ClInclude Include="ast\expressions\IdentifierValue.hpp" />
     <ClInclude Include="ast\expressions\InvocationOperator.hpp" />
     <ClInclude Include="ast\expressions\LiteralValue.hpp" />
@@ -324,6 +327,7 @@
     <ClInclude Include="compiler\Compiler.hpp" />
     <ClInclude Include="compiler\CompilerOptions.hpp" />
     <ClInclude Include="compiler\Target.hpp" />
+    <ClInclude Include="error\InternalAssert.hpp" />
     <ClInclude Include="lexer\Token.hpp" />
     <ClInclude Include="lexer\TokenizationUtils.hpp" />
     <ClInclude Include="lexer\Tokenizer.hpp" />
@@ -342,6 +346,7 @@
     <ClInclude Include="symbol\types\Type.hpp" />
     <ClInclude Include="utf\FastFmt.hpp" />
     <ClInclude Include="utf\StringUtils.hpp" />
+    <ClInclude Include="utf\Utf.hpp" />
     <ClInclude Include="utf\UtfIterator.hpp" />
     <ClInclude Include="utils\Bit.hpp" />
     <ClInclude Include="utils\Concept.hpp" />

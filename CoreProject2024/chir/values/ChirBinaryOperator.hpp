@@ -22,6 +22,16 @@ namespace chir {
 			DIVIDE,
 			REMAINDER,
 
+			LOGICAL_AND,
+			LOGICAL_OR,
+
+			EQUALS,
+			NOT_EQUALS,
+			LESS_EQUALS,
+			GREATER_EQUALS,
+			LESS,
+			GREATER,
+
 			BINARY_OPERATOR_TYPES_COUNT
 		};
 

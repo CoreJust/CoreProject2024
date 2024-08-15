@@ -4,6 +4,7 @@
 
 #include "LiteralValue.hpp"
 #include <charconv>
+#include "error/InternalAssert.hpp"
 #include "error/ErrorPrinter.hpp"
 
 // Values used for bool literals.
@@ -25,6 +26,8 @@ utf::StringView ast::LiteralValue::getRawValue() const noexcept {
 }
 
 int64_t ast::LiteralValue::parseAsI64() const noexcept {
+	error::internalAssert(m_type.getTypeName() == "i32", "Must be i32");
+
 	if (m_value.size() >= 2) {
 		int64_t result = 0;
 		switch (m_value[1]) {
@@ -39,6 +42,8 @@ int64_t ast::LiteralValue::parseAsI64() const noexcept {
 }
 
 bool ast::LiteralValue::parseAsBool() const noexcept {
+	error::internalAssert(m_type.getTypeName() == "bool", "Must be bool");
+
 	return m_value[0];
 }
 
