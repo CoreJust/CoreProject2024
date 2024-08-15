@@ -5,17 +5,17 @@
 #include "CirLocalVariable.hpp"
 
 cir::LocalVariable::LocalVariable(utf::String name, Type type, utils::NoNull<Value> initialValue) noexcept
-    : Instruction(std::move(name), std::move(type), ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
-    assert(m_type != TypeKind::UNIT);
-    assert(m_type == m_initialValue->getType());
+	: Instruction(std::move(name), std::move(type), ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
+	assert(m_type != TypeKind::UNIT);
+	assert(m_type == m_initialValue->getType());
 
-    Value::addUser(m_initialValue, *this);
+	Value::addUser(m_initialValue, *this);
 }
 
 utils::NoNull<cir::Value>& cir::LocalVariable::getInitialValue() noexcept {
-    return m_initialValue;
+	return m_initialValue;
 }
 
 utf::String cir::LocalVariable::toInstuctionString() const {
-    return std::format("let {}: {} = {}", m_name, m_type.toString(), m_initialValue->toString());
+	return std::format("let {}: {} = {}", m_name, m_type.toString(), m_initialValue->toString());
 }

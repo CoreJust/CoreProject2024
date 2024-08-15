@@ -6,5 +6,5 @@
 #include "utils/CollectionUtils.hpp"
 
 utf::String symbol::Path::toString() const noexcept {
-    return utils::joinToString(path, ".");
+	return utils::joinToString(path, ".");
 }

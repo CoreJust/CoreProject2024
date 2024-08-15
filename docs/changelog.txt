@@ -13,3 +13,4 @@ Alpha 0.1.1 (15.08.2024 - ?)
 - Added bool type, added true and false literals.
 - Slightly increased project compilation speed.
 - Fixed bug with local variables names in CIR (they had indices appended to their name).
+- Improved AST and CHIR output (less parens where they are not required).

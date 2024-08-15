@@ -12,7 +12,7 @@
 #include "cir/value/constant/CirConstanNumber.hpp"
 
 cir_pass::LLVMGlobalsLoaderPass::LLVMGlobalsLoaderPass(llvm_utils::LLVMModule& llvmModule) noexcept
-    : m_llvmModule(llvmModule) { }
+	: m_llvmModule(llvmModule) { }
 
 void cir_pass::LLVMGlobalsLoaderPass::pass(utils::NoNull<cir::Module> module) {
 	for (utils::NoNull<cir::GlobalValue> value : module->getGlobals()) {
@@ -25,7 +25,7 @@ void cir_pass::LLVMGlobalsLoaderPass::pass(utils::NoNull<cir::Module> module) {
 }
 
 std::unordered_map<cir::ValueId, llvm::Value*> cir_pass::LLVMGlobalsLoaderPass::getLLVMGlobals() noexcept {
-    return std::move(m_llvmGlobals);
+	return std::move(m_llvmGlobals);
 }
 
 void cir_pass::LLVMGlobalsLoaderPass::loadFunction(utils::NoNull<cir::Function> function) {

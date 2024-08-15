@@ -58,39 +58,54 @@ void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
 
 void chir_visitor::ChirPrinter::visit(chir::UnaryOperator& node) {
 	switch (node.getOperator()) {
-		case chir::UnaryOperator::PLUS:		 m_printer.stream() << "+("; break;
-		case chir::UnaryOperator::MINUS:	 m_printer.stream() << "-("; break;
-		case chir::UnaryOperator::LOGIC_NOT: m_printer.stream() << "!("; break;
+		case chir::UnaryOperator::PLUS:		 m_printer.stream() << '+'; break;
+		case chir::UnaryOperator::MINUS:	 m_printer.stream() << '-'; break;
+		case chir::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
 
-	Parent::visit(node.getValue());
-	m_printer.stream() << ')';
+	if (node.getValue()->getKind() <= chir::NodeKind::UNARY_OPERATOR) {
+		Parent::visit(node.getValue()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getValue());
+		m_printer.stream() << ')';
+	}
 }
 
 void chir_visitor::ChirPrinter::visit(chir::BinaryOperator& node) {
-	m_printer.stream() << '(';
-	Parent::visit(node.getLeft());
+	if (node.getLeft()->getKind() < chir::NodeKind::BINARY_OPERATOR) {
+		Parent::visit(node.getLeft()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getLeft());
+		m_printer.stream() << ')';
+	}
 
 	switch (node.getOperator()) {
-		case chir::BinaryOperator::PLUS:		m_printer.stream() << ") + ("; break;
-		case chir::BinaryOperator::MINUS:		m_printer.stream() << ") - ("; break;
-		case chir::BinaryOperator::MULTIPLY:	m_printer.stream() << ") * ("; break;
-		case chir::BinaryOperator::DIVIDE:		m_printer.stream() << ") / ("; break;
-		case chir::BinaryOperator::REMAINDER:	m_printer.stream() << ") % ("; break;
-		case chir::BinaryOperator::LOGICAL_AND: m_printer.stream() << ") && ("; break;
-		case chir::BinaryOperator::LOGICAL_OR:	m_printer.stream() << ") || ("; break;
-		case chir::BinaryOperator::EQUALS:		m_printer.stream() << ") == ("; break;
-		case chir::BinaryOperator::NOT_EQUALS:	m_printer.stream() << ") != ("; break;
-		case chir::BinaryOperator::LESS_EQUALS: m_printer.stream() << ") <= ("; break;
-		case chir::BinaryOperator::GREATER_EQUALS: m_printer.stream() << ") >= ("; break;
-		case chir::BinaryOperator::LESS:		m_printer.stream() << ") < ("; break;
-		case chir::BinaryOperator::GREATER:		m_printer.stream() << ") > ("; break;
+		case chir::BinaryOperator::PLUS:		m_printer.stream() << " + "; break;
+		case chir::BinaryOperator::MINUS:		m_printer.stream() << " - "; break;
+		case chir::BinaryOperator::MULTIPLY:	m_printer.stream() << " * "; break;
+		case chir::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
+		case chir::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case chir::BinaryOperator::LOGICAL_AND: m_printer.stream() << " && "; break;
+		case chir::BinaryOperator::LOGICAL_OR:	m_printer.stream() << " || "; break;
+		case chir::BinaryOperator::EQUALS:		m_printer.stream() << " == "; break;
+		case chir::BinaryOperator::NOT_EQUALS:	m_printer.stream() << " != "; break;
+		case chir::BinaryOperator::LESS_EQUALS: m_printer.stream() << " <= "; break;
+		case chir::BinaryOperator::GREATER_EQUALS: m_printer.stream() << " >= "; break;
+		case chir::BinaryOperator::LESS:		m_printer.stream() << " < "; break;
+		case chir::BinaryOperator::GREATER:		m_printer.stream() << " > "; break;
 	default: unreachable();
 	}
 
-	Parent::visit(node.getRight());
-	m_printer.stream() << ')';
+	if (node.getRight()->getKind() < chir::NodeKind::BINARY_OPERATOR) {
+		Parent::visit(node.getRight()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getRight());
+		m_printer.stream() << ')';
+	}
 }
 
 void chir_visitor::ChirPrinter::visit(chir::ReturnOperator& node) {

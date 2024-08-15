@@ -5,27 +5,27 @@
 #include "CirBinaryInstruction.hpp"
 
 cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) noexcept
-    : Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),
-    m_instuctionKind(instructionKind), m_left(left), m_right(right) 
+	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),
+	m_instuctionKind(instructionKind), m_left(left), m_right(right) 
 {
-    Value::addUser(m_left, *this);
-    Value::addUser(m_right, *this);
+	Value::addUser(m_left, *this);
+	Value::addUser(m_right, *this);
 }
 
 cir::BinaryInstruction::BinaryInstructionKind cir::BinaryInstruction::getInstructionKind() const noexcept {
-    return m_instuctionKind;
+	return m_instuctionKind;
 }
 
 utils::NoNull<cir::Value>& cir::BinaryInstruction::getLeft() noexcept {
-    return m_left;
+	return m_left;
 }
 
 utils::NoNull<cir::Value>& cir::BinaryInstruction::getRight() noexcept {
-    return m_right;
+	return m_right;
 }
 
 utf::String cir::BinaryInstruction::toInstuctionString() const {
-    static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
+	static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
 
-    return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), OPERATORS[m_instuctionKind], m_right->toString());
+	return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), OPERATORS[m_instuctionKind], m_right->toString());
 }

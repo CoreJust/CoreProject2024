@@ -5,8 +5,8 @@
 #include "ChirConstantValue.hpp"
 
 chir::ConstantValue::ConstantValue(symbol::Type type, int64_t value) noexcept
-    : Value(NodeKind::CONSTANT_VALUE, std::move(type)), m_value(value) { }
+	: Value(NodeKind::CONSTANT_VALUE, std::move(type)), m_value(value) { }
 
 int64_t chir::ConstantValue::getValue() const noexcept {
-    return m_value;
+	return m_value;
 }

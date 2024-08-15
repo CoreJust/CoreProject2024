@@ -5,37 +5,37 @@
 #include "CirRetInstuction.hpp"
 
 cir::RetInstruction::RetInstruction() noexcept 
-    : Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(nullptr) {
+	: Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(nullptr) {
 
 }
 
 cir::RetInstruction::RetInstruction(utils::NoNull<Value> operand) noexcept
-    : Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(operand) {
-    Value::addUser(m_operand, *this);
+	: Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(operand) {
+	Value::addUser(m_operand, *this);
 }
 
 bool cir::RetInstruction::isRetUnit() const noexcept {
-    return m_operand == nullptr;
+	return m_operand == nullptr;
 }
 
 cir::Value*& cir::RetInstruction::getOperand() noexcept {
-    return m_operand;
+	return m_operand;
 }
 
 const cir::Type& cir::RetInstruction::getReturnType() noexcept {
-    static Type s_unitType = TypeKind::UNIT;
+	static Type s_unitType = TypeKind::UNIT;
 
-    if (m_operand == nullptr) {
-        return s_unitType;
-    } else {
-        return m_operand->getType();
-    }
+	if (m_operand == nullptr) {
+		return s_unitType;
+	} else {
+		return m_operand->getType();
+	}
 }
 
 utf::String cir::RetInstruction::toInstuctionString() const {
-    if (m_operand != nullptr) {
-        return std::format("ret {}", m_operand->toString());
-    } else {
-        return "ret unit";
-    }
+	if (m_operand != nullptr) {
+		return std::format("ret {}", m_operand->toString());
+	} else {
+		return "ret unit";
+	}
 }

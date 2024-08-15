@@ -5,13 +5,13 @@
 #include "ReturnOperator.hpp"
 
 ast::ReturnOperator::ReturnOperator() noexcept
-    : Expression(NodeKind::RETURN_OPERATOR), m_expression(nullptr) { }
+	: Expression(NodeKind::RETURN_OPERATOR), m_expression(nullptr) { }
 
 ast::ReturnOperator::ReturnOperator(utils::NoNull<Expression> expression) noexcept
-    : Expression(NodeKind::RETURN_OPERATOR), m_expression(expression.get()) {
-    Node::setParent(m_expression, this);
+	: Expression(NodeKind::RETURN_OPERATOR), m_expression(expression.get()) {
+	Node::setParent(m_expression, this);
 }
 
 ast::Expression*& ast::ReturnOperator::getExpression() noexcept {
-    return m_expression;
+	return m_expression;
 }

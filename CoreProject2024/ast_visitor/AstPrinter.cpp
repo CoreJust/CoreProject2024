@@ -43,33 +43,48 @@ void ast_visitor::AstPrinter::visit(ast::InvocationOperator& node) {
 
 void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 	switch (node.getOperator()) {
-		case ast::UnaryOperator::PLUS:		m_printer.stream() << "+("; break;
-		case ast::UnaryOperator::MINUS:		m_printer.stream() << "-("; break;
-		case ast::UnaryOperator::LOGIC_NOT: m_printer.stream() << "!("; break;
+		case ast::UnaryOperator::PLUS:		m_printer.stream() << '+'; break;
+		case ast::UnaryOperator::MINUS:		m_printer.stream() << '-'; break;
+		case ast::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
 
-	Parent::visit(node.getExpression());
-	m_printer.stream() << ')';
+	if (node.getExpression()->getKind() <= ast::NodeKind::UNARY_OPERATOR) {
+		Parent::visit(node.getExpression()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getExpression());
+		m_printer.stream() << ')';
+	}
 }
 
 void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {
-	m_printer.stream() << '(';
-	Parent::visit(node.getLeft());
+	if (node.getLeft()->getKind() < ast::NodeKind::BINARY_OPERATOR) {
+		Parent::visit(node.getLeft()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getLeft());
+		m_printer.stream() << ')';
+	}
 
 	switch (node.getOperator()) {
-		case ast::BinaryOperator::PLUS:			m_printer.stream() << ") + ("; break;
-		case ast::BinaryOperator::MINUS:		m_printer.stream() << ") - ("; break;
-		case ast::BinaryOperator::MULTIPLY:		m_printer.stream() << ") * ("; break;
-		case ast::BinaryOperator::DIVIDE:		m_printer.stream() << ") / ("; break;
-		case ast::BinaryOperator::REMAINDER:	m_printer.stream() << ") % ("; break;
-		case ast::BinaryOperator::LOGIC_AND:	m_printer.stream() << ") && ("; break;
-		case ast::BinaryOperator::LOGIC_OR:		m_printer.stream() << ") || ("; break;
+		case ast::BinaryOperator::PLUS:			m_printer.stream() << " + "; break;
+		case ast::BinaryOperator::MINUS:		m_printer.stream() << " - "; break;
+		case ast::BinaryOperator::MULTIPLY:		m_printer.stream() << " * "; break;
+		case ast::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
+		case ast::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case ast::BinaryOperator::LOGIC_AND:	m_printer.stream() << " && "; break;
+		case ast::BinaryOperator::LOGIC_OR:		m_printer.stream() << " || "; break;
 	default: unreachable();
 	}
 
-	Parent::visit(node.getRight());
-	m_printer.stream() << ')';
+	if (node.getRight()->getKind() < ast::NodeKind::BINARY_OPERATOR) {
+		Parent::visit(node.getRight()); // Priority is obvious, no need for parens.
+	} else {
+		m_printer.stream() << '(';
+		Parent::visit(node.getRight());
+		m_printer.stream() << ')';
+	}
 }
 
 void ast_visitor::AstPrinter::visit(ast::ComparativeBinaryOperator& node) {
@@ -77,9 +92,13 @@ void ast_visitor::AstPrinter::visit(ast::ComparativeBinaryOperator& node) {
 	const std::vector<utils::NoNull<ast::Expression>>& expressions = node.getExpressions();
 
 	for (uint32_t i = 0; i < expressions.size(); ++i) {
-		m_printer.stream() << '(';
-		Parent::visit(expressions[i]);
-		m_printer.stream() << ')';
+		if (expressions[i]->getKind() < ast::NodeKind::BINARY_OPERATOR) {
+			Parent::visit(expressions[i]); // Priority is obvious, no need for parens.
+		} else {
+			m_printer.stream() << '(';
+			Parent::visit(expressions[i]);
+			m_printer.stream() << ')';
+		}
 
 		if (i < operators.size()) {
 			switch (operators[i]) {

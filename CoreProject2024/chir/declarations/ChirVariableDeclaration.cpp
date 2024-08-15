@@ -5,14 +5,14 @@
 #include "ChirVariableDeclaration.hpp"
 
 chir::VariableDeclaration::VariableDeclaration(const symbol::VariableSymbol& variable, utils::NoNull<Value> initialValue) noexcept
-    : Declaration(NodeKind::VARIABLE_DECLARATION), m_variable(variable), m_initialValue(initialValue) {
-    Node::setParent(m_initialValue, this);
+	: Declaration(NodeKind::VARIABLE_DECLARATION), m_variable(variable), m_initialValue(initialValue) {
+	Node::setParent(m_initialValue, this);
 }
 
 const symbol::VariableSymbol& chir::VariableDeclaration::getVariable() const noexcept {
-    return m_variable;
+	return m_variable;
 }
 
 utils::NoNull<chir::Value>& chir::VariableDeclaration::getInitialValue() noexcept {
-    return m_initialValue;
+	return m_initialValue;
 }
