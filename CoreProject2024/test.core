@@ -36,10 +36,12 @@ fn print2(c: i32): i32 {
 	return print1(t4)
 }
 
-fn print3(c: i32): i32 = print2(print2(c))
+fn print3(c: i32, b: bool): i32 = print2(print2(c))
 
 fn main(): i32 {
-	print3(32)
+	let bool_test = false
+	
+	print3(32, true)
 	putchar(10)
 
 	return 0

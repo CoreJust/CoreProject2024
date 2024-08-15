@@ -27,7 +27,10 @@ namespace lexer {
 		RETURN,
 		LET,
 		I32,
+		BOOL,
 		UNIT,
+		TRUE,
+		FALSE,
 
 		// Operators and other symbols
 		EQ, // =

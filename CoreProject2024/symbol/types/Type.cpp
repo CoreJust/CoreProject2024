@@ -14,6 +14,7 @@ cir::Type symbol::Type::makeCirType() const {
 
 	switch (m_typeKind) {
 		case TypeKind::I32: return cir::TypeKind::I32;
+		case TypeKind::BOOL: return cir::TypeKind::BOOL;
 		case TypeKind::UNIT: [[fallthrough]];
 		case TypeKind::NEVER_TYPE: return cir::TypeKind::UNIT;
 	default: unreachable();
@@ -33,6 +34,7 @@ uint32_t symbol::Type::getTypeSize() const noexcept {
 
 	switch (m_typeKind) {
 		case TypeKind::I32: return 4;
+		case TypeKind::BOOL: return 1;
 		case TypeKind::UNIT: [[fallthrough]];
 		case TypeKind::NEVER_TYPE: return 0;
 	default: unreachable();
@@ -45,6 +47,7 @@ utf::String symbol::Type::toString() const {
 	switch (m_typeKind) {
 		case TypeKind::UNIT: return "unit";
 		case TypeKind::I32: return "i32";
+		case TypeKind::BOOL: return "bool";
 		case TypeKind::NEVER_TYPE: return "never";
 	default: unreachable();
 	}
@@ -56,6 +59,7 @@ utf::String symbol::Type::toMangleString() const {
 	switch (m_typeKind) {
 		case TypeKind::UNIT: return "u";
 		case TypeKind::I32: return "i4";
+		case TypeKind::BOOL: return "b";
 		case TypeKind::NEVER_TYPE: return "n";
 	default: unreachable();
 	}

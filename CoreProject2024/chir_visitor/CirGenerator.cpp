@@ -25,7 +25,7 @@ void chir_visitor::CirGenerator::visitRoot(chir::Module& module) {
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::ConstantValue& node) {
-    return cir::CirAllocator::make<cir::ConstantNumber>(node.getValue());
+    return cir::CirAllocator::make<cir::ConstantNumber>(node.getValueType().makeCirType(), node.getValue());
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::SymbolValue& node) {

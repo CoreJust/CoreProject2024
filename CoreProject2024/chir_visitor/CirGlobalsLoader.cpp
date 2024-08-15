@@ -48,7 +48,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::VariableDeclaration& node) {
 	utils::NoNull<cir::GlobalVariable> variable = m_cirModule.addGlobalVariable(
 		variableSymbol.getName(),
 		variableSymbol.getType().makeCirType(),
-		cir::CirAllocator::make<cir::ConstantNumber>(0)
+		cir::CirAllocator::make<cir::ConstantNumber>(variableSymbol.getType().makeCirType(), 0)
 	);
 
 	m_globalsMap.try_emplace(variableSymbol.getId(), variable);

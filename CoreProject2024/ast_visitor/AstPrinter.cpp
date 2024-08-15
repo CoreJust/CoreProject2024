@@ -13,7 +13,11 @@ void ast_visitor::AstPrinter::print(utils::NoNull<ast::Node> node) {
 }
 
 void ast_visitor::AstPrinter::visit(ast::LiteralValue& node) {
-	m_printer.stream() << node.getValue();
+	if (node.getType().getTypeName() == "bool") {
+		m_printer.stream() << (node.parseAsBool() ? "true\0" : "false");
+	} else { // Number
+		m_printer.stream() << node.getRawValue();
+	}
 }
 
 void ast_visitor::AstPrinter::visit(ast::IdentifierValue& node) {

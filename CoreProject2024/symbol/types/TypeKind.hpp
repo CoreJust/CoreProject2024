@@ -16,6 +16,7 @@ namespace symbol {
 	enum class TypeKind : uint8_t {
 		UNIT = 0,
 		I32,
+		BOOL,
 
 		NEVER_TYPE,
 

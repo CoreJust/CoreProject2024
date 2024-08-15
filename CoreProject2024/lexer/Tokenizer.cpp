@@ -21,7 +21,10 @@ constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuil
 		case utils::hashOf("return"): return TokenType::RETURN;
 		case utils::hashOf("let"): return TokenType::LET;
 		case utils::hashOf("i32"): return TokenType::I32;
+		case utils::hashOf("bool"): return TokenType::BOOL;
 		case utils::hashOf("unit"): return TokenType::UNIT;
+		case utils::hashOf("true"): return TokenType::TRUE;
+		case utils::hashOf("false"): return TokenType::FALSE;
 	default: return TokenType::NO_TOKEN_TYPE;
 	}
 }

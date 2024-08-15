@@ -66,10 +66,10 @@ Also, it is allowed to do shadowing, thus overriding an existing variable with a
 ###  Types  ###
 There are only two variable types available:
 <type> :=
-	i32
-	|unit.
+	i32|bool|unit.
 The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used 
 as function return type (so all the variables and arguments are actually i32 as of now).
+bool is the boolean type with 2 possible values: true and false.
 
 ###  Expressions  ###
 There are following expressions available:
@@ -114,6 +114,8 @@ There are currently only two type of literals: numbers and strings.
 r before the string literal stands for raw string, where all the characters are understood as is, whereas in
 common strings there can be escape sequences:
 	\n, \t, \v, \f, \e, \a, \b, \', \", \\, \{, \}, \r, \[o]<octal value>, \o{...}, \x<hexadecimal value>, \x{...}, \uDDDD, \u{<unicode code point>}
+<boolean-literal> :=
+	true|false
 	
 ###  Identifiers  ###
 Any name must be a valid identifier:

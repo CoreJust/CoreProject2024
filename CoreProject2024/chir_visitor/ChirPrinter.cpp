@@ -18,7 +18,11 @@ void chir_visitor::ChirPrinter::visitRoot(chir::Module& module) {
 }
 
 void chir_visitor::ChirPrinter::visit(chir::ConstantValue& node) {
-	m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+	if (node.getValueType() == symbol::TypeKind::BOOL) {
+		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+	} else { // Number
+		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+	}
 }
 
 void chir_visitor::ChirPrinter::visit(chir::SymbolValue& node) {

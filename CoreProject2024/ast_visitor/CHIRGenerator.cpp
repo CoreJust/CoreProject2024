@@ -21,7 +21,11 @@ chir::Module ast_visitor::CHIRGenerator::generateCHIRModule(utils::NoNull<ast::D
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& node) {
-	return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), node.parseAsI64());
+	if (node.getType().getTypeName() == "bool") {
+		return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), symbol::TypeKind::BOOL, node.parseAsBool());
+	} else {
+		return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), symbol::TypeKind::I32, node.parseAsI64());
+	}
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {

@@ -213,10 +213,7 @@ void compiler::Compiler::generateObjectFile(llvm_utils::LLVMModule&& llvmModule,
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::OBJECT_FILE_OPEN_FAILURE,
 			.name = "Compilation error: Failed to open object file",
-			.selectionStart = utils::TextPosition(),
-			.selectionLength = 0,
 			.description = std::format("Failed to open {}.o: {}.", CompilerOptions::getSourceName(), objectCodeError.message()),
-			.explanation = "-"
 
 		});
 	}

@@ -17,7 +17,7 @@ namespace chir {
 		int64_t m_value;
 
 	public:
-		ConstantValue(int64_t value) noexcept;
+		ConstantValue(symbol::Type type, int64_t value) noexcept;
 
 		int64_t getValue() const noexcept;
 	};

@@ -11,18 +11,22 @@
 #pragma once
 #include "utf/String.hpp"
 #include "../Expression.hpp"
+#include "ast/AstType.hpp"
 
 namespace ast {
 	class LiteralValue final : public Expression {
 	private:
 		utf::StringView m_value;
-		// <ValueType> m_type;
+		Type m_type;
 
 	public:
-		LiteralValue(utf::StringView value) noexcept;
+		LiteralValue(utf::StringView value) noexcept; // Int
+		LiteralValue(bool value) noexcept; // Bool
 
-		utf::StringView getValue() const noexcept;
+		const Type& getType() const noexcept;
+		utf::StringView getRawValue() const noexcept;
 		int64_t parseAsI64() const noexcept;
+		bool parseAsBool() const noexcept;
 
 	private:
 		int64_t tryParseAsI64(int base) const noexcept;

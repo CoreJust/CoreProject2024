@@ -10,3 +10,4 @@ Alpha 0.1.0 (17.07.2024 - 09.08.2024)
 Alpha 0.1.1 (15.08.2024 - ?)
 - Added comments.
 - Added target assembly emitting.
+- Added bool type, added true and false literals.

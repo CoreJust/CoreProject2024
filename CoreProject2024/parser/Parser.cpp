@@ -253,6 +253,10 @@ ast::Expression* parser::Parser::primary() {
         return ast::AstAllocator::make<ast::LiteralValue>(position, tokenText).get();
     } else if (m_toks.match(lexer::IDENTIFIER)) {
         return ast::AstAllocator::make<ast::IdentifierValue>(position, tokenText).get();
+    } else if (m_toks.match(lexer::FALSE)) {
+        return ast::AstAllocator::make<ast::LiteralValue>(position, false).get();
+    } else if (m_toks.match(lexer::TRUE)) {
+        return ast::AstAllocator::make<ast::LiteralValue>(position, true).get();
     }
 
     return nullptr;
@@ -261,6 +265,8 @@ ast::Expression* parser::Parser::primary() {
 ast::Type parser::Parser::parseType() {
     if (m_toks.match(lexer::I32)) {
         return ast::Type("i32");
+    } else if (m_toks.match(lexer::BOOL)) {
+        return ast::Type("bool");
     } else if (m_toks.match(lexer::UNIT)) {
         return ast::Type("unit");
     } else {

@@ -15,6 +15,7 @@ namespace cir {
 	enum class TypeKind : uint8_t {
 		UNIT = 0,
 		I32,
+		BOOL,
 
 		BASIC_BLOCK,
 

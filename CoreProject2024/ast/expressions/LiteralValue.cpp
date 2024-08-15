@@ -6,10 +6,21 @@
 #include <charconv>
 #include "error/ErrorPrinter.hpp"
 
-ast::LiteralValue::LiteralValue(utf::StringView value) noexcept 
-	: Expression(NodeKind::LITERAL_VALUE), m_value(value) { }
+// Values used for bool literals.
+const utf::StringView BOOL_FALSE = "\0";
+const utf::StringView BOOL_TRUE = "\x1";
 
-utf::StringView ast::LiteralValue::getValue() const noexcept {
+ast::LiteralValue::LiteralValue(utf::StringView value) noexcept 
+	: Expression(NodeKind::LITERAL_VALUE), m_value(value), m_type("i32") { }
+
+ast::LiteralValue::LiteralValue(bool value) noexcept
+	: Expression(NodeKind::LITERAL_VALUE), m_value(value ? BOOL_TRUE : BOOL_FALSE), m_type("bool") { }
+
+const ast::Type& ast::LiteralValue::getType() const noexcept {
+	return m_type;
+}
+
+utf::StringView ast::LiteralValue::getRawValue() const noexcept {
 	return m_value;
 }
 
@@ -25,6 +36,10 @@ int64_t ast::LiteralValue::parseAsI64() const noexcept {
 	}
 
 	return tryParseAsI64(10);
+}
+
+bool ast::LiteralValue::parseAsBool() const noexcept {
+	return m_value[0];
 }
 
 int64_t ast::LiteralValue::tryParseAsI64(int base) const noexcept {

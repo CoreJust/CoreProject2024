@@ -11,6 +11,8 @@ ast::Type::Type(utf::StringView typeName) noexcept : m_typeName(typeName) { }
 symbol::Type ast::Type::makeSymbolType() const {
     if (m_typeName == "i32") {
         return symbol::TypeKind::I32;
+    } else if (m_typeName == "bool") {
+        return symbol::TypeKind::BOOL;
     } else if (m_typeName == "unit") {
         return symbol::TypeKind::UNIT;
     } else {
