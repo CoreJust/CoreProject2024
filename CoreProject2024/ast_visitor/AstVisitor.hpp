@@ -34,9 +34,9 @@ namespace ast_visitor {
 	public:
 		INLINE void visitRoot(utils::NoNull<ast::Node> node) {
 			if (node->isExpression()) {
-				visit(node.as<ast::Expression>().get());
+				(void)visit(node.as<ast::Expression>().get());
 			} else if (node->isStatement()) {
-				visit(node.as<ast::Declaration>().get());
+				(void)visit(node.as<ast::Declaration>().get());
 			} else {
 				unreachable();
 			}

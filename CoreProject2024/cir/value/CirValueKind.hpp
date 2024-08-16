@@ -78,7 +78,7 @@ namespace cir {
 	constexpr bool isTerminator(ValueKind kind) noexcept {
 		switch (kind) {
 			case cir::ValueKind::RET_INSTRUCTION: [[fallthrough]];
-			case cir::ValueKind::GOTO_INSTRUCTION: return true;
+			case cir::ValueKind::GOTO_INSTRUCTION: [[fallthrough]];
 			case cir::ValueKind::BRANCH_INSTRUCTION: return true;
 		default: return false;
 		}
@@ -88,8 +88,8 @@ namespace cir {
 	constexpr bool isUsable(ValueKind kind) noexcept {
 		switch (kind) {
 			case cir::ValueKind::UNIT_INVOCATION_INSTRUCTION: [[fallthrough]];
-			case cir::ValueKind::GOTO_INSTRUCTION: return false;
-			case cir::ValueKind::BRANCH_INSTRUCTION: return false;
+			case cir::ValueKind::GOTO_INSTRUCTION: [[fallthrough]];
+			case cir::ValueKind::BRANCH_INSTRUCTION: [[fallthrough]];
 			case cir::ValueKind::RET_INSTRUCTION: return false;
 		default: return true;
 		}

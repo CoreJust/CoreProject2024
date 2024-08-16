@@ -16,14 +16,14 @@ fn print(b: bool) {
 	}
 }
 
-fn printImpl(n: i32) {
-	if n != 0 {
-		printImpl(n / 10)
-		putchar(48 + n % 10)
-	}
-}
-
 fn print(n: i32) {
+	fn printImpl(n: i32) {
+		if n != 0 {
+			printImpl(n / 10)
+			putchar(48 + n % 10)
+		}
+	}
+	
 	if n == 0 {
 		putchar(48)
 	} elif n < 0 {
