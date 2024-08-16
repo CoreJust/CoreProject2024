@@ -9,8 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace symbol {
-	using SymbolId = uint64_t;
+	using SymbolId = unsigned long long;
+
+	static_assert(sizeof(SymbolId) == 8);
 }

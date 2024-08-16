@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirBinaryInstruction.hpp"
+#include <format>
 
 cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) noexcept
 	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),

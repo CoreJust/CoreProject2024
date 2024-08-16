@@ -19,6 +19,8 @@
 #include "chir/ChirAllocator.hpp"
 #include "chir_visitor/CirGlobalsLoader.hpp"
 #include "chir_visitor/CirGenerator.hpp"
+#include "cir_pass/CirPassManager.hpp"
+#include "cir_pass/optimization/CirDeadInstructionsEliminatorPass.hpp"
 #include "cir_pass/CirVerificationPass.hpp"
 #include "cir_pass/LLVMGlobalsLoaderPass.hpp"
 #include "cir_pass/LLVMGenerator.hpp"
@@ -159,15 +161,27 @@ cir::Module compiler::Compiler::generateCIR(chir::Module&& chirModule) {
 	cirGenerator.visitRoot(chirModule);
 	checkForErrors();
 
+	// Printing the CIR.
 	if (CompilerOptions::shallEmitCIR()) {
 		std::cout << "\n\nCIR:\n\n";
 		result.print(std::cout);
 	}
 
-	// CIR verification.
-	cir_pass::VerificationPass verifier;
-	verifier.pass(&result);
+	// CIR passes.
+	cir_pass::PassManager cirPassManager;
+
+	// Obligatory passes.
+	cirPassManager.registerPass(std::make_unique<cir_pass::DeadInstructionsEliminatorPass>());
+	cirPassManager.registerPass(std::make_unique<cir_pass::VerificationPass>()); // CIR verification.
+
+	cirPassManager.pass(&result);
 	checkForErrors();
+
+	// Printing the CIR after all the optimizations.
+	if (CompilerOptions::shallEmitOptimizedCIR()) {
+		std::cout << "\n\nOptimized CIR:\n\n";
+		result.print(std::cout);
+	}
 
 	return result;
 }
@@ -183,7 +197,7 @@ llvm::TargetMachine* compiler::Compiler::generateLLVM(cir::Module&& cirModule, l
 	llvm::InitializeAllTargetMCs();
 	llvm::InitializeAllAsmParsers();
 	llvm::InitializeAllAsmPrinters();
-
+	
 	cir_pass::LLVMGenerator llvmGenerator(result, llvmGlobalLoaderPass.getLLVMGlobals());
 	llvmGenerator.pass(&cirModule);
 

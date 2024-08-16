@@ -19,7 +19,7 @@ namespace llvm {
 }
 
 namespace compiler {
-	enum class TargetEndianness : uint8_t {
+	enum class TargetEndianness : unsigned char {
 		LITTLE_ENDIAN = 0,
 		BIG_ENDIAN,
 

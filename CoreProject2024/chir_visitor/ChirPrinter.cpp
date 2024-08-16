@@ -19,7 +19,7 @@ void chir_visitor::ChirPrinter::visitRoot(chir::Module& module) {
 
 void chir_visitor::ChirPrinter::visit(chir::ConstantValue& node) {
 	if (node.getValueType() == symbol::TypeKind::BOOL) {
-		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue() ? "true\0" : "false");
 	} else { // Number
 		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
 	}
@@ -130,7 +130,34 @@ void chir_visitor::ChirPrinter::visit(chir::ScopeStatement& node) {
 
 	m_printer.decreaseIndent();
 	m_printer.printIndent();
-	m_printer.stream() << "}\n\n";
+	m_printer.stream() << "}";
+}
+
+void chir_visitor::ChirPrinter::visit(chir::IfElseStatement& node) {
+	const std::vector<utils::NoNull<chir::Value>>& conditions = node.getConditions();
+	const std::vector<utils::NoNull<chir::Statement>>& ifBodies = node.getIfBodies();
+
+	m_printer.printIndent();
+	m_printer.stream() << "if (";
+	Parent::visit(conditions[0]);
+	m_printer.stream() << ") ";
+
+	Parent::visit(ifBodies[0]);
+
+	for (uint32_t i = 1; i < conditions.size(); ++i) {
+		m_printer.stream() << " else if (";
+		Parent::visit(conditions[i]);
+		m_printer.stream() << ") ";
+
+		Parent::visit(ifBodies[i]);
+	}
+
+	if (node.hasElse()) {
+		m_printer.stream() << " else ";
+		Parent::visit(node.getElseBody());
+	}
+
+	m_printer.stream() << "\n\n";
 }
 
 void chir_visitor::ChirPrinter::visit(chir::VariableStatement& node) {

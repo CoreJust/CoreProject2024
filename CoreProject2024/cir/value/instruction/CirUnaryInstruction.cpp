@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirUnaryInstruction.hpp"
+#include <format>
 
 cir::UnaryInstruction::UnaryInstruction(UnaryInstructionKind instructionKind, utils::NoNull<Value> operand, utf::String name) noexcept
 	: Instruction(std::move(name), operand->getType(), ValueKind::UNARY_INSTRUCTION), m_instuctionKind(instructionKind), m_operand(operand) {

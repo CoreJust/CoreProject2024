@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirRetInstuction.hpp"
+#include <format>
 
 cir::RetInstruction::RetInstruction() noexcept 
 	: Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(nullptr) {

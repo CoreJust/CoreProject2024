@@ -57,6 +57,8 @@ namespace cir {
 		utils::NoNull<InvocationInstruction> makeInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name = "i");
 		utils::NoNull<UnitInvocationInstruction> makeUnitInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments);
 		utils::NoNull<LocalVariable> makeLocal(utf::String name, Type type, utils::NoNull<Value> initialValue);
+		utils::NoNull<GotoInstruction> makeGoto(utils::NoNull<BasicBlock> basicBlockToGo);
+		utils::NoNull<BranchInstruction> makeBranch(utils::NoNull<Value> value, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch);
 		utils::NoNull<RetInstruction> makeRet(utils::NoNull<Value> value);
 		utils::NoNull<RetInstruction> makeRetUnit();
 

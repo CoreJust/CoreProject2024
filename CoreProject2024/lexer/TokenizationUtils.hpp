@@ -41,7 +41,7 @@ namespace lexer {
 		result.fill(false);
 
 		for (char ch : arr) {
-			result[std::bit_cast<uint8_t>(ch)] = true;
+			result[std::bit_cast<unsigned char>(ch)] = true;
 		}
 
 		return result;

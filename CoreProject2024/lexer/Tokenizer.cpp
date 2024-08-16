@@ -20,6 +20,9 @@ constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuil
 		case utils::hashOf("fn"): return TokenType::FN;
 		case utils::hashOf("native"): return TokenType::NATIVE;
 		case utils::hashOf("return"): return TokenType::RETURN;
+		case utils::hashOf("if"): return TokenType::IF;
+		case utils::hashOf("elif"): return TokenType::ELIF;
+		case utils::hashOf("else"): return TokenType::ELSE;
 		case utils::hashOf("let"): return TokenType::LET;
 		case utils::hashOf("i32"): return TokenType::I32;
 		case utils::hashOf("bool"): return TokenType::BOOL;
@@ -322,7 +325,7 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 	m_currentToken = Token {
 		.text = stringLiteral,
 		.position = tokenPosition,
-		.type = static_cast<TokenType>(static_cast<uint8_t>(TokenType::TEXT) + isMultilineString)
+		.type = static_cast<TokenType>(static_cast<unsigned char>(TokenType::TEXT) + isMultilineString)
 	};
 }
 

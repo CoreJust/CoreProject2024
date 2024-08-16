@@ -152,52 +152,52 @@ namespace utils {
 	}
 
 	// Returns the index of the least significant bit.
-	constexpr uint8_t leastSignificantBit(const uint64_t value) noexcept {
+	constexpr unsigned char leastSignificantBit(const uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
-			return static_cast<uint8_t>(std::countr_zero(value));
+			return static_cast<unsigned char>(std::countr_zero(value));
 		} else {
 #ifdef ENABLE_INTRINSICS
 			unsigned long result;
 			_BitScanForward64(&result, value);
 
-			return static_cast<uint8_t>(result);
+			return static_cast<unsigned char>(result);
 #elif defined(__GNUC__)
-			return static_cast<uint8_t>(__builtin_ctzll(value));
+			return static_cast<unsigned char>(__builtin_ctzll(value));
 #else
-			return static_cast<uint8_t>(std::countr_zero(value));
+			return static_cast<unsigned char>(std::countr_zero(value));
 #endif
 		}
 	}
 
 	// Returns the index of the most significant bit.
-	constexpr uint8_t mostSignificantBit(const uint64_t value) noexcept {
+	constexpr unsigned char mostSignificantBit(const uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
-			return static_cast<uint8_t>(63 - std::countl_zero(value));
+			return static_cast<unsigned char>(63 - std::countl_zero(value));
 		} else {
 #ifdef ENABLE_INTRINSICS
 			unsigned long result;
 			_BitScanReverse64(&result, value);
 
-			return static_cast<uint8_t>(result);
+			return static_cast<unsigned char>(result);
 #elif defined(__GNUC__)
-			return static_cast<uint8_t>(63 ^ __builtin_clzll(value));
+			return static_cast<unsigned char>(63 ^ __builtin_clzll(value));
 #else
-			return static_cast<uint8_t>(63 - std::countl_zero(value));
+			return static_cast<unsigned char>(63 - std::countl_zero(value));
 #endif
 		}
 	}
 
 	// Returns the number of bits set to 1.
-	constexpr uint8_t popCount(uint64_t value) noexcept {
+	constexpr unsigned char popCount(uint64_t value) noexcept {
 		if (std::is_constant_evaluated()) {
-			return static_cast<uint8_t>(std::popcount(value));
+			return static_cast<unsigned char>(std::popcount(value));
 		} else {
 #ifdef ENABLE_INTRINSICS
-			return static_cast<uint8_t>(_mm_popcnt_u64(value));
+			return static_cast<unsigned char>(_mm_popcnt_u64(value));
 #elif defined(__GNUC__)
-			return static_cast<uint8_t>(__builtin_popcountll(value));
+			return static_cast<unsigned char>(__builtin_popcountll(value));
 #else
-			return static_cast<uint8_t>(std::popcount(value));
+			return static_cast<unsigned char>(std::popcount(value));
 #endif
 		}
 	}

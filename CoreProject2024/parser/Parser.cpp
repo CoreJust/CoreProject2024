@@ -101,10 +101,12 @@ ast::Declaration* parser::Parser::variableDeclaration() {
 }
 
 ast::Statement* parser::Parser::statement() {
-	if (m_toks.match(lexer::FN)) {
-		return functionDeclaration();
-	} else if (m_toks.match(lexer::LET)) {
+	if (m_toks.match(lexer::LET)) {
 		return variableDeclaration();
+	} else if (m_toks.match(lexer::IF)) {
+		return ifElseStatement();
+	} else if (m_toks.match(lexer::FN)) {
+		return functionDeclaration();
 	} else if (m_toks.match(lexer::RBRACE)) {
 		return scopeStatement();
 	} else {
@@ -149,6 +151,26 @@ ast::Statement* parser::Parser::scopeStatement() {
 	}
 
 	return ast::AstAllocator::make<ast::ScopeStatement>(position, std::move(statements)).get();
+}
+
+ast::Statement* parser::Parser::ifElseStatement() {
+	const utils::TextPosition position = m_toks.current().position;
+	std::vector<utils::NoNull<ast::Expression>> conditions;
+	std::vector<utils::NoNull<ast::Statement>> ifBodies;
+
+	do {
+		conditions.emplace_back(expression());
+		m_toks.consume(lexer::LBRACE, "Expected the openning brace of the if statement body");
+		ifBodies.emplace_back(scopeStatement());
+	} while (m_toks.match(lexer::ELIF));
+
+	ast::Statement* elseBody = nullptr;
+	if (m_toks.match(lexer::ELSE)) {
+		m_toks.consume(lexer::LBRACE, "Expected the openning brace of the else statement body");
+		elseBody = scopeStatement();
+	}
+
+	return ast::AstAllocator::make<ast::IfElseStatement>(position, std::move(conditions), std::move(ifBodies), elseBody).get();
 }
 
 ast::Expression* parser::Parser::expression() {

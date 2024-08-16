@@ -16,7 +16,7 @@
 namespace cir {
 	class UnaryInstruction final : public Instruction {
 	public:
-		enum UnaryInstructionKind : uint8_t {
+		enum UnaryInstructionKind : unsigned char {
 			NEG = 0,
 			LOGIC_NOT,
 

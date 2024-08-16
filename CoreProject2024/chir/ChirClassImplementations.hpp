@@ -17,6 +17,7 @@
 #include "values/ChirReturnOperator.hpp"
 #include "statements/ChirValueStatement.hpp"
 #include "statements/ChirScopeStatement.hpp"
+#include "statements/ChirIfElseStatement.hpp"
 #include "statements/ChirVariableStatement.hpp"
 #include "declarations/ChirVariableDeclaration.hpp"
 #include "declarations/ChirFunctionDeclaration.hpp"

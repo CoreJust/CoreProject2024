@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include <llvm/ADT/SmallVector.h>
+#include <vector>
 #include "../Expression.hpp"
 
 namespace ast {

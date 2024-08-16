@@ -16,7 +16,7 @@
 namespace cir {
 	class BinaryInstruction final : public Instruction {
 	public:
-		enum BinaryInstructionKind : uint8_t {
+		enum BinaryInstructionKind : unsigned char {
 			ADD = 0,
 			SUB,
 			MUL,

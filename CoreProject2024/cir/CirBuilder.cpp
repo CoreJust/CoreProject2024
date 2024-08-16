@@ -99,6 +99,19 @@ utils::NoNull<cir::LocalVariable> cir::CirBuilder::makeLocal(utf::String name, T
 	return makeInstruction<LocalVariable>(std::move(name), std::move(type), initialValue);
 }
 
+utils::NoNull<cir::GotoInstruction> cir::CirBuilder::makeGoto(utils::NoNull<BasicBlock> basicBlockToGo) {
+	m_currentBasicBlock->addSuccessor(basicBlockToGo);
+
+	return makeInstruction<GotoInstruction>(basicBlockToGo);
+}
+
+utils::NoNull<cir::BranchInstruction> cir::CirBuilder::makeBranch(utils::NoNull<Value> value, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch) {
+	m_currentBasicBlock->addSuccessor(successBranch);
+	m_currentBasicBlock->addSuccessor(failureBranch);
+
+	return makeInstruction<BranchInstruction>(value, successBranch, failureBranch);
+}
+
 utils::NoNull<cir::RetInstruction> cir::CirBuilder::makeRet(utils::NoNull<Value> value) {
 	return makeInstruction<RetInstruction>(value);
 }

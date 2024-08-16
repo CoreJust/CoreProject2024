@@ -3,14 +3,16 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "Type.hpp"
-#include <cassert>
+#include "utils/Macro.hpp"
+#include "error/InternalAssert.hpp"
+#include "cir/type/CirType.hpp"
 
 symbol::Type::Type(TypeKind typeKind) noexcept : m_typeKind(typeKind) {
 
 }
 
 cir::Type symbol::Type::makeCirType() const {
-	assert(m_typeKind != TypeKind::NO_TYPE);
+	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::I32: return cir::TypeKind::I32;
@@ -30,7 +32,7 @@ symbol::TypeKind symbol::Type::getTypeKind() const noexcept {
 }
 
 uint32_t symbol::Type::getTypeSize() const noexcept {
-	assert(m_typeKind != TypeKind::NO_TYPE);
+	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::I32: return 4;
@@ -42,7 +44,7 @@ uint32_t symbol::Type::getTypeSize() const noexcept {
 }
 
 utf::String symbol::Type::toString() const {
-	assert(m_typeKind != TypeKind::NO_TYPE);
+	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::UNIT: return "unit";
@@ -54,7 +56,7 @@ utf::String symbol::Type::toString() const {
 }
 
 utf::String symbol::Type::toMangleString() const {
-	assert(m_typeKind != TypeKind::NO_TYPE);
+	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::UNIT: return "u";

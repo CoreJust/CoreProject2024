@@ -34,6 +34,7 @@ namespace parser {
 		// Statements
 		ast::Statement* statement();
 		ast::Statement* scopeStatement();
+		ast::Statement* ifElseStatement();
 
 		// Expressions
 		ast::Expression* expression();

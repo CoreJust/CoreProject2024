@@ -46,6 +46,7 @@ namespace chir_visitor {
 		utils::NoNull<cir::Value> visit(chir::ReturnOperator& node) override;
 		void visit(chir::ValueStatement& node) override;
 		void visit(chir::ScopeStatement& node) override;
+		void visit(chir::IfElseStatement& node) override;
 		void visit(chir::VariableStatement& node) override;
 		void visit(chir::VariableDeclaration& node) override;
 		void visit(chir::FunctionDeclaration& node) override;

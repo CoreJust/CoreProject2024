@@ -9,10 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace ast {
-	enum class NodeKind : uint8_t {
+	enum class NodeKind : unsigned char {
 		// Expression node types
 
 		/*
@@ -77,6 +76,14 @@ namespace ast {
 		*/
 		SCOPE_STATEMENT,
 
+		/*
+		*	If-else statement is a branching if[-else] statement.
+		*	if <condition> <scope-statement>
+		*	[elif (condition) <scope-statement>]...
+		*	[else <scope-statement>]
+		*/
+		IF_ELSE_STATEMENT,
+
 
 		// Subtype of statements - declarations (statements that can exist on the highest level, i.e. global objects)
 
@@ -102,16 +109,16 @@ namespace ast {
 
 	// Checks if the given node type is an expression.
 	constexpr bool isExpression(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeKind::EXPRESSION_STATEMENT);
+		return static_cast<unsigned char>(type) < static_cast<unsigned char>(NodeKind::EXPRESSION_STATEMENT);
 	}
 
 	// Checks if the given node type is a statement.
 	constexpr bool isStatement(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::EXPRESSION_STATEMENT);
+		return static_cast<unsigned char>(type) >= static_cast<unsigned char>(NodeKind::EXPRESSION_STATEMENT);
 	}
 
 	// Checks if the given node type is a declaration, i.e. statement of the highest level.
 	constexpr bool isDeclaration(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::VARIABLE_DECLARATION);
+		return static_cast<unsigned char>(type) >= static_cast<unsigned char>(NodeKind::VARIABLE_DECLARATION);
 	}
 }

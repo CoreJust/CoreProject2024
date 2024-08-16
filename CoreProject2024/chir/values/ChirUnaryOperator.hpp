@@ -15,7 +15,7 @@ namespace chir {
 	class UnaryOperator final : public Value {
 	public:
 		// The kind of unary operator used.
-		enum UnaryOperatorType : uint8_t {
+		enum UnaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
 			LOGIC_NOT,

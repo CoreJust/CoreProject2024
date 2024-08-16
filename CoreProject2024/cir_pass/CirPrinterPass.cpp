@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirPrinterPass.hpp"
+#include <format>
 #include "utils/CollectionUtils.hpp"
 #include "cir/CirModule.hpp"
 #include "cir/value/constant/CirCommonFunction.hpp"

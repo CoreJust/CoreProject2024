@@ -59,6 +59,7 @@ namespace ast_visitor {
 			switch (node->getKind()) {
 				case ast::NodeKind::EXPRESSION_STATEMENT:	return m_self.visit(*node.as<ast::ExpressionStatement>());
 				case ast::NodeKind::SCOPE_STATEMENT:		return m_self.visit(*node.as<ast::ScopeStatement>());
+				case ast::NodeKind::IF_ELSE_STATEMENT:		return m_self.visit(*node.as<ast::IfElseStatement>());
 				case ast::NodeKind::VARIABLE_DECLARATION:	return m_self.visit(*node.as<ast::VariableDeclaration>());
 				case ast::NodeKind::FUNCTION_DECLARATION:	return m_self.visit(*node.as<ast::FunctionDeclaration>());
 				case ast::NodeKind::MODULE_DECLARATIONS:	return m_self.visit(*node.as<ast::ModuleDeclarations>());
@@ -76,6 +77,7 @@ namespace ast_visitor {
 		virtual ExpressionResult visit(ast::ReturnOperator& node) = 0;
 		virtual StatementResult visit(ast::ExpressionStatement& node) = 0;
 		virtual StatementResult visit(ast::ScopeStatement& node) = 0;
+		virtual StatementResult visit(ast::IfElseStatement& node) = 0;
 		virtual StatementResult visit(ast::VariableDeclaration& node) = 0;
 		virtual StatementResult visit(ast::FunctionDeclaration& node) = 0;
 		virtual StatementResult visit(ast::ModuleDeclarations& node) = 0;

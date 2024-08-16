@@ -24,6 +24,7 @@ namespace ast {
 	class Statement;
 	class ExpressionStatement;
 	class ScopeStatement;
+	class IfElseStatement;
 	class Declaration;
 	class VariableDeclaration;
 	class FunctionDeclaration;

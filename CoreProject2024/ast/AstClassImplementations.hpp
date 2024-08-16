@@ -18,6 +18,7 @@
 #include "expressions/ReturnOperator.hpp"
 #include "statements/ExpressionStatement.hpp"
 #include "statements/ScopeStatement.hpp"
+#include "statements/IfElseStatement.hpp"
 #include "declarations/VariableDeclaration.hpp"
 #include "declarations/FunctionDeclaration.hpp"
 #include "declarations/ModuleDeclarations.hpp"

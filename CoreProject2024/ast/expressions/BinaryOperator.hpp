@@ -15,7 +15,7 @@ namespace ast {
 	class BinaryOperator final : public Expression {
 	public:
 		// The kind of unary operator used.
-		enum BinaryOperatorType : uint8_t {
+		enum BinaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
 			MULTIPLY,

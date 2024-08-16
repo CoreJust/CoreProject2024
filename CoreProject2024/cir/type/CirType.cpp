@@ -5,6 +5,7 @@
 #include "CirType.hpp"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
+#include "utils/Macro.hpp"
 
 cir::Type::Type(TypeKind kind) noexcept : m_typeKind(kind) {
 

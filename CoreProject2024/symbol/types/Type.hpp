@@ -11,7 +11,10 @@
 #pragma once
 #include "utf/String.hpp"
 #include "TypeKind.hpp"
-#include "cir/type/CirType.hpp"
+
+namespace cir {
+	class Type;
+}
 
 namespace symbol {
 	/*

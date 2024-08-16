@@ -12,6 +12,7 @@
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/TargetParser/Host.h>
 #include "utils/CollectionUtils.hpp"
+#include "utils/Macro.hpp"
 #include "compiler/CompilerOptions.hpp"
 #include "cir/CirModule.hpp"
 #include "cir/value/CirValueClassImplementations.hpp"
@@ -35,11 +36,11 @@ cir_pass::LLVMGenerator::LLVMGenerator(llvm_utils::LLVMModule& llvmModule, std::
 
 	llvm::OptimizationLevel optLevel = llvm::OptimizationLevel::O2;
 	switch (compiler::CompilerOptions::getOptimizationLevel()) {
-		case compiler::OptimizationLevel::O0: optLevel = llvm::OptimizationLevel::O0;
-		case compiler::OptimizationLevel::O1: optLevel = llvm::OptimizationLevel::O1;
-		case compiler::OptimizationLevel::O2: optLevel = llvm::OptimizationLevel::O2;
-		case compiler::OptimizationLevel::O3: optLevel = llvm::OptimizationLevel::O3;
-		case compiler::OptimizationLevel::OSIZE: optLevel = llvm::OptimizationLevel::Oz;
+		case compiler::OptimizationLevel::O0: optLevel = llvm::OptimizationLevel::O0; break;
+		case compiler::OptimizationLevel::O1: optLevel = llvm::OptimizationLevel::O1; break;
+		case compiler::OptimizationLevel::O2: optLevel = llvm::OptimizationLevel::O2; break;
+		case compiler::OptimizationLevel::O3: optLevel = llvm::OptimizationLevel::O3; break;
+		case compiler::OptimizationLevel::OSIZE: optLevel = llvm::OptimizationLevel::Oz; break;
 	default: break;
 	}
 
@@ -65,10 +66,16 @@ llvm::TargetMachine* cir_pass::LLVMGenerator::getTargetMachine() noexcept {
 void cir_pass::LLVMGenerator::compileFunction(utils::NoNull<cir::Function> function) {
 	if (!function->isNativeFunction()) {
 		llvm::Function* llvmFunction = reinterpret_cast<llvm::Function*>(m_symbols[function->getId()]);
-		llvm::BasicBlock* llvmBB = llvm::BasicBlock::Create(m_llvmModule.getContext(), "entry", llvmFunction);
-		m_builder.SetInsertPoint(llvmBB);
+		utils::NoNull<cir::CommonFunction> asCommonFunction = function.as<cir::CommonFunction>();
 
 		m_values.clear();
+
+		// Create an LLVM basic block for each of the basic blocks of the function.
+		for (utils::NoNull<cir::BasicBlock> basicBlock : asCommonFunction->getBasicBlocks()) {
+			m_values.try_emplace(basicBlock->getId(), llvm::BasicBlock::Create(m_llvmModule.getContext(), basicBlock->getName(), llvmFunction));
+		}
+
+		m_builder.SetInsertPoint(getLLVMBB(asCommonFunction->getBasicBlocks().front()));
 
 		// Adding function arguments to variable list.
 		std::vector<utils::NoNull<cir::FunctionArgument>>& functionArguments = function->getArguments();
@@ -78,7 +85,7 @@ void cir_pass::LLVMGenerator::compileFunction(utils::NoNull<cir::Function> funct
 			m_values.try_emplace(functionArguments[i]->getId(), llvmArgument);
 		}
 
-		for (utils::NoNull<cir::BasicBlock> basicBlock : function.as<cir::CommonFunction>()->getBasicBlocks()) {
+		for (utils::NoNull<cir::BasicBlock> basicBlock : asCommonFunction->getBasicBlocks()) {
 			compileBasicBlock(basicBlock, llvmFunction);
 		}
 
@@ -88,10 +95,7 @@ void cir_pass::LLVMGenerator::compileFunction(utils::NoNull<cir::Function> funct
 }
 
 void cir_pass::LLVMGenerator::compileBasicBlock(utils::NoNull<cir::BasicBlock> basicBlock, llvm::Function* llvmFunction) {
-	if (llvmFunction->back().getTerminator() != nullptr) {
-		llvm::BasicBlock* llvmBB = llvm::BasicBlock::Create(m_llvmModule.getContext(), basicBlock->getName(), llvmFunction);
-		m_builder.SetInsertPoint(llvmBB);
-	}
+	m_builder.SetInsertPoint(getLLVMBB(basicBlock));
 
 	for (utils::NoNull<cir::Instruction> instruction : basicBlock->getInstructions()) {
 		m_values.try_emplace(instruction->getId(), compileInstruction(instruction));
@@ -105,6 +109,8 @@ llvm::Value* cir_pass::LLVMGenerator::compileInstruction(utils::NoNull<cir::Inst
 		case cir::ValueKind::INVOCATION_INSTRUCTION: return compileInvocationInstruction(instruction.as<cir::InvocationInstruction>());
 		case cir::ValueKind::LOCAL_VARIABLE: return compileLocalVariable(instruction.as<cir::LocalVariable>());
 		case cir::ValueKind::UNIT_INVOCATION_INSTRUCTION: return compileUnitInvocationInstruction(instruction.as<cir::UnitInvocationInstruction>());
+		case cir::ValueKind::GOTO_INSTRUCTION: return compileGotoInstruction(instruction.as<cir::GotoInstruction>());
+		case cir::ValueKind::BRANCH_INSTRUCTION: return compileBranchInstruction(instruction.as<cir::BranchInstruction>());
 		case cir::ValueKind::RET_INSTRUCTION: return compileRetInstruction(instruction.as<cir::RetInstruction>());
 	default: unreachable();
 	}
@@ -123,12 +129,17 @@ llvm::Value* cir_pass::LLVMGenerator::getLLVMValue(utils::NoNull<cir::Value> val
 	}
 }
 
+llvm::BasicBlock* cir_pass::LLVMGenerator::getLLVMBB(utils::NoNull<cir::BasicBlock> basicBlock) {
+	return reinterpret_cast<llvm::BasicBlock*>(m_values[basicBlock->getId()]);
+}
+
 llvm::Value* cir_pass::LLVMGenerator::compileConstant(utils::NoNull<cir::Constant> constant) {
 	switch (constant->getKind()) {
 		case cir::ValueKind::CONSTANT_NUMBER: return llvm::ConstantInt::get(m_llvmModule.getContext(), llvm::APInt(32, constant.as<cir::ConstantNumber>()->getValue(), true));
 		case cir::ValueKind::GLOBAL_VARIABLE: return m_builder.CreateLoad(constant->getType().makeLLVMType(m_llvmModule.getContext()), m_symbols[constant->getId()]);
 		case cir::ValueKind::COMMON_FUNCTION: [[fallthrough]];
 		case cir::ValueKind::NATIVE_FUNCTION: return m_symbols[constant->getId()];
+		case cir::ValueKind::BASIC_BLOCK: return m_values[constant->getId()];
 	default: unreachable();
 	}
 }
@@ -192,6 +203,14 @@ llvm::Value* cir_pass::LLVMGenerator::compileUnitInvocationInstruction(utils::No
 	);
 
 	return m_builder.CreateCall(callee->getFunctionType(), callee, arguments);
+}
+
+llvm::Value* cir_pass::LLVMGenerator::compileGotoInstruction(utils::NoNull<cir::GotoInstruction> instruction) {
+	return m_builder.CreateBr(getLLVMBB(instruction->getBasicBlockToGo()));
+}
+
+llvm::Value* cir_pass::LLVMGenerator::compileBranchInstruction(utils::NoNull<cir::BranchInstruction> instruction) {
+	return m_builder.CreateCondBr(getLLVMValue(instruction->getCondition()), getLLVMBB(instruction->getSuccessBranch()), getLLVMBB(instruction->getFailureBranch()));
 }
 
 llvm::Value* cir_pass::LLVMGenerator::compileRetInstruction(utils::NoNull<cir::RetInstruction> instruction) {

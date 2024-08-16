@@ -9,10 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace cir {
-	enum class TypeKind : uint8_t {
+	enum class TypeKind : unsigned char {
 		UNIT = 0,
 		I32,
 		BOOL,

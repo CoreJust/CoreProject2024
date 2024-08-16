@@ -57,6 +57,7 @@ namespace cir_pass {
 		void compileBasicBlock(utils::NoNull<cir::BasicBlock> basicBlock, llvm::Function* llvmFunction);
 		llvm::Value* compileInstruction(utils::NoNull<cir::Instruction> instruction);
 		llvm::Value* getLLVMValue(utils::NoNull<cir::Value> value);
+		llvm::BasicBlock* getLLVMBB(utils::NoNull<cir::BasicBlock> basicBlock);
 		llvm::Value* compileConstant(utils::NoNull<cir::Constant> constant);
 
 		llvm::Value* compileUnaryInstruction(utils::NoNull<cir::UnaryInstruction> instruction);
@@ -64,6 +65,8 @@ namespace cir_pass {
 		llvm::Value* compileInvocationInstruction(utils::NoNull<cir::InvocationInstruction> instruction);
 		llvm::Value* compileLocalVariable(utils::NoNull<cir::LocalVariable> instruction);
 		llvm::Value* compileUnitInvocationInstruction(utils::NoNull<cir::UnitInvocationInstruction> instruction);
+		llvm::Value* compileGotoInstruction(utils::NoNull<cir::GotoInstruction> instruction);
+		llvm::Value* compileBranchInstruction(utils::NoNull<cir::BranchInstruction> instruction);
 		llvm::Value* compileRetInstruction(utils::NoNull<cir::RetInstruction> instruction);
 	};
 }

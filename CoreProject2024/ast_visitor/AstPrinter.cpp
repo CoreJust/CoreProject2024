@@ -136,7 +136,34 @@ void ast_visitor::AstPrinter::visit(ast::ScopeStatement& node) {
 
 	m_printer.decreaseIndent();
 	m_printer.printIndent();
-	m_printer.stream() << "}\n\n";
+	m_printer.stream() << "}";
+}
+
+void ast_visitor::AstPrinter::visit(ast::IfElseStatement& node) {
+	const std::vector<utils::NoNull<ast::Expression>>& conditions = node.getConditions();
+	const std::vector<utils::NoNull<ast::Statement>>& ifBodies = node.getIfBodies();
+
+	m_printer.printIndent();
+	m_printer.stream() << "if (";
+	Parent::visit(conditions[0]);
+	m_printer.stream() << ") ";
+
+	Parent::visit(ifBodies[0]);
+
+	for (uint32_t i = 1; i < conditions.size(); ++i) {
+		m_printer.stream() << " elif (";
+		Parent::visit(conditions[i]);
+		m_printer.stream() << ") ";
+
+		Parent::visit(ifBodies[i]);
+	}
+
+	if (node.hasElse()) {
+		m_printer.stream() << " else ";
+		Parent::visit(node.getElseBody());
+	}
+
+	m_printer.stream() << "\n\n";
 }
 
 void ast_visitor::AstPrinter::visit(ast::VariableDeclaration& node) {

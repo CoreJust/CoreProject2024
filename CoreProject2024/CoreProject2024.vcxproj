@@ -169,6 +169,7 @@
     <ClCompile Include="ast\Statement.cpp" />
     <ClCompile Include="ast\statements\ExpressionStatement.cpp" />
     <ClCompile Include="ast\expressions\ReturnOperator.cpp" />
+    <ClCompile Include="ast\statements\IfElseStatement.cpp" />
     <ClCompile Include="ast\statements\ScopeStatement.cpp" />
     <ClCompile Include="ast_visitor\AstPrinter.cpp" />
     <ClCompile Include="ast_visitor\CHIRGenerator.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="chir\ChirValue.cpp" />
     <ClCompile Include="chir\declarations\ChirFunctionDeclaration.cpp" />
     <ClCompile Include="chir\declarations\ChirVariableDeclaration.cpp" />
+    <ClCompile Include="chir\statements\ChirIfElseStatement.cpp" />
     <ClCompile Include="chir\statements\ChirScopeStatement.cpp" />
     <ClCompile Include="chir\statements\ChirValueStatement.cpp" />
     <ClCompile Include="chir\statements\ChirVariableStatement.cpp" />
@@ -206,6 +208,8 @@
     <ClCompile Include="cir\value\constant\CirGlobalVariable.cpp" />
     <ClCompile Include="cir\value\constant\CirNativeFunction.cpp" />
     <ClCompile Include="cir\value\instruction\CirBinaryInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirBranchInstruction.cpp" />
+    <ClCompile Include="cir\value\instruction\CirGotoInstruction.cpp" />
     <ClCompile Include="cir\value\instruction\CirInstruction.cpp" />
     <ClCompile Include="cir\value\instruction\CirInvocationInstruction.cpp" />
     <ClCompile Include="cir\value\instruction\CirLocalVariable.cpp" />
@@ -213,6 +217,8 @@
     <ClCompile Include="cir\value\instruction\CirTerminator.cpp" />
     <ClCompile Include="cir\value\instruction\CirUnaryInstruction.cpp" />
     <ClCompile Include="cir\value\instruction\CirUnitInvocationInstruction.cpp" />
+    <ClCompile Include="cir_pass\CirPassManager.cpp" />
+    <ClCompile Include="cir_pass\optimization\CirDeadInstructionsEliminatorPass.cpp" />
     <ClCompile Include="cir_pass\CirPassAdapters.cpp" />
     <ClCompile Include="cir_pass\CirPrinterPass.cpp" />
     <ClCompile Include="cir_pass\CirVerificationPass.cpp" />
@@ -262,6 +268,7 @@
     <ClInclude Include="ast\Statement.hpp" />
     <ClInclude Include="ast\statements\ExpressionStatement.hpp" />
     <ClInclude Include="ast\expressions\ReturnOperator.hpp" />
+    <ClInclude Include="ast\statements\IfElseStatement.hpp" />
     <ClInclude Include="ast\statements\ScopeStatement.hpp" />
     <ClInclude Include="ast_visitor\AstPrinter.hpp" />
     <ClInclude Include="ast_visitor\AstVisitor.hpp" />
@@ -278,6 +285,7 @@
     <ClInclude Include="chir\declarations\ChirFunctionDeclaration.hpp" />
     <ClInclude Include="chir\declarations\ChirVariableDeclaration.hpp" />
     <ClInclude Include="chir\NodeKind.hpp" />
+    <ClInclude Include="chir\statements\ChirIfElseStatement.hpp" />
     <ClInclude Include="chir\statements\ChirScopeStatement.hpp" />
     <ClInclude Include="chir\statements\ChirValueStatement.hpp" />
     <ClInclude Include="chir\statements\ChirVariableStatement.hpp" />
@@ -311,6 +319,8 @@
     <ClInclude Include="cir\value\CirValueKind.hpp" />
     <ClInclude Include="cir\value\constant\CirNativeFunction.hpp" />
     <ClInclude Include="cir\value\instruction\CirBinaryInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirBranchInstruction.hpp" />
+    <ClInclude Include="cir\value\instruction\CirGotoInstruction.hpp" />
     <ClInclude Include="cir\value\instruction\CirLocalVariable.hpp" />
     <ClInclude Include="cir\value\instruction\CirUnaryInstruction.hpp" />
     <ClInclude Include="cir\value\instruction\CirInstruction.hpp" />
@@ -318,6 +328,8 @@
     <ClInclude Include="cir\value\instruction\CirInvocationInstruction.hpp" />
     <ClInclude Include="cir\value\instruction\CirUnitInvocationInstruction.hpp" />
     <ClInclude Include="cir\value\instruction\CirRetInstuction.hpp" />
+    <ClInclude Include="cir_pass\CirPassManager.hpp" />
+    <ClInclude Include="cir_pass\optimization\CirDeadInstructionsEliminatorPass.hpp" />
     <ClInclude Include="cir_pass\CirPass.hpp" />
     <ClInclude Include="cir_pass\CirPassAdapters.hpp" />
     <ClInclude Include="cir_pass\CirPrinterPass.hpp" />

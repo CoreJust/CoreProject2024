@@ -9,11 +9,9 @@
 */
 
 #pragma once
-#include <cassert>
 #include <concepts>
 #include <source_location>
-#include <format>
-#include "error/ErrorPrinter.hpp"
+#include "error/InternalAssert.hpp"
 
 namespace utils {
 	/*
@@ -29,22 +27,8 @@ namespace utils {
 		NoNull() = delete;
 		constexpr NoNull(NoNull&& other) noexcept : m_ptr(other.m_ptr) { }
 		constexpr NoNull(const NoNull& other) noexcept : m_ptr(other.m_ptr) { }
-		constexpr NoNull(T* ptr, std::source_location location = std::source_location::current()) noexcept : m_ptr(ptr) {
-			if (ptr == nullptr) {
-				error::ErrorPrinter::error({
-					.code = error::ErrorCode::INTERNAL_ERROR,
-					.name = "Internal compiler error: Unexpected null pointer",
-					.description = std::format(
-						"Passed nullptr to NoNull class, source: {} at {}:{}, function {}.", 
-						location.file_name(), 
-						location.line(), 
-						location.column(), 
-						location.function_name()
-					),
-				});
-
-				assert(false); // For debug mode.
-			}
+		constexpr NoNull(T* ptr, const std::source_location& location = std::source_location::current()) noexcept : m_ptr(ptr) {
+			error::internalAssert(ptr != nullptr, "Passed nullptr to NoNull class");
 		}
 
 		constexpr NoNull& operator=(const NoNull& other) noexcept {
@@ -59,6 +43,10 @@ namespace utils {
 
 		constexpr auto operator<=>(const T* other) const noexcept {
 			return m_ptr <=> other;
+		}
+		
+		constexpr bool operator==(const NoNull& other) const noexcept {
+			return m_ptr == other.m_ptr;
 		}
 
 		constexpr T* operator->() const noexcept {

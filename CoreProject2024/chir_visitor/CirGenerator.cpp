@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirGenerator.hpp"
+#include <format>
 #include "utils/CollectionUtils.hpp"
 #include "error/ErrorPrinter.hpp"
 #include "chir/ChirModule.hpp"
@@ -99,6 +100,35 @@ void chir_visitor::CirGenerator::visit(chir::ScopeStatement& node) {
 	}
 }
 
+void chir_visitor::CirGenerator::visit(chir::IfElseStatement& node) {
+	const std::vector<utils::NoNull<chir::Value>>& conditions = node.getConditions();
+	const std::vector<utils::NoNull<chir::Statement>>& ifBodies = node.getIfBodies();
+
+	utils::NoNull<cir::BasicBlock> mergeBlock = m_builder.makeBasicBlock("ifelsemerge");
+	int64_t blocksCount = static_cast<int64_t>(ifBodies.size()) + node.hasElse();
+
+	for (uint32_t i = 0; i < ifBodies.size(); ++i) {
+		utils::NoNull<cir::Value> condition = Parent::visit(conditions[i]);
+		utils::NoNull<cir::BasicBlock> successBranch = m_builder.makeBasicBlock("if");
+		utils::NoNull<cir::BasicBlock> failureBranch = --blocksCount > 0 ?
+			m_builder.makeBasicBlock("else") : mergeBlock;
+
+		m_builder.makeBranch(condition, successBranch, failureBranch);
+		m_builder.setBasicBlock(successBranch);
+		Parent::visit(ifBodies[i]);
+		m_builder.makeGoto(mergeBlock);
+
+		m_builder.setBasicBlock(failureBranch);
+	}
+
+	if (node.hasElse()) {
+		Parent::visit(node.getElseBody());
+		m_builder.makeGoto(mergeBlock);
+	}
+
+	m_builder.setBasicBlock(mergeBlock);
+}
+
 void chir_visitor::CirGenerator::visit(chir::VariableStatement& node) {
 	symbol::VariableSymbol& variable = node.getVariable();
 	utils::NoNull<cir::Value> initialValue = Parent::visit(node.getInitialValue());
@@ -119,7 +149,7 @@ void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
 			.description = "Not supported yet."
 		});
 
-		assert(false); // For debug mode.
+		error::internalAssert(false); // For debug mode.
 		return;
 	}
 
@@ -158,7 +188,7 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::getSymbolValue(symbol::Sym
 			.description = std::format( "Symbols map in CIR generators doesn't have symbol with ID {}.", symbolId),
 		});
 
-		assert(false); // For debug mode.
+		error::internalAssert(false); // For debug mode.
 	}
 
 	return it->second;

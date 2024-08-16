@@ -12,7 +12,8 @@ utf::String lexer::tokenType2String(TokenType type) {
 
 	static const char* TOKEN_TYPE_NAMES[] = {
 		"IDENTIFIER", "NUMBER", "TEXT", "RAW_TEXT",
-		"FN", "NATIVE", "RETURN", "LET",
+		"FN", "NATIVE", "RETURN", 
+		"IF", "ELIF", "ELSE", "LET",
 		"I32", "BOOL", "UNIT",
 		"TRUE", "FALSE",
 		"EQ", "PLUS", "MINUS", "STAR",

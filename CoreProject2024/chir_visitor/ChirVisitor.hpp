@@ -54,6 +54,7 @@ namespace chir_visitor {
 			switch (node->getKind()) {
 				case chir::NodeKind::VALUE_STATEMENT:		return m_self.visit(*node.as<chir::ValueStatement>());
 				case chir::NodeKind::SCOPE_STATEMENT:		return m_self.visit(*node.as<chir::ScopeStatement>());
+				case chir::NodeKind::IF_ELSE_STATEMENT:		return m_self.visit(*node.as<chir::IfElseStatement>());
 				case chir::NodeKind::VARIABLE_STATEMENT:	return m_self.visit(*node.as<chir::VariableStatement>());
 			default: unreachable();
 			}
@@ -76,6 +77,7 @@ namespace chir_visitor {
 		virtual ValueResult visit(chir::ReturnOperator& node) = 0;
 		virtual StatementResult visit(chir::ValueStatement & node) = 0;
 		virtual StatementResult visit(chir::ScopeStatement& node) = 0;
+		virtual StatementResult visit(chir::IfElseStatement& node) = 0;
 		virtual StatementResult visit(chir::VariableStatement& node) = 0;
 		virtual DeclarationResult visit(chir::VariableDeclaration& node) = 0;
 		virtual DeclarationResult visit(chir::FunctionDeclaration& node) = 0;

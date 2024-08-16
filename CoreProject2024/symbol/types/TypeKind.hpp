@@ -9,11 +9,10 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace symbol {
 	// Enumeration of the primitive types and type categories.
-	enum class TypeKind : uint8_t {
+	enum class TypeKind : unsigned char {
 		UNIT = 0,
 		I32,
 		BOOL,

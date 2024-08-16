@@ -40,8 +40,8 @@ Char utf::nextChar(char const*& ptr) {
 }
 
 bool utf::isValidUtf(StringView str) {
-	const uint8_t* end = reinterpret_cast<const uint8_t*>(str.data()) + str.size();
-	const uint8_t* ptr = reinterpret_cast<const uint8_t*>(str.data());
+	const unsigned char* end = reinterpret_cast<const unsigned char*>(str.data()) + str.size();
+	const unsigned char* ptr = reinterpret_cast<const unsigned char*>(str.data());
 
 	while (ptr < end) {
 		if (ptr + 8 <= end && (*reinterpret_cast<const uint64_t*>(ptr) & 0x8080808080808080) == 0) { // ASCII optimization

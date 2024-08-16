@@ -15,7 +15,7 @@
 
 namespace error {
 	// ErrorDetailLevel specifies the amount of information printed for each error/warning.
-	enum class ErrorDetailLevel : uint8_t {
+	enum class ErrorDetailLevel : unsigned char {
 		// [E/W<code>] <error name> at <line>:<position>
 		ERROR_NAME_AND_CODE_ONLY = 0,
 
@@ -66,6 +66,7 @@ namespace error {
 			INVALID_CALLEE,
 			UNEXPECTED_TYPE,
 			TYPE_MISMATCH,
+			BOOL_TYPE_REQUIRED,
 			NON_FUNCTION_CONTEXT,
 			RETURN_IN_RETURN,
 			NO_MAIN_FUNCTION,
@@ -92,11 +93,11 @@ namespace error {
 	private:
 		// Used to emulate named arguments in error and warning functions invocation.
 		struct ErrorStruct {
-			int code;
-			utf::String name;
+			int code = -1;
+			utf::String name = "-";
 			utils::TextPosition selectionStart = utils::TextPosition { };
 			uint64_t selectionLength = 0;
-			utf::String description;
+			utf::String description = "-";
 			utf::String explanation = "-";
 		};
 
@@ -114,7 +115,7 @@ namespace error {
 	public:
 		// Prints the error to the standard output stream.
 		// Terminates the compilation process.
-		static void fatalError(const ErrorStruct& err);
+		[[noreturn]] static void fatalError(const ErrorStruct& err);
 
 		// Prints the error to the standard output stream.
 		static void error(const ErrorStruct& err);

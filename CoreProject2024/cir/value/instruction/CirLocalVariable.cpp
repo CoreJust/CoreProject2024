@@ -3,11 +3,12 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirLocalVariable.hpp"
+#include <format>
 
 cir::LocalVariable::LocalVariable(utf::String name, Type type, utils::NoNull<Value> initialValue) noexcept
 	: Instruction(std::move(name), std::move(type), ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
-	assert(m_type != TypeKind::UNIT);
-	assert(m_type == m_initialValue->getType());
+	error::internalAssert(m_type != TypeKind::UNIT);
+	error::internalAssert(m_type == m_initialValue->getType());
 
 	Value::addUser(m_initialValue, *this);
 }

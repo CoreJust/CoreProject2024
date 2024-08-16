@@ -14,7 +14,7 @@
 #include "Target.hpp"
 
 namespace compiler {
-	enum class ProjectMode : uint8_t {
+	enum class ProjectMode : unsigned char {
 		/*
 		*	The project mode used to build an executable file.
 		*	Requires the main function to be defined.
@@ -58,7 +58,7 @@ namespace compiler {
 	*	the compilation mode sets the other options up first, and all the other user options are
 	*	applied afterwards.
 	*/
-	enum class CompilationMode : uint8_t {
+	enum class CompilationMode : unsigned char {
 		/*
 		*	Release is the compilation mode expected to be normally used for
 		*	the final version of the project.
@@ -98,7 +98,7 @@ namespace compiler {
 		COMPILATION_MODES_COUNT
 	};
 
-	enum class OptimizationLevel : uint8_t {
+	enum class OptimizationLevel : unsigned char {
 		/*
 		*	O0 optimization level means that no optimizations are applied at all.
 		*	The compilation results in exactly what the programer has written without

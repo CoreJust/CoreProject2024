@@ -10,6 +10,8 @@
 
 #pragma once
 #include "String.hpp"
+#include "utils/Bit.hpp"
+#include "utils/Macro.hpp"
 
 namespace utf {
 	// Converts u8 chars to String.

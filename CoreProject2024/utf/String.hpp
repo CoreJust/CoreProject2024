@@ -10,8 +10,6 @@
 
 #pragma once
 #include <string>
-#include "utils/Bit.hpp"
-#include "utils/Macro.hpp"
 
 namespace utf {
 	// Utf-8 string, string view and character respectively.

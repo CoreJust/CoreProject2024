@@ -12,10 +12,10 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 #include <random>
-#include <llvm/ADT/SmallVector.h>
+#include <vector>
 #include "utf/String.hpp"
 
-uint8_t COUNTS[] = {
+unsigned char COUNTS[] = {
 	1, 0, 1, 2, 3, 1, 2, 1, 4, 5, 8, 0, 1, 5, 1, 5, 4, 10, 11, 3, 2, 4, 2, 4, 6, 7, 2, 2, 1, 3, 2, 15, 1, 1, 2, 3, 2, 3, 4, 4, 4, 5, 29
 };
 

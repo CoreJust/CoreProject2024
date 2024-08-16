@@ -38,6 +38,7 @@ namespace ast_visitor {
 		void visit(ast::ReturnOperator& node) override;
 		void visit(ast::ExpressionStatement& node) override;
 		void visit(ast::ScopeStatement& node) override;
+		void visit(ast::IfElseStatement& node) override;
 		void visit(ast::VariableDeclaration& node) override;
 		void visit(ast::FunctionDeclaration& node) override;
 		void visit(ast::ModuleDeclarations& node) override;

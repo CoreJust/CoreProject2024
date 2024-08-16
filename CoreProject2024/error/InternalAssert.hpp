@@ -15,5 +15,5 @@
 
 namespace error {
 	// If the condition is false, causes fatal internal error with the given message for description.
-	void internalAssert(bool condition, utf::StringView message = "", std::source_location location = std::source_location::current());
+	void internalAssert(bool condition, utf::StringView message = "", const std::source_location& location = std::source_location::current());
 }

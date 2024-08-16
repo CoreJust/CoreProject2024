@@ -15,7 +15,20 @@ utils::NoNull<cir::BasicBlock> cir::CommonFunction::makeBasicBlock(utf::String n
 	return m_basicBlocks.emplace_back(cir::CirAllocator::make<cir::BasicBlock>(*this, name + std::to_string(m_basicBlocks.size())));
 }
 
-std::vector<utils::NoNull<cir::BasicBlock>>& cir::CommonFunction::getBasicBlocks() noexcept {
+std::list<utils::NoNull<cir::BasicBlock>>::iterator cir::CommonFunction::removeBasicBlock(std::list<utils::NoNull<BasicBlock>>::iterator it) {
+	std::list<utils::NoNull<Instruction>>& instructions = (*it)->getInstructions();
+	for (auto instructionIt = instructions.begin(); instructionIt != instructions.end();) {
+		if ((*instructionIt)->isTerminator()) {
+			instructionIt = (*it)->removeInstruction(instructionIt);
+		} else {
+			++instructionIt;
+		}
+	}
+
+	return m_basicBlocks.erase(it);
+}
+
+std::list<utils::NoNull<cir::BasicBlock>>& cir::CommonFunction::getBasicBlocks() noexcept {
 	return m_basicBlocks;
 }
 

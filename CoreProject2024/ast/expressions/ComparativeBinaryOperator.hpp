@@ -18,7 +18,7 @@ namespace ast {
 	class ComparativeBinaryOperator final : public Expression {
 	public:
 		// The kind of unary operator used.
-		enum ComparativeOperatorType : uint8_t {
+		enum ComparativeOperatorType : unsigned char {
 			EQUALS = 0,
 			NOT_EQUALS,
 			LESS_EQUALS,

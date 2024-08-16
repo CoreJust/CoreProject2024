@@ -6,7 +6,7 @@
 #include <format>
 #include "ErrorPrinter.hpp"
 
-void error::internalAssert(bool condition, utf::StringView message, std::source_location location) {
+void error::internalAssert(bool condition, utf::StringView message, const std::source_location& location) {
 	if (!condition) {
 		ErrorPrinter::fatalError({
 			.code = ErrorCode::INTERNAL_ERROR,

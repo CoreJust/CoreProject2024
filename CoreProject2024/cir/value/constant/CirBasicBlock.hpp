@@ -11,6 +11,7 @@
 */
 
 #pragma once
+#include <list>
 #include "CirConstant.hpp"
 #include "../instruction/CirInstruction.hpp"
 
@@ -20,7 +21,7 @@ namespace cir {
 	class BasicBlock final : public Constant {
 	private:
 		CommonFunction& m_parentFunction;
-		std::vector<utils::NoNull<Instruction>> m_instructions;
+		std::list<utils::NoNull<Instruction>> m_instructions;
 
 		// The edges that form the Control Flow Graph.
 		std::vector<utils::NoNull<BasicBlock>> m_predecessors;
@@ -34,8 +35,20 @@ namespace cir {
 		// Adds the instruction to the end of BasicBlock's instruction list.
 		void addInstruction(utils::NoNull<Instruction> instruction) noexcept;
 
+		// Removes the instruction from the BasicBlock's instruction list.
+		// Updates the CFG.
+		std::list<utils::NoNull<Instruction>>::iterator removeInstruction(std::list<utils::NoNull<Instruction>>::iterator it);
+
+		// Adds the basic block to this one's successors
+		// and adds this one to the basic block predecessors.
+		void addSuccessor(utils::NoNull<BasicBlock> successor);
+
+		// Removes the basic block from this one's successors
+		// and removes this one from the basic block predecessors.
+		void removeSuccessor(utils::NoNull<BasicBlock> successor);
+
 		CommonFunction& getParentFunction() noexcept;
-		std::vector<utils::NoNull<Instruction>>& getInstructions() noexcept;
+		std::list<utils::NoNull<Instruction>>& getInstructions() noexcept;
 		std::vector<utils::NoNull<BasicBlock>>& getPredecessors() noexcept;
 		std::vector<utils::NoNull<BasicBlock>>& getSuccessors() noexcept;
 

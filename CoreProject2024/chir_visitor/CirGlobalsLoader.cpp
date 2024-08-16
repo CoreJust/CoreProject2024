@@ -41,6 +41,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::BinaryOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ReturnOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ValueStatement& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ScopeStatement& node) { }
+void chir_visitor::CirGlobalsLoader::visit(chir::IfElseStatement& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::VariableStatement& node) { }
 
 void chir_visitor::CirGlobalsLoader::visit(chir::VariableDeclaration& node) {
