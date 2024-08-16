@@ -8,7 +8,7 @@ cir::Function::Function(utf::String name, Type returnType, std::vector<utils::No
 	: GlobalValue(std::move(name), /* TMP */TypeKind::BASIC_BLOCK, kind, parentModule),
 	m_returnType(std::move(returnType)),
 	m_arguments(std::move(arguments)) {
-	assert(cir::isFunction(kind));
+	error::internalAssert(cir::isFunction(kind));
 }
 
 const cir::Type& cir::Function::getReturnType() const noexcept {

@@ -342,7 +342,7 @@ Operators and their corresponding priorities:
         
     10.  a &&, || b - logical AND and OR. Applcable to bool.
     
-    10. a if expr else b - ternary operator. e is bool. If e is true then a would be the result, else b.
+    10. expr ? a : b - ternary operator. e is bool. If e is true then a would be the result, else b.
         a ?: b - elvis operator. Returns a if a is not null else b.
         match e { -val- -> a, -val- -> b..., else -> c } - match operator. If e matches any of the cases, the respective value is the result, otherwise default.
             Else must be specified anyway (unless all the possible values have their branches). Instead of specific values, whole expressions can be used (then, it would be compiled into if-else series).

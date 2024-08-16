@@ -14,7 +14,7 @@
 #include "Target.hpp"
 
 namespace compiler {
-	enum class ProjectMode : uint8_t {
+	enum class ProjectMode : unsigned char {
 		/*
 		*	The project mode used to build an executable file.
 		*	Requires the main function to be defined.
@@ -44,11 +44,12 @@ namespace compiler {
 		OPTIMIZED_CIR = 0x8,
 		LLVM_IR = 0x10,
 		OPTIMIZED_LLVM_IR = 0x20,
-		OBJECT_FILE = 0x40,
-		EXECUTABLE_FILE = 0x80, // Includes OBJECT_FILE
-		EXECUTION_RESULTS = 0x100, // Includes OBJECT_FILE and EXECUTABLE_FILE
+		ASSEMBLY = 0x40,
+		OBJECT_FILE = 0x80,
+		EXECUTABLE_FILE = 0x100, // Includes OBJECT_FILE
+		EXECUTION_RESULTS = 0x200, // Includes OBJECT_FILE and EXECUTABLE_FILE
 
-		ALL = 0x1ff
+		ALL = 0x3ff
 	};
 
 	/*
@@ -57,7 +58,7 @@ namespace compiler {
 	*	the compilation mode sets the other options up first, and all the other user options are
 	*	applied afterwards.
 	*/
-	enum class CompilationMode : uint8_t {
+	enum class CompilationMode : unsigned char {
 		/*
 		*	Release is the compilation mode expected to be normally used for
 		*	the final version of the project.
@@ -97,7 +98,7 @@ namespace compiler {
 		COMPILATION_MODES_COUNT
 	};
 
-	enum class OptimizationLevel : uint8_t {
+	enum class OptimizationLevel : unsigned char {
 		/*
 		*	O0 optimization level means that no optimizations are applied at all.
 		*	The compilation results in exactly what the programer has written without
@@ -177,6 +178,7 @@ namespace compiler {
 		static bool shallEmitOptimizedCIR() noexcept;
 		static bool shallEmitLLVMIR() noexcept;
 		static bool shallEmitOptimizedLLVMIR() noexcept;
+		static bool shallEmitAssembly() noexcept;
 		static bool shallEmitObjectFile() noexcept;
 		static bool shallEmitExecutableFile() noexcept;
 		static bool shallEmitExecutionResult() noexcept;

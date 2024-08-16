@@ -29,5 +29,7 @@ namespace cir {
 	class UnitInvocationInstruction;
 	class LocalVariable;
 	class Terminator;
+	class GotoInstruction;
+	class BranchInstruction;
 	class RetInstruction;
 }

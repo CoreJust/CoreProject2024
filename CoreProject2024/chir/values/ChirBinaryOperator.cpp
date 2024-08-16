@@ -5,19 +5,19 @@
 #include "ChirBinaryOperator.hpp"
 
 chir::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Value> left, utils::NoNull<Value> right, symbol::Type type) noexcept
-    : Value(NodeKind::BINARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_left(left), m_right(right) {
-    Node::setParent(m_left, this);
-    Node::setParent(m_right, this);
+	: Value(NodeKind::BINARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_left(left), m_right(right) {
+	Node::setParent(m_left, this);
+	Node::setParent(m_right, this);
 }
 
 utils::NoNull<chir::Value>& chir::BinaryOperator::getLeft() noexcept {
-    return m_left;
+	return m_left;
 }
 
 utils::NoNull<chir::Value>& chir::BinaryOperator::getRight() noexcept {
-    return m_right;
+	return m_right;
 }
 
 chir::BinaryOperator::BinaryOperatorType chir::BinaryOperator::getOperator() const noexcept {
-    return m_operatorType;
+	return m_operatorType;
 }

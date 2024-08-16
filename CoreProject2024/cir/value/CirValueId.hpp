@@ -9,8 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace cir {
-	using ValueId = uint64_t;
+	using ValueId = unsigned long long int;
+
+	static_assert(sizeof(ValueId) == 8);
 }

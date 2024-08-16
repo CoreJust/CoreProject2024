@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirUnitInvocationInstruction.hpp"
+#include <format>
 #include "utils/CollectionUtils.hpp"
 
 cir::UnitInvocationInstruction::UnitInvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments) noexcept

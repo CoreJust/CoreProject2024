@@ -5,7 +5,7 @@
 /*
 *	CirVerificationPass.hpp by CoreJust
 *	Created on 06.08.2024
-*	Contains VerificationPass class that is derived from ModulePass
+*	Contains VerificationPass class that is derived from CommonFunctionPass
 *	and that verifies CIR correctness.
 */
 

@@ -6,6 +6,7 @@
 #include <format>
 #include "utils/CollectionUtils.hpp"
 #include "error/ErrorPrinter.hpp"
+#include "error/InternalAssert.hpp"
 #include "symbol/SymbolAllocator.hpp"
 #include "ast/AstClassImplementations.hpp"
 #include "chir/ChirClassImplementations.hpp"
@@ -21,7 +22,11 @@ chir::Module ast_visitor::CHIRGenerator::generateCHIRModule(utils::NoNull<ast::D
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& node) {
-	return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), node.parseAsI64());
+	if (node.getType().getTypeName() == "bool") {
+		return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), symbol::TypeKind::BOOL, node.parseAsBool());
+	} else {
+		return chir::ChirAllocator::make<chir::ConstantValue>(node.getPosition(), symbol::TypeKind::I32, node.parseAsI64());
+	}
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
@@ -75,7 +80,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 	arguments.reserve(node.getArguments().size());
 
 	for (auto argument : node.getArguments()) {
-		arguments.push_back(Parent::visit(argument));
+		arguments.emplace_back(Parent::visit(argument));
 	}
 
 	std::vector<symbol::Type> argumentTypes = utils::map<std::vector<symbol::Type>>(
@@ -108,12 +113,19 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator& node) {
 	utils::NoNull<chir::Value> value = Parent::visit(node.getExpression());
-	if (value->getValueType() != symbol::TypeKind::I32) {
+	if (node.isArithmetical() && value->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
 			.selectionStart = node.getPosition(),
 			.description = std::format("Expression type was expected to be i32, but {} was found.", value->getValueType().toString())
+		});
+	} else if (node.isLogical() && value->getValueType() != symbol::TypeKind::BOOL) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type was expected to be bool, but {} was found.", value->getValueType().toString())
 		});
 	}
 
@@ -133,16 +145,27 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 			.code = error::ErrorCode::TYPE_MISMATCH,
 			.name = "Semantic error: Type mismatch",
 			.selectionStart = node.getPosition(),
-			.description = std::format("Expression types in binary operator must match, but {} and {} were found.", left->getValueType().toString(), right->getValueType().toString())
+			.description = std::format(
+				"Expression types in binary operator must match, but {} and {} were found.", 
+				left->getValueType().toString(), 
+				right->getValueType().toString()
+			)
 		});
 	}
 
-	if (left->getValueType() != symbol::TypeKind::I32) {
+	if (node.isArithmetical() && left->getValueType() != symbol::TypeKind::I32) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
 			.selectionStart = node.getPosition(),
-			.description = std::format("Expression type was expected to be i32, but {} was found.", left->getValueType().toString())
+			.description = std::format("Expression type in arithmetic operator expected to be i32, but {} was found.", left->getValueType().toString())
+		});
+	} else if (node.isLogical() && left->getValueType() != symbol::TypeKind::BOOL) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type in logical operator expected to be bool, but {} was found.", left->getValueType().toString())
 		});
 	}
 
@@ -153,6 +176,61 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 		right,
 		left->getValueType()
 	);
+}
+
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ComparativeBinaryOperator& node) {
+	const std::vector<ast::ComparativeBinaryOperator::ComparativeOperatorType>& operators = node.getOperators();
+	const std::vector<utils::NoNull<ast::Expression>>& expressions = node.getExpressions();
+
+	utils::NoNull<chir::Value> left = Parent::visit(expressions[0]);
+	chir::Value* result = nullptr;
+	for (uint32_t i = 0; i < operators.size(); ++i) {
+		utils::NoNull<chir::Value> right = Parent::visit(expressions[i + 1]);
+		if (left->getValueType() != right->getValueType()) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::TYPE_MISMATCH,
+				.name = "Semantic error: Type mismatch",
+				.selectionStart = node.getPosition(),
+				.description = std::format(
+					"Expression types in comparative binary operator must match, but {} and {} were found.", 
+					left->getValueType().toString(), 
+					right->getValueType().toString()
+				)
+			});
+		}
+
+		if (left->getValueType() == symbol::TypeKind::UNIT) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::UNEXPECTED_TYPE,
+				.name = "Semantic error: Unexpected type",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Expression type in comparative operator cannot be unit.")
+			});
+		}
+
+		utils::NoNull<chir::Value> comparisonValue = chir::ChirAllocator::make<chir::BinaryOperator>(
+			node.getPosition(),
+			static_cast<chir::BinaryOperator::BinaryOperatorType>(operators[i] + chir::BinaryOperator::EQUALS),
+			left,
+			right,
+			symbol::TypeKind::BOOL
+		);
+
+		left = right;
+		if (result == nullptr) {
+			result = comparisonValue.get();
+		} else {
+			result = chir::ChirAllocator::make<chir::BinaryOperator>(
+				node.getPosition(),
+				chir::BinaryOperator::LOGICAL_AND,
+				result,
+				comparisonValue,
+				symbol::TypeKind::BOOL
+			).get();
+		}
+	}
+
+	return result;
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator& node) {
@@ -239,6 +317,41 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
 	return chir::ChirAllocator::make<chir::ScopeStatement>(node.getPosition(), std::move(statements)).get();
 }
 
+chir::Statement* ast_visitor::CHIRGenerator::visit(ast::IfElseStatement& node) {
+	const std::vector<utils::NoNull<ast::Expression>>& conditions = node.getConditions();
+	const std::vector<utils::NoNull<ast::Statement>>& ifBodies = node.getIfBodies();
+
+	std::vector<utils::NoNull<chir::Value>> resultingConditions;
+	std::vector<utils::NoNull<chir::Statement>> resultingIfBodies;
+
+	resultingConditions.reserve(conditions.size());
+	resultingIfBodies.reserve(ifBodies.size());
+
+	for (uint32_t i = 0; i < conditions.size(); i++) {
+		resultingConditions.emplace_back(Parent::visit(conditions[i]));
+		resultingIfBodies.emplace_back(Parent::visit(ifBodies[i]));
+
+		if (resultingConditions.back()->getValueType() != symbol::TypeKind::BOOL) {
+			error::ErrorPrinter::error({
+				.code = error::ErrorCode::BOOL_TYPE_REQUIRED,
+				.name = "Semantic error: Expected a bool type in condition context",
+				.selectionStart = node.getPosition(),
+				.description = std::format(
+					"The condition of the if statement must be of bool type, but type {} was encountered.",
+					resultingConditions.back()->getValueType().toString()
+				)
+			});
+		}
+	}
+
+	chir::Statement* elseBody = nullptr;
+	if (node.hasElse()) {
+		elseBody = Parent::visit(node.getElseBody());
+	}
+
+	return chir::ChirAllocator::make<chir::IfElseStatement>(node.getPosition(), std::move(resultingConditions), std::move(resultingIfBodies), elseBody).get();
+}
+
 chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& node) {
 	utils::NoNull<chir::Value> initialValue = Parent::visit(node.getInitialValue());
 	symbol::Type type = node.getVariableType().makeSymbolType();
@@ -253,15 +366,13 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 				type.toString()
 			)
 		});
-
-		return nullptr;
 	}
 
 	if (m_symbols.getCurrentScope().getFunction() == nullptr) { // Global variable
 		const symbol::VariableSymbol* variable = m_symbols.getVariable(node.getName());
 
-		assert(variable != nullptr);
-		assert(variable->getType() == type);
+		error::internalAssert(variable != nullptr);
+		error::internalAssert(variable->getType() == type);
 
 		m_declarations.emplace_back(chir::ChirAllocator::make<chir::VariableDeclaration>(
 			node.getPosition(),
@@ -295,7 +406,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 
 		function = const_cast<symbol::FunctionSymbol*>(m_symbols.getFunction(node.getName(), argumentTypes));
 
-		assert(function != nullptr);
+		error::internalAssert(function != nullptr);
 	} else { // Local function
 		symbol::SymbolPath path = externalFunction->getSymbolPath();
 		path.internalPath.path.push_back(externalFunction->getName());

@@ -13,7 +13,7 @@
 #include "SymbolPath.hpp"
 
 namespace symbol {
-	enum SymbolKind : uint8_t {
+	enum SymbolKind : unsigned char {
 		VARIABLE = 0,
 		FUNCTION,
 

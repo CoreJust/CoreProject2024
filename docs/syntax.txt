@@ -3,9 +3,18 @@ This file contains the relevant features of the language (currently it is only a
 ###  Characters  ###
 A Core program is written in UTF-8 encoding.
 In the code only some of ASCII characters might be used:
-a-zA-Z0-9_+-*/%=:;,(){}"
+a-zA-Z0-9_+-*/%=<>|&!:;,(){}"
 As well as spaces and new lines (those can be non-ASCII as well).
-All of the UTF-8 symbols are allowed in string literals.
+All the UTF-8 symbols are allowed in string literals.
+
+###  Comments  ###
+In any place within the program (apart from within string literals) it is allowed to write comments.
+There can be comments of 2 types:
+1) Single-line comments //<any characters>[<new line>]
+2) Multiline comments /*<any characters>|<nested comments>*/
+It is allowed to have nested multiline comments.
+Single-line comments might include the /* character combination, it wouldn't cause a multiline comment.
+All the comments are ingored by compiler and do not affect the token stream (apart from the new lines within).
 
 ###  Program structure  ###
 A program consists of a single .core file.
@@ -57,36 +66,50 @@ Also, it is allowed to do shadowing, thus overriding an existing variable with a
 ###  Types  ###
 There are only two variable types available:
 <type> :=
-	i32
-	|unit.
+	i32|bool|unit.
 The i32 type is the signed 32-bit integer type, whereas unit is the void type, that can only be used 
 as function return type (so all the variables and arguments are actually i32 as of now).
+bool is the boolean type with 2 possible values: true and false.
 
 ###  Expressions  ###
 There are following expressions available:
 <expression> :=
 	return <expression> # Returns the expression result from the function. Has the never type. Cannot be used in another return statement.
+	|<comparative>
+<logical> :=
+	<comparative> || <logical>
+	|<comparative> && <logical>
+	|<comparative>
+<comparative> :=
+	<additive> == <comparative>
+	|<additive> != <comparative>
+	|<additive> <= <comparative>
+	|<additive> >= <comparative>
+	|<additive> < <comparative>
+	|<additive> > <comparative>
 	|<additive>
 <additive> :=
-	<multiplicative> + <multiplicative>
-	|<multiplicative> - <multiplicative>
+	<multiplicative> + <additive>
+	|<multiplicative> - <additive>
 	|<multiplicative>
 <multiplicative> :=
-	<unary> * <unary>
-	|<unary> / <unary>
-	|<unary> % <unary>
+	<unary> * <multiplicative>
+	|<unary> / <multiplicative>
+	|<unary> % <multiplicative>
 	|<unary>
 <unary> :=
 	+<unary>
 	|-<unary>
+	|!<unary>
 	|<postprimary>
 <postprimary> :=
-	<primary>([<expression>[, <expression>]...])
+	<postprimary>([<expression>[, <expression>]...])
 	|<primary>
 <primary> :=
 	(<expression>)
 	|<identifier>
 	|<literal>
+Conditional expressions may be chained: a < b < c is the same as a < b && b < c.
 
 ###  Literals  ###
 There are currently only two type of literals: numbers and strings.
@@ -105,6 +128,8 @@ There are currently only two type of literals: numbers and strings.
 r before the string literal stands for raw string, where all the characters are understood as is, whereas in
 common strings there can be escape sequences:
 	\n, \t, \v, \f, \e, \a, \b, \', \", \\, \{, \}, \r, \[o]<octal value>, \o{...}, \x<hexadecimal value>, \x{...}, \uDDDD, \u{<unicode code point>}
+<boolean-literal> :=
+	true|false
 	
 ###  Identifiers  ###
 Any name must be a valid identifier:

@@ -5,12 +5,12 @@
 #include "ChirScopeStatement.hpp"
 
 chir::ScopeStatement::ScopeStatement(std::vector<utils::NoNull<Statement>> statements) noexcept
-    : Statement(NodeKind::SCOPE_STATEMENT), m_statements(std::move(statements)) {
-    for (auto statement : m_statements) {
-        Node::setParent(statement, this);
-    }
+	: Statement(NodeKind::SCOPE_STATEMENT), m_statements(std::move(statements)) {
+	for (auto statement : m_statements) {
+		Node::setParent(statement, this);
+	}
 }
 
 const std::vector<utils::NoNull<chir::Statement>>& chir::ScopeStatement::getStatements() const noexcept {
-    return m_statements;
+	return m_statements;
 }

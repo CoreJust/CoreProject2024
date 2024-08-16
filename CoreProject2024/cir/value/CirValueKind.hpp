@@ -9,10 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace cir {
-	enum class ValueKind : uint8_t {
+	enum class ValueKind : unsigned char {
 		/// Constants
 
 		// Literal constants
@@ -38,6 +37,8 @@ namespace cir {
 		// Instructions that produce no usable value
 		UNIT_INVOCATION_INSTRUCTION, // Unit function call.
 		RET_INSTRUCTION,
+		GOTO_INSTRUCTION,
+		BRANCH_INSTRUCTION,
 
 		
 		/// Function argument
@@ -76,7 +77,9 @@ namespace cir {
 	// They must be at the end of each BasicBlock and cannot be at their middle.
 	constexpr bool isTerminator(ValueKind kind) noexcept {
 		switch (kind) {
-			case cir::ValueKind::RET_INSTRUCTION: return true;
+			case cir::ValueKind::RET_INSTRUCTION: [[fallthrough]];
+			case cir::ValueKind::GOTO_INSTRUCTION: [[fallthrough]];
+			case cir::ValueKind::BRANCH_INSTRUCTION: return true;
 		default: return false;
 		}
 	}
@@ -85,6 +88,8 @@ namespace cir {
 	constexpr bool isUsable(ValueKind kind) noexcept {
 		switch (kind) {
 			case cir::ValueKind::UNIT_INVOCATION_INSTRUCTION: [[fallthrough]];
+			case cir::ValueKind::GOTO_INSTRUCTION: [[fallthrough]];
+			case cir::ValueKind::BRANCH_INSTRUCTION: [[fallthrough]];
 			case cir::ValueKind::RET_INSTRUCTION: return false;
 		default: return true;
 		}

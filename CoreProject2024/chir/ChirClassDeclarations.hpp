@@ -23,6 +23,7 @@ namespace chir {
 	class Statement;
 	class ValueStatement;
 	class ScopeStatement;
+	class IfElseStatement;
 	class Declaration;
 	class VariableStatement;
 	class VariableDeclaration;

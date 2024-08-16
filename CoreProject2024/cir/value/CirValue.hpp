@@ -10,7 +10,7 @@
 */
 
 #pragma once
-#include <llvm/ADT/SmallVector.h>
+#include <vector>
 #include "utils/NoNull.hpp"
 #include "../type/CirType.hpp"
 #include "CirValueId.hpp"

@@ -15,12 +15,22 @@ namespace chir {
 	class BinaryOperator final : public Value {
 	public:
 		// The kind of unary operator used.
-		enum BinaryOperatorType : uint8_t {
+		enum BinaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
 			MULTIPLY,
 			DIVIDE,
 			REMAINDER,
+
+			LOGICAL_AND,
+			LOGICAL_OR,
+
+			EQUALS,
+			NOT_EQUALS,
+			LESS_EQUALS,
+			GREATER_EQUALS,
+			LESS,
+			GREATER,
 
 			BINARY_OPERATOR_TYPES_COUNT
 		};

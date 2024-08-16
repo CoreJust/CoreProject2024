@@ -15,7 +15,7 @@ namespace lexer {
 	// TokenType represents a category of a single token.
 	// Some tokens represent a fixed substring in text (like keywords and operators),
 	// while others represent a wide range of those (like identifiers and literals).
-	enum TokenType : uint8_t {
+	enum TokenType : unsigned char {
 		IDENTIFIER = 0,
 		NUMBER, // number literal
 		TEXT, // string literal
@@ -25,9 +25,15 @@ namespace lexer {
 		FN,
 		NATIVE,
 		RETURN,
+		IF,
+		ELIF,
+		ELSE,
 		LET,
 		I32,
+		BOOL,
 		UNIT,
+		TRUE,
+		FALSE,
 
 		// Operators and other symbols
 		EQ, // =
@@ -36,6 +42,17 @@ namespace lexer {
 		STAR, // *
 		SLASH, // /
 		PERCENT, // %
+		AND, // &
+		OR, // |
+		EQEQ, // ==
+		NOTEQ, // !=
+		LESSEQ, // <=
+		GREATEREQ, // >=
+		LESS, // <
+		GREATER, // <
+		NOT, // !
+		LOGIC_AND, // &&
+		LOGIC_OR, // ||
 		LPAREN, // (
 		RPAREN, // )
 		LBRACE, // {

@@ -11,6 +11,7 @@
 #pragma once
 #include "String.hpp"
 #include "utils/Bit.hpp"
+#include "utils/Macro.hpp"
 
 namespace utf {
 	// Fast algorithm to get integral log2.
@@ -36,7 +37,7 @@ namespace utf {
 		static thread_local char s_buffer[32];
 
 		// An enumeration of numbers in 2 digits from 0 to 99.
-		static const char DIGITS[] = \
+		static const alignas(alignof(uint16_t)) char DIGITS[] = \
 			"00010203040506070809"\
 			"10111213141516171819"\
 			"20212223242526272829"\

@@ -7,10 +7,10 @@
 #include "cir/CirModule.hpp"
 
 cir::GlobalValue::GlobalValue(utf::String name, Type type, ValueKind kind, utils::NoNull<Module> parentModule) noexcept
-    : Constant(std::move(name), std::move(type), kind), m_parentModule(parentModule) {
-    assert(cir::isGlobalValue(kind));
+	: Constant(std::move(name), std::move(type), kind), m_parentModule(parentModule) {
+	assert(cir::isGlobalValue(kind));
 }
 
 cir::Module& cir::GlobalValue::getParentModule() noexcept {
-    return *m_parentModule;
+	return *m_parentModule;
 }

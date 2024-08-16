@@ -19,7 +19,7 @@ namespace cir {
 	*/
 	class ConstantNumber final : public Constant {
 	public:
-		ConstantNumber(int64_t value) noexcept;
+		ConstantNumber(Type type, int64_t value) noexcept;
 
 		int64_t getValue() const noexcept;
 	};

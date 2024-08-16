@@ -11,7 +11,10 @@
 
 #pragma once
 #include "utf/String.hpp"
-#include "symbol/types/Type.hpp"
+
+namespace symbol {
+	class Type;
+}
 
 namespace ast {
 	class Type final {

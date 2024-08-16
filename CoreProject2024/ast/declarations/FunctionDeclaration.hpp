@@ -10,7 +10,7 @@
 
 #pragma once
 #include <variant>
-#include <llvm/ADT/SmallVector.h>
+#include <vector>
 #include "utf/String.hpp"
 #include "../Declaration.hpp"
 #include "../AstType.hpp"

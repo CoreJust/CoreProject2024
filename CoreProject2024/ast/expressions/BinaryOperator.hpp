@@ -15,12 +15,15 @@ namespace ast {
 	class BinaryOperator final : public Expression {
 	public:
 		// The kind of unary operator used.
-		enum BinaryOperatorType : uint8_t {
+		enum BinaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
 			MULTIPLY,
 			DIVIDE,
 			REMAINDER,
+
+			LOGIC_AND,
+			LOGIC_OR,
 
 			BINARY_OPERATOR_TYPES_COUNT
 		};
@@ -36,5 +39,11 @@ namespace ast {
 		utils::NoNull<Expression>& getLeft() noexcept;
 		utils::NoNull<Expression>& getRight() noexcept;
 		BinaryOperatorType getOperator() const noexcept;
+
+		// Returns whether the operator is arithmetical.
+		bool isArithmetical() const noexcept;
+
+		// Returns whether the operator is logical.
+		bool isLogical() const noexcept;
 	};
 }

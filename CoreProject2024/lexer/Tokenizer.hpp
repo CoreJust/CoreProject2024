@@ -83,6 +83,8 @@ namespace lexer {
 		// Tokenizes an operator starting from the current character and stores it to the current character.
 		void tokenizeOperator();
 
+		void skipSinglelineComment();
+		void skipMultilineComment();
 		void skipWhitespaces();
 
 		// Returns the next character. Updates current position in the text.

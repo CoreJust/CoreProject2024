@@ -9,10 +9,9 @@
 */
 
 #pragma once
-#include <cstdint>
 
 namespace chir {
-	enum class NodeKind : uint8_t {
+	enum class NodeKind : unsigned char {
 		// Value node types
 
 		/*
@@ -76,6 +75,14 @@ namespace chir {
 		*/
 		VARIABLE_STATEMENT,
 
+		/*
+		*	Choosing one of a list of possible branches with a number of options:
+		*	if (a) ...
+		*	elif (b) ...
+		*	else ...
+		*/
+		IF_ELSE_STATEMENT,
+
 
 		// Declaration node types
 
@@ -95,16 +102,16 @@ namespace chir {
 
 	// Checks if the given node type is an expression.
 	constexpr bool isExpression(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeKind::VALUE_STATEMENT);
+		return static_cast<unsigned char>(type) < static_cast<unsigned char>(NodeKind::VALUE_STATEMENT);
 	}
 
 	// Checks if the given node type is a statement.
 	constexpr bool isStatement(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::VALUE_STATEMENT) && static_cast<uint8_t>(type) < static_cast<uint8_t>(NodeKind::VARIABLE_DECLARATION);
+		return static_cast<unsigned char>(type) >= static_cast<unsigned char>(NodeKind::VALUE_STATEMENT) && static_cast<unsigned char>(type) < static_cast<unsigned char>(NodeKind::VARIABLE_DECLARATION);
 	}
 
 	// Checks if the given node type is a declaration, i.e. statement of the highest level.
 	constexpr bool isDeclaration(NodeKind type) noexcept {
-		return static_cast<uint8_t>(type) >= static_cast<uint8_t>(NodeKind::VARIABLE_DECLARATION);
+		return static_cast<unsigned char>(type) >= static_cast<unsigned char>(NodeKind::VARIABLE_DECLARATION);
 	}
 }

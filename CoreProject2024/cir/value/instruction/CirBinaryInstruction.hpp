@@ -16,12 +16,22 @@
 namespace cir {
 	class BinaryInstruction final : public Instruction {
 	public:
-		enum BinaryInstructionKind : uint8_t {
+		enum BinaryInstructionKind : unsigned char {
 			ADD = 0,
 			SUB,
 			MUL,
 			DIV,
 			REM,
+
+			LOGIC_AND,
+			LOGIC_OR,
+
+			CMP_EQ,
+			CMP_NEQ,
+			CMP_LEQ,
+			CMP_GEQ,
+			CMP_LT,
+			CMP_GT,
 
 			BINARY_INSTRUCTIONS_COUNT
 		};

@@ -10,7 +10,7 @@
 */
 
 #pragma once
-#include <llvm/ADT/SmallVector.h>
+#include <vector>
 #include "AstVisitor.hpp"
 #include "symbol/SymbolTable.hpp"
 #include "chir/ChirModule.hpp"
@@ -45,9 +45,11 @@ namespace ast_visitor {
 		utils::NoNull<chir::Value> visit(ast::InvocationOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::UnaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::BinaryOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::ComparativeBinaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::ReturnOperator& node) override;
 		chir::Statement* visit(ast::ExpressionStatement& node) override;
 		chir::Statement* visit(ast::ScopeStatement& node) override;
+		chir::Statement* visit(ast::IfElseStatement& node) override;
 		chir::Statement* visit(ast::VariableDeclaration& node) override;
 		chir::Statement* visit(ast::FunctionDeclaration& node) override;
 		chir::Statement* visit(ast::ModuleDeclarations& node) override;

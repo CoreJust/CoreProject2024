@@ -20,4 +20,6 @@
 #include "instruction/CirInvocationInstruction.hpp"
 #include "instruction/CirUnitInvocationInstruction.hpp"
 #include "instruction/CirLocalVariable.hpp"
+#include "instruction/CirGotoInstruction.hpp"
+#include "instruction/CirBranchInstruction.hpp"
 #include "instruction/CirRetInstuction.hpp"

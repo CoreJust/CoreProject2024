@@ -5,6 +5,7 @@
 #include "Tokenizer.hpp"
 #include <cassert>
 #include <format>
+#include "utf/Utf.hpp"
 #include "utf/StringHash.hpp"
 #include "error/ErrorPrinter.hpp"
 #include "TokenizationUtils.hpp"
@@ -19,9 +20,15 @@ constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuil
 		case utils::hashOf("fn"): return TokenType::FN;
 		case utils::hashOf("native"): return TokenType::NATIVE;
 		case utils::hashOf("return"): return TokenType::RETURN;
+		case utils::hashOf("if"): return TokenType::IF;
+		case utils::hashOf("elif"): return TokenType::ELIF;
+		case utils::hashOf("else"): return TokenType::ELSE;
 		case utils::hashOf("let"): return TokenType::LET;
 		case utils::hashOf("i32"): return TokenType::I32;
+		case utils::hashOf("bool"): return TokenType::BOOL;
 		case utils::hashOf("unit"): return TokenType::UNIT;
+		case utils::hashOf("true"): return TokenType::TRUE;
+		case utils::hashOf("false"): return TokenType::FALSE;
 	default: return TokenType::NO_TOKEN_TYPE;
 	}
 }
@@ -36,6 +43,17 @@ constexpr TokenType getOperatorTokenType(const utils::StringHashBuilder& hashBui
 		case utils::hashOf("*"): return TokenType::STAR;
 		case utils::hashOf("/"): return TokenType::SLASH;
 		case utils::hashOf("%"): return TokenType::PERCENT;
+		case utils::hashOf("&"): return TokenType::AND;
+		case utils::hashOf("|"): return TokenType::OR;
+		case utils::hashOf("=="): return TokenType::EQEQ;
+		case utils::hashOf("!="): return TokenType::NOTEQ;
+		case utils::hashOf("<="): return TokenType::LESSEQ;
+		case utils::hashOf(">="): return TokenType::GREATEREQ;
+		case utils::hashOf("<"): return TokenType::LESS;
+		case utils::hashOf(">"): return TokenType::GREATER;
+		case utils::hashOf("!"): return TokenType::NOT;
+		case utils::hashOf("&&"): return TokenType::LOGIC_AND;
+		case utils::hashOf("||"): return TokenType::LOGIC_OR;
 		case utils::hashOf("("): return TokenType::LPAREN;
 		case utils::hashOf(")"): return TokenType::RPAREN;
 		case utils::hashOf("{"): return TokenType::LBRACE;
@@ -122,6 +140,17 @@ const Token& lexer::Tokenizer::next() {
 		if (utf::isAnyWhitespace(m_char)) {
 			skipWhitespaces();
 			continue;
+		}
+
+		// Checking for comment start.
+		if (m_char == utf::encodeUtf('/') && m_ptr < m_end) {
+			if (*m_ptr == '/') {
+				skipSinglelineComment();
+				continue;
+			} else if (*m_ptr == '*') {
+				skipMultilineComment();
+				continue;
+			}
 		}
 
 		if (m_char == 0 && m_ptr >= m_end) { // Reached end of source string.
@@ -274,7 +303,7 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 
 			break;
 		} else if (m_ptr >= m_end) { // Reached the end of source file but have not found the closing "
-			error::ErrorPrinter::error({
+			error::ErrorPrinter::fatalError({
 				.code = error::ErrorCode::NO_CLOSING_QUOTES,
 				.name = "Syntax error: No closing double quotes",
 				.selectionStart = tokenPosition,
@@ -296,7 +325,7 @@ void lexer::Tokenizer::tokenizeStringLiteral() {
 	m_currentToken = Token {
 		.text = stringLiteral,
 		.position = tokenPosition,
-		.type = static_cast<TokenType>(static_cast<uint8_t>(TokenType::TEXT) + isMultilineString)
+		.type = static_cast<TokenType>(static_cast<unsigned char>(TokenType::TEXT) + isMultilineString)
 	};
 }
 
@@ -320,6 +349,67 @@ void lexer::Tokenizer::tokenizeOperator() {
 		.position = tokenPosition,
 		.type = operatorTokenType
 	};
+}
+
+void lexer::Tokenizer::skipSinglelineComment() {
+	// Skipping the initial //
+	nextChar();
+	nextChar();
+
+	utf::skipToNextLine(m_char, m_ptr, m_end);
+}
+
+void lexer::Tokenizer::skipMultilineComment() {
+	uint32_t depth = 1; // Current nestedness of the comment.
+	bool isInString = false; // So as not to mistaken a */ or /* within a string literal for a comment.
+
+	// Skipping the initial /*
+	nextChar();
+	nextChar();
+
+	while (depth && m_ptr < m_end) {
+		if (isInString) {
+			// No need to separately handle multiline strings, since """...""" would be considered "" "..." "" and work as expected.
+			if (m_char == utf::encodeUtf('"')) {
+				isInString = false;
+			}
+
+			nextChar();
+			continue;
+		}
+
+		switch (m_char) {
+			case utf::encodeUtf('/'): 
+				if (*m_ptr == '*') {
+					depth += 1;
+					nextChar();
+					nextChar();
+				} break;
+			case utf::encodeUtf('*'):
+				if (*m_ptr == '/') {
+					depth -= 1;
+					nextChar();
+					nextChar();
+				} break;
+			case utf::encodeUtf('"'):
+				isInString = true;
+				nextChar();
+				break;
+		default: 
+			nextChar(); // Skip the custom character.
+			break;
+		}
+	}
+
+	if (depth) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::NO_COMMENT_END,
+			.name = "Syntax error: No closing */ for a multiline comment",
+			.selectionStart = m_position,
+			.selectionLength = 0,
+			.description = std::format("Encountered unexpected end of file, but have not reached the closing */ for the multiline comment."),
+		});
+	}
 }
 
 void lexer::Tokenizer::skipWhitespaces() {

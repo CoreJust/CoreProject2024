@@ -41,6 +41,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::BinaryOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ReturnOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ValueStatement& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ScopeStatement& node) { }
+void chir_visitor::CirGlobalsLoader::visit(chir::IfElseStatement& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::VariableStatement& node) { }
 
 void chir_visitor::CirGlobalsLoader::visit(chir::VariableDeclaration& node) {
@@ -48,7 +49,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::VariableDeclaration& node) {
 	utils::NoNull<cir::GlobalVariable> variable = m_cirModule.addGlobalVariable(
 		variableSymbol.getName(),
 		variableSymbol.getType().makeCirType(),
-		cir::CirAllocator::make<cir::ConstantNumber>(0)
+		cir::CirAllocator::make<cir::ConstantNumber>(variableSymbol.getType().makeCirType(), 0)
 	);
 
 	m_globalsMap.try_emplace(variableSymbol.getId(), variable);

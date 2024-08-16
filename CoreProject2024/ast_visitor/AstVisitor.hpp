@@ -34,9 +34,9 @@ namespace ast_visitor {
 	public:
 		INLINE void visitRoot(utils::NoNull<ast::Node> node) {
 			if (node->isExpression()) {
-				visit(node.as<ast::Expression>().get());
+				(void)visit(node.as<ast::Expression>().get());
 			} else if (node->isStatement()) {
-				visit(node.as<ast::Declaration>().get());
+				(void)visit(node.as<ast::Declaration>().get());
 			} else {
 				unreachable();
 			}
@@ -49,6 +49,7 @@ namespace ast_visitor {
 				case ast::NodeKind::INVOCATION_OPERATOR:	return m_self.visit(*node.as<ast::InvocationOperator>());
 				case ast::NodeKind::UNARY_OPERATOR:			return m_self.visit(*node.as<ast::UnaryOperator>());
 				case ast::NodeKind::BINARY_OPERATOR:		return m_self.visit(*node.as<ast::BinaryOperator>());
+				case ast::NodeKind::COMPARATIVE_BINARY_OPERATOR: return m_self.visit(*node.as<ast::ComparativeBinaryOperator>());
 				case ast::NodeKind::RETURN_OPERATOR:		return m_self.visit(*node.as<ast::ReturnOperator>());
 			default: unreachable();
 			}
@@ -58,6 +59,7 @@ namespace ast_visitor {
 			switch (node->getKind()) {
 				case ast::NodeKind::EXPRESSION_STATEMENT:	return m_self.visit(*node.as<ast::ExpressionStatement>());
 				case ast::NodeKind::SCOPE_STATEMENT:		return m_self.visit(*node.as<ast::ScopeStatement>());
+				case ast::NodeKind::IF_ELSE_STATEMENT:		return m_self.visit(*node.as<ast::IfElseStatement>());
 				case ast::NodeKind::VARIABLE_DECLARATION:	return m_self.visit(*node.as<ast::VariableDeclaration>());
 				case ast::NodeKind::FUNCTION_DECLARATION:	return m_self.visit(*node.as<ast::FunctionDeclaration>());
 				case ast::NodeKind::MODULE_DECLARATIONS:	return m_self.visit(*node.as<ast::ModuleDeclarations>());
@@ -71,9 +73,11 @@ namespace ast_visitor {
 		virtual ExpressionResult visit(ast::InvocationOperator& node) = 0;
 		virtual ExpressionResult visit(ast::UnaryOperator& node) = 0;
 		virtual ExpressionResult visit(ast::BinaryOperator& node) = 0;
+		virtual ExpressionResult visit(ast::ComparativeBinaryOperator& node) = 0;
 		virtual ExpressionResult visit(ast::ReturnOperator& node) = 0;
 		virtual StatementResult visit(ast::ExpressionStatement& node) = 0;
 		virtual StatementResult visit(ast::ScopeStatement& node) = 0;
+		virtual StatementResult visit(ast::IfElseStatement& node) = 0;
 		virtual StatementResult visit(ast::VariableDeclaration& node) = 0;
 		virtual StatementResult visit(ast::FunctionDeclaration& node) = 0;
 		virtual StatementResult visit(ast::ModuleDeclarations& node) = 0;

@@ -11,13 +11,14 @@
 
 #pragma once
 #include <vector>
+#include <list>
 #include "CirFunction.hpp"
 #include "CirBasicBlock.hpp"
 
 namespace cir {
 	class CommonFunction final : public Function {
 	private:
-		std::vector<utils::NoNull<BasicBlock>> m_basicBlocks;
+		std::list<utils::NoNull<BasicBlock>> m_basicBlocks;
 		uint64_t m_instructionCounter; // Used for unique naming of instructions.
 
 	public:
@@ -25,7 +26,10 @@ namespace cir {
 
 		utils::NoNull<BasicBlock> makeBasicBlock(utf::String name) noexcept;
 
-		std::vector<utils::NoNull<BasicBlock>>& getBasicBlocks() noexcept;
+		// Removes the basic block from basic blocks list and modifies CFG.
+		std::list<utils::NoNull<BasicBlock>>::iterator removeBasicBlock(std::list<utils::NoNull<BasicBlock>>::iterator it);
+
+		std::list<utils::NoNull<BasicBlock>>& getBasicBlocks() noexcept;
 		uint64_t& getInstructionCounter() noexcept;
 	};
 }

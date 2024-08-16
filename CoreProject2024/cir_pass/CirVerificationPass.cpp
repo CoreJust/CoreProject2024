@@ -3,6 +3,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirVerificationPass.hpp"
+#include "error/ErrorPrinter.hpp"
 #include "cir/CirModule.hpp"
 #include "cir/value/constant/CirCommonFunction.hpp"
 #include "cir/value/constant/CirGlobalVariable.hpp"
@@ -31,7 +32,7 @@ void cir_pass::VerificationPass::verifyGlobalVariable(utils::NoNull<cir::GlobalV
 }
 
 void cir_pass::VerificationPass::verifyBasicBlock(utils::NoNull<cir::BasicBlock> basicBlock) {
-	const std::vector<utils::NoNull<cir::Instruction>>& instructions = basicBlock->getInstructions();
+	const std::list<utils::NoNull<cir::Instruction>>& instructions = basicBlock->getInstructions();
 	if (instructions.empty()) {
 		onVerificationFail("Empty basic block");
 	} else if (!instructions.back()->isTerminator()) {
@@ -49,6 +50,4 @@ void cir_pass::VerificationPass::onVerificationFail(utf::String message) {
 		.name = "CIR error: Failed CIR verification",
 		.description = message,
 	});
-
-	assert(false); // For debug mode.
 }

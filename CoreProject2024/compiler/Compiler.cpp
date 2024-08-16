@@ -19,6 +19,8 @@
 #include "chir/ChirAllocator.hpp"
 #include "chir_visitor/CirGlobalsLoader.hpp"
 #include "chir_visitor/CirGenerator.hpp"
+#include "cir_pass/CirPassManager.hpp"
+#include "cir_pass/optimization/CirDeadInstructionsEliminatorPass.hpp"
 #include "cir_pass/CirVerificationPass.hpp"
 #include "cir_pass/LLVMGlobalsLoaderPass.hpp"
 #include "cir_pass/LLVMGenerator.hpp"
@@ -159,15 +161,27 @@ cir::Module compiler::Compiler::generateCIR(chir::Module&& chirModule) {
 	cirGenerator.visitRoot(chirModule);
 	checkForErrors();
 
+	// Printing the CIR.
 	if (CompilerOptions::shallEmitCIR()) {
 		std::cout << "\n\nCIR:\n\n";
 		result.print(std::cout);
 	}
 
-	// CIR verification.
-	cir_pass::VerificationPass verifier;
-	verifier.pass(&result);
+	// CIR passes.
+	cir_pass::PassManager cirPassManager;
+
+	// Obligatory passes.
+	cirPassManager.registerPass(std::make_unique<cir_pass::DeadInstructionsEliminatorPass>());
+	cirPassManager.registerPass(std::make_unique<cir_pass::VerificationPass>()); // CIR verification.
+
+	cirPassManager.pass(&result);
 	checkForErrors();
+
+	// Printing the CIR after all the optimizations.
+	if (CompilerOptions::shallEmitOptimizedCIR()) {
+		std::cout << "\n\nOptimized CIR:\n\n";
+		result.print(std::cout);
+	}
 
 	return result;
 }
@@ -183,7 +197,7 @@ llvm::TargetMachine* compiler::Compiler::generateLLVM(cir::Module&& cirModule, l
 	llvm::InitializeAllTargetMCs();
 	llvm::InitializeAllAsmParsers();
 	llvm::InitializeAllAsmPrinters();
-
+	
 	cir_pass::LLVMGenerator llvmGenerator(result, llvmGlobalLoaderPass.getLLVMGlobals());
 	llvmGenerator.pass(&cirModule);
 
@@ -213,10 +227,7 @@ void compiler::Compiler::generateObjectFile(llvm_utils::LLVMModule&& llvmModule,
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::OBJECT_FILE_OPEN_FAILURE,
 			.name = "Compilation error: Failed to open object file",
-			.selectionStart = utils::TextPosition(),
-			.selectionLength = 0,
 			.description = std::format("Failed to open {}.o: {}.", CompilerOptions::getSourceName(), objectCodeError.message()),
-			.explanation = "-"
 
 		});
 	}
@@ -225,6 +236,18 @@ void compiler::Compiler::generateObjectFile(llvm_utils::LLVMModule&& llvmModule,
 	llvm::legacy::PassManager passManager;
 	if (targetMachine->addPassesToEmitFile(passManager, objectCodeOutput, nullptr, llvm::CodeGenFileType::ObjectFile)) {
 		throw 0;
+	}
+
+	// Emitting the assembly.
+	if (CompilerOptions::shallEmitAssembly()) {
+		llvm::legacy::PassManager emitPassManager;
+		if (targetMachine->addPassesToEmitFile(emitPassManager, llvm::errs(), nullptr, llvm::CodeGenFileType::AssemblyFile)) {
+			throw 0;
+		}
+
+		std::cout << "\n\nAssembly:\n\n";
+		emitPassManager.run(llvmModule.getModule());
+		llvm::errs().flush();
 	}
 
 	// Generating the object code.

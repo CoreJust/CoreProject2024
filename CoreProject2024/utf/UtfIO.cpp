@@ -3,6 +3,10 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "UtfIO.hpp"
+#include <ostream>
+#include <istream>
+
+#include "String.hpp"
 
 #ifdef _WIN32
 #include <Windows.h>

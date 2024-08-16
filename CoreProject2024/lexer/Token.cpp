@@ -10,18 +10,23 @@
 utf::String lexer::tokenType2String(TokenType type) {
 	assert(type <= TOKEN_TYPES_COUNT);
 
-    static const char* TOKEN_TYPE_NAMES[] = {
+	static const char* TOKEN_TYPE_NAMES[] = {
 		"IDENTIFIER", "NUMBER", "TEXT", "RAW_TEXT",
-		"FN", "NATIVE", "RETURN", "LET",
-		"I32", "UNIT",
+		"FN", "NATIVE", "RETURN", 
+		"IF", "ELIF", "ELSE", "LET",
+		"I32", "BOOL", "UNIT",
+		"TRUE", "FALSE",
 		"EQ", "PLUS", "MINUS", "STAR",
-		"SLASH", "PERCENT",
+		"SLASH", "PERCENT", "AND", "OR",
+		"EQEQ", "NOTEQ", "LESSEQ", "GREATEREQ", 
+		"LESS", "GREATER",
+		"NOT", "LOGIC_AND", "LOGIC_OR",
 		"LPAREN", "RPAREN", "LBRACE", "RBRACE",
 		"COLON", "SEMICOLON", "COMMA",
 		"NEWLINE", "NO_TOKEN", "TOKEN_TYPES_COUNT"
-    };
+	};
 
-    return TOKEN_TYPE_NAMES[type];
+	return TOKEN_TYPE_NAMES[type];
 }
 
 utf::String lexer::Token::toString() const {
