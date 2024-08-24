@@ -10,28 +10,45 @@
 */
 
 #pragma once
+#include "utils/NoNull.hpp"
+#include "utils/PooledAllocator.hpp"
 #include "utf/String.hpp"
+#include "AstTypeKind.hpp"
 
 namespace symbol {
 	class Type;
 }
 
 namespace ast {
-	class Type final {
-	private:
-		utf::StringView m_typeName;
+	class Type {
+		template<class T> friend class utils::PooledAllocator;
+
+	protected:
+		TypeKind m_typeKind;
+
+	protected:
+		Type(TypeKind typeKind) noexcept;
+
+	public:
+		static utils::NoNull<Type> make(TypeKind typeKind = TypeKind::NO_TYPE);
 
 	public:
 		Type() noexcept; // No type
-		Type(utf::StringView typeName) noexcept;
 
 		// Creates the symbol type from AST type.
 		// Can only be called after the types are loaded into symbol table.
-		symbol::Type makeSymbolType() const;
+		virtual utils::NoNull<symbol::Type> makeSymbolType() const;
 
 		// No type is when the type is unknown (not stated explicitly).
 		bool isNoType() const noexcept;
 
-		utf::StringView getTypeName() const noexcept;
+		bool isPrimitiveType() const noexcept;
+		bool isComplexType() const noexcept;
+		bool isFunctionType() const noexcept;
+		bool isCCompatibleType() const noexcept;
+		bool isIntegerType() const noexcept;
+
+		TypeKind getKind() const noexcept;
+		virtual utf::String toString() const noexcept;
 	};
 }

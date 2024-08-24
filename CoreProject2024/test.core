@@ -1,5 +1,5 @@
 // A function of the standard C runtime library.
-fn putchar(ch: i32): i32 = native("putchar")
+fn putchar(ch: cint): cint = native("putchar")
 
 fn print(b: bool) {
 	if (b) {
@@ -16,8 +16,8 @@ fn print(b: bool) {
 	}
 }
 
-fn print(n: i32) {
-	fn printImpl(n: i32) {
+fn print(n: cint) {
+	fn printImpl(n: cint) {
 		if n != 0 {
 			printImpl(n / 10)
 			putchar(48 + n % 10)
@@ -34,7 +34,7 @@ fn print(n: i32) {
 	}
 }
 
-fn fib(n: i32): i32 {
+fn fib(n: cint): cint {
 	if n < 1 {
 		return 1
 	} else {

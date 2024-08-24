@@ -11,8 +11,8 @@
 #include "CirGlobalVariable.hpp"
 #include <cassert>
 
-cir::GlobalVariable::GlobalVariable(utf::String name, Type type, utils::NoNull<Constant> initialValue, utils::NoNull<Module> parentModule) noexcept
-	: GlobalValue(std::move(name), std::move(type), ValueKind::GLOBAL_VARIABLE, parentModule), m_initialValue(initialValue) {
+cir::GlobalVariable::GlobalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Constant> initialValue, utils::NoNull<Module> parentModule) noexcept
+	: GlobalValue(std::move(name), type, ValueKind::GLOBAL_VARIABLE, parentModule), m_initialValue(initialValue) {
 	assert(m_type != TypeKind::UNIT);
 	assert(m_type == m_initialValue->getType());
 

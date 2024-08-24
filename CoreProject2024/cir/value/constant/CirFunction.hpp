@@ -18,13 +18,13 @@
 namespace cir {
 	class Function : public GlobalValue {
 	protected:
-		Type m_returnType;
+		utils::NoNull<Type> m_returnType;
 		std::vector<utils::NoNull<FunctionArgument>> m_arguments;
 
 	public:
-		Function(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, ValueKind kind, utils::NoNull<Module> parentModule) noexcept;
+		Function(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, ValueKind kind, utils::NoNull<Module> parentModule) noexcept;
 
-		const Type& getReturnType() const noexcept;
+		utils::NoNull<Type> getReturnType() const noexcept;
 		std::vector<utils::NoNull<FunctionArgument>>& getArguments() noexcept;
 	};
 }

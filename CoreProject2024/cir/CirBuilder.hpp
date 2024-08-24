@@ -35,9 +35,6 @@ namespace cir {
 		// Creates and returns a new BasicBlock, and makes it the current one.
 		utils::NoNull<BasicBlock> makeAnsSetBasicBlock(utf::String name) noexcept;
 
-		// Generates the FunctionArgument value.
-		utils::NoNull<FunctionArgument> makeFunctionArgument(utf::String name, Type type);
-
 		// Functions that create an Instruction. append it to the current BasicBlock, and return it.
 		utils::NoNull<UnaryInstruction> makeNeg(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<UnaryInstruction> makeLogicNot(utils::NoNull<Value> operand, utf::String name = "u");
@@ -56,7 +53,7 @@ namespace cir {
 		utils::NoNull<BinaryInstruction> makeGt(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<InvocationInstruction> makeInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name = "i");
 		utils::NoNull<UnitInvocationInstruction> makeUnitInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments);
-		utils::NoNull<LocalVariable> makeLocal(utf::String name, Type type, utils::NoNull<Value> initialValue);
+		utils::NoNull<LocalVariable> makeLocal(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue);
 		utils::NoNull<GotoInstruction> makeGoto(utils::NoNull<BasicBlock> basicBlockToGo);
 		utils::NoNull<BranchInstruction> makeBranch(utils::NoNull<Value> value, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch);
 		utils::NoNull<RetInstruction> makeRet(utils::NoNull<Value> value);

@@ -16,7 +16,7 @@
 namespace cir {
 	class FunctionArgument final : public Value {
 	public:
-		FunctionArgument(utf::String name, Type type) noexcept;
+		FunctionArgument(utf::String name, utils::NoNull<Type> type) noexcept;
 
 		utf::String toString() const;
 	};

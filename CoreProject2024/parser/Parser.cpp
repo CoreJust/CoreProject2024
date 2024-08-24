@@ -7,6 +7,7 @@
 #include "error/ErrorPrinter.hpp"
 #include "ast/AstAllocator.hpp"
 #include "ast/AstClassImplementations.hpp"
+#include "ast/type/AstFunctionType.hpp"
 
 parser::Parser::Parser(lexer::Tokenizer tokenizer) : m_toks(std::move(tokenizer)) { }
 
@@ -48,23 +49,23 @@ ast::Declaration* parser::Parser::functionDeclaration() {
 		const utf::StringView argName = m_toks.consume(lexer::IDENTIFIER, "Expected argument name, function argument must have format <name>: <type>.").text;
 		m_toks.consume(lexer::COLON, "Expected ':' for function argument type, function argument must have format <name>: <type>.");
 
-		ast::Type argType = parseType();
-		arguments.emplace_back(ast::FunctionDeclaration::Argument{ .name = argName, .type = std::move(argType) });
+		utils::NoNull<ast::Type> argType = parseType();
+		arguments.emplace_back(ast::FunctionDeclaration::Argument{ .name = argName, .type = argType });
 		if (!m_toks.match(lexer::COMMA)) {
 			m_toks.consume(lexer::RPAREN, "Function argument list must end with ')', close the argument list.");
 			break;
 		}
 	}
 
-	ast::Type returnType = ast::Type("unit");
-	if (m_toks.match(lexer::COLON)) {
-		returnType = parseType();
-	}
+	utils::NoNull<ast::Type> returnType = m_toks.match(lexer::COLON)
+		? parseType()
+		: ast::Type::make(ast::TypeKind::UNIT);
 
 	// Function body
 	if (m_toks.match(lexer::EQ)) {
 		if (m_toks.match(lexer::NATIVE)) { // Native function declaration
 			m_toks.consume(lexer::LPAREN, "Native function names must be written in parens, format fn ... = native(\"<native name>\").");
+
 			const utf::StringView nativeName = m_toks.consumeRange(lexer::TEXT, lexer::RAW_TEXT, "Missing native function name, format fn ... = native(\"<native name>\").").text;
 			m_toks.consume(lexer::RPAREN, "Missing closing ')' after native function name, expected format fn ... = native(\"<native name>\").");
 
@@ -89,10 +90,9 @@ ast::Declaration* parser::Parser::functionDeclaration() {
 ast::Declaration* parser::Parser::variableDeclaration() {
 	const utils::TextPosition position = m_toks.current().position;
 	const utf::StringView name = m_toks.consume(lexer::IDENTIFIER, "Missing variable name, add a name to the variable.").text;
-	ast::Type type;
-	if (m_toks.match(lexer::COLON)) {
-		type = parseType();
-	}
+	utils::NoNull<ast::Type> type = m_toks.match(lexer::COLON) 
+		? parseType() 
+		: ast::Type::make();
 
 	m_toks.consume(lexer::EQ, "Missing '=', variable must be initialized with initial value.");
 	ast::Expression* initialValue = expression();
@@ -350,14 +350,28 @@ ast::Expression* parser::Parser::primary() {
 	return nullptr;
 }
 
-ast::Type parser::Parser::parseType() {
-	if (m_toks.match(lexer::I32)) {
-		return ast::Type("i32");
-	} else if (m_toks.match(lexer::BOOL)) {
-		return ast::Type("bool");
-	} else if (m_toks.match(lexer::UNIT)) {
-		return ast::Type("unit");
-	} else {
+utils::NoNull<ast::Type> parser::Parser::parseType() {
+	switch (m_toks.current().type) {
+		case lexer::I8: m_toks.next(); return ast::Type::make(ast::TypeKind::I8);
+		case lexer::I16: m_toks.next(); return ast::Type::make(ast::TypeKind::I16);
+		case lexer::I32: m_toks.next(); return ast::Type::make(ast::TypeKind::I32);
+		case lexer::I64: m_toks.next(); return ast::Type::make(ast::TypeKind::I64);
+		case lexer::I128: m_toks.next(); return ast::Type::make(ast::TypeKind::I128);
+		case lexer::ISIZE: m_toks.next(); return ast::Type::make(ast::TypeKind::ISIZE);
+		case lexer::U8: m_toks.next(); return ast::Type::make(ast::TypeKind::U8);
+		case lexer::U16: m_toks.next(); return ast::Type::make(ast::TypeKind::U16);
+		case lexer::U32: m_toks.next(); return ast::Type::make(ast::TypeKind::U32);
+		case lexer::U64: m_toks.next(); return ast::Type::make(ast::TypeKind::U64);
+		case lexer::U128: m_toks.next(); return ast::Type::make(ast::TypeKind::U128);
+		case lexer::USIZE: m_toks.next(); return ast::Type::make(ast::TypeKind::USIZE);
+		case lexer::CINT: m_toks.next(); return ast::Type::make(ast::TypeKind::CINT);
+		case lexer::CLONG: m_toks.next(); return ast::Type::make(ast::TypeKind::CLONG);
+		case lexer::CUINT: m_toks.next(); return ast::Type::make(ast::TypeKind::CUINT);
+		case lexer::CULONG: m_toks.next(); return ast::Type::make(ast::TypeKind::CULONG);
+		case lexer::BOOL: m_toks.next(); return ast::Type::make(ast::TypeKind::BOOL);
+		case lexer::UNIT: m_toks.next(); return ast::Type::make(ast::TypeKind::UNIT);
+		case lexer::FN: m_toks.next(); return parseFunctionType();
+	default:
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::EXPECTED_A_TYPE,
 			.name = "Syntax error: Expected a type",
@@ -366,6 +380,26 @@ ast::Type parser::Parser::parseType() {
 			.description = std::format("Encountered unexpected token {}, while a type was expected.",  m_toks.current().toString()),
 		});
 
-		return ast::Type();
+		return ast::Type::make();
 	}
+}
+
+utils::NoNull<ast::Type> parser::Parser::parseFunctionType() {
+	std::vector<utils::NoNull<ast::Type>> argumentTypes;
+
+	m_toks.next(); // Skipping the fn keyword.
+
+	m_toks.consume(lexer::LPAREN, "Expected an opening paren of a function type");
+	if (!m_toks.match(lexer::RPAREN)) {
+		do {
+			argumentTypes.emplace_back(parseType());
+		} while (m_toks.match(lexer::COMMA));
+		m_toks.consume(lexer::RPAREN, "Expected a closing paren of a function type");
+	}
+
+	utils::NoNull<ast::Type> returnType = m_toks.match(lexer::COLON)
+		? parseType()
+		: ast::Type::make(ast::TypeKind::UNIT);
+
+	return ast::FunctionType::make(returnType, std::move(argumentTypes));
 }

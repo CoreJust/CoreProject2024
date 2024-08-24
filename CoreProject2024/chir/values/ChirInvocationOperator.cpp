@@ -4,8 +4,9 @@
 
 #include "ChirInvocationOperator.hpp"
 
-chir::InvocationOperator::InvocationOperator(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, symbol::Type type) noexcept
+chir::InvocationOperator::InvocationOperator(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utils::NoNull<symbol::Type> type) noexcept
 	: Value(NodeKind::INVOCATION_OPERATOR, type), m_callee(callee), m_arguments(std::move(arguments)) {
+
 	// Setting the current node as the parent.
 	Node::setParent(m_callee, this);
 	for (auto argument : m_arguments) {

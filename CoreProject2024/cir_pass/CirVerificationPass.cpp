@@ -38,7 +38,7 @@ void cir_pass::VerificationPass::verifyBasicBlock(utils::NoNull<cir::BasicBlock>
 	} else if (!instructions.back()->isTerminator()) {
 		onVerificationFail("No terminator at the end of basic block");
 	} else if (instructions.back()->getKind() == cir::ValueKind::RET_INSTRUCTION) {
-		if (basicBlock->getParentFunction().getReturnType() != instructions.back().as<cir::RetInstruction>()->getReturnType()) {
+		if (*basicBlock->getParentFunction().getReturnType() != *instructions.back().as<cir::RetInstruction>()->getReturnType()) {
 			onVerificationFail("Ret operand and function return type mismatch");
 		}
 	}

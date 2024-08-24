@@ -6,8 +6,8 @@
 #include <format>
 
 cir::BranchInstruction::BranchInstruction(utils::NoNull<Value> condition, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch) noexcept
-    : Terminator("", TypeKind::UNIT, ValueKind::BRANCH_INSTRUCTION), m_condition(condition), m_successBranch(successBranch), m_failureBranch(failureBranch) {
-    error::internalAssert(m_condition->getType() == TypeKind::BOOL);
+    : Terminator("", Type::make(TypeKind::UNIT), ValueKind::BRANCH_INSTRUCTION), m_condition(condition), m_successBranch(successBranch), m_failureBranch(failureBranch) {
+    error::internalAssert(m_condition->getType()->getTypeKind() == TypeKind::BOOL);
 }
 
 cir::Value*& cir::BranchInstruction::getCondition() noexcept {

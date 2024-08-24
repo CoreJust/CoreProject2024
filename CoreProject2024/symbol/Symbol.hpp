@@ -11,6 +11,7 @@
 #pragma once
 #include "SymbolId.hpp"
 #include "SymbolPath.hpp"
+#include "type/Type.hpp"
 
 namespace symbol {
 	enum SymbolKind : unsigned char {
@@ -35,6 +36,9 @@ namespace symbol {
 		const utf::String& getName() const noexcept;
 		SymbolId getId() const noexcept;
 		SymbolKind getKind() const noexcept;
+
+		// Returns the type of the symbol's identifier.
+		virtual utils::NoNull<Type> getSymbolValueType() const = 0;
 
 		virtual utf::String toString() const noexcept = 0;
 

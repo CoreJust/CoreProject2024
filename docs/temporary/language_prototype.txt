@@ -208,7 +208,7 @@ Anonymous types can be created when using:
 		...
 	} // Similar to Kotlin's objects
 
-Basic types are: unit, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64, char (utf-8 character), bool, arrays (like i32[11]), dynamic arrays (like i32[]), 
+Basic types are: unit, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, cint, clong. cuint, culong, f32, f64, char (utf-8 character), bool, arrays (like i32[11]), dynamic arrays (like i32[]), 
 pointers (like i32*), function pointers (like fn(): unit), nullable pointers and function pointers (like i32?, fn?(): unit), references (like i32&),
 tuples (like (i32, i64)), and user defined types + nullable classes (like File?, same as in Kotlin), never type (special type that shows that the value would never
 return, can be used with any value), pointer (general pointer type aka void*).

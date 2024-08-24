@@ -28,7 +28,7 @@ void ast_visitor::SymbolLoader::visit(ast::ScopeStatement& node) { }
 void ast_visitor::SymbolLoader::visit(ast::IfElseStatement& node) { }
 
 void ast_visitor::SymbolLoader::visit(ast::VariableDeclaration& node) {
-	m_symbols.addVariable(symbol::SymbolPath { }, utf::String(node.getName()), node.getVariableType().makeSymbolType());
+	m_symbols.addVariable(symbol::SymbolPath { }, utf::String(node.getName()), node.getVariableType()->makeSymbolType());
 }
 
 void ast_visitor::SymbolLoader::visit(ast::FunctionDeclaration& node) {
@@ -39,11 +39,11 @@ void ast_visitor::SymbolLoader::visit(ast::FunctionDeclaration& node) {
 		arguments.emplace_back(symbol::SymbolAllocator::make<symbol::VariableSymbol>(
 			symbol::SymbolPath { }, 
 			utf::String(argument.name), 
-			argument.type.makeSymbolType()
+			argument.type->makeSymbolType()
 		));
 	}
 
-	m_symbols.addFunction(symbol::SymbolPath { }, utf::String(node.getName()), node.getReturnType().makeSymbolType(), std::move(arguments));
+	m_symbols.addFunction(symbol::SymbolPath { }, utf::String(node.getName()), node.getReturnType()->makeSymbolType(), std::move(arguments));
 }
 
 void ast_visitor::SymbolLoader::visit(ast::ModuleDeclarations& node) {

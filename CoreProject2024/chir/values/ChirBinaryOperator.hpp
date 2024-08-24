@@ -41,7 +41,7 @@ namespace chir {
 		BinaryOperatorType m_operatorType;
 
 	public:
-		BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Value> left, utils::NoNull<Value> right, symbol::Type type) noexcept;
+		BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Value> left, utils::NoNull<Value> right, utils::NoNull<symbol::Type> type) noexcept;
 
 		utils::NoNull<Value>& getLeft() noexcept;
 		utils::NoNull<Value>& getRight() noexcept;

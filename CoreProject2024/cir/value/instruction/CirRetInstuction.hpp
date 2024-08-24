@@ -23,7 +23,7 @@ namespace cir {
 
 		bool isRetUnit() const noexcept;
 		Value*& getOperand() noexcept;
-		const Type& getReturnType() noexcept;
+		utils::NoNull<Type> getReturnType() noexcept;
 
 		utf::String toInstuctionString() const override;
 	};

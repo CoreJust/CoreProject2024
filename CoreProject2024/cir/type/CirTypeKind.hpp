@@ -13,11 +13,30 @@
 namespace cir {
 	enum class TypeKind : unsigned char {
 		UNIT = 0,
-		I32,
 		BOOL,
 
 		BASIC_BLOCK,
 
+		// Complex types
+		INTEGER,
+		FUNCTION,
+
 		TYPE_KINDS_COUNT
 	};
+
+	constexpr bool isPrimitive(TypeKind type) noexcept {
+		switch (type) {
+			case cir::TypeKind::INTEGER: [[fallthrough]];
+			case cir::TypeKind::FUNCTION: return false;
+		default: return true;
+		}
+	}
+
+	constexpr bool isComplex(TypeKind type) noexcept {
+		switch (type) {
+			case cir::TypeKind::INTEGER: [[fallthrough]];
+			case cir::TypeKind::FUNCTION: return true;
+		default: return false;
+		}
+	}
 }

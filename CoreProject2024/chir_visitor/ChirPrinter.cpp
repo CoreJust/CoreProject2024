@@ -18,10 +18,10 @@ void chir_visitor::ChirPrinter::visitRoot(chir::Module& module) {
 }
 
 void chir_visitor::ChirPrinter::visit(chir::ConstantValue& node) {
-	if (node.getValueType() == symbol::TypeKind::BOOL) {
-		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue() ? "true\0" : "false");
+	if (node.getValueType()->isBoolType()) {
+		m_printer.stream() << std::format("{}({})", node.getValueType()->toString(), node.getValue() ? "true\0" : "false");
 	} else { // Number
-		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+		m_printer.stream() << std::format("{}({})", node.getValueType()->toString(), node.getValue().str());
 	}
 }
 
@@ -32,7 +32,7 @@ void chir_visitor::ChirPrinter::visit(chir::SymbolValue& node) {
 			"fn {}<{}>", 
 			node.getFunction().getName(), 
 			utils::joinToString(node.getFunction().getArguments(), ", ", "", "", [](utils::NoNull<symbol::VariableSymbol> argument) -> utf::String {
-				return argument->getType().toString();
+				return argument->getType()->toString();
 			})
 		); break;
 	default: unreachable();

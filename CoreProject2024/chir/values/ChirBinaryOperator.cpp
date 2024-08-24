@@ -4,8 +4,8 @@
 
 #include "ChirBinaryOperator.hpp"
 
-chir::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Value> left, utils::NoNull<Value> right, symbol::Type type) noexcept
-	: Value(NodeKind::BINARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_left(left), m_right(right) {
+chir::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Value> left, utils::NoNull<Value> right, utils::NoNull<symbol::Type> type) noexcept
+	: Value(NodeKind::BINARY_OPERATOR, type), m_operatorType(operatorType), m_left(left), m_right(right) {
 	Node::setParent(m_left, this);
 	Node::setParent(m_right, this);
 }

@@ -2,6 +2,7 @@
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+// TODO: refactor
 #include "Compiler.hpp"
 #include <iostream>
 #include <llvm/Support/FileSystem.h>
@@ -12,13 +13,16 @@
 #include "error/ErrorPrinter.hpp"
 #include "parser/Parser.hpp"
 #include "symbol/SymbolAllocator.hpp"
+#include "symbol/type/TypeAllocator.hpp"
 #include "ast_visitor/AstPrinter.hpp"
 #include "ast_visitor/SymbolLoader.hpp"
 #include "ast_visitor/CHIRGenerator.hpp"
 #include "ast/AstAllocator.hpp"
+#include "ast/type/AstTypeAllocator.hpp"
 #include "chir/ChirAllocator.hpp"
 #include "chir_visitor/CirGlobalsLoader.hpp"
 #include "chir_visitor/CirGenerator.hpp"
+#include "cir/type/CirTypeAllocator.hpp"
 #include "cir_pass/CirPassManager.hpp"
 #include "cir_pass/optimization/CirDeadInstructionsEliminatorPass.hpp"
 #include "cir_pass/CirVerificationPass.hpp"
@@ -41,6 +45,7 @@ void compiler::Compiler::build() {
 		symbol::SymbolTable symbolTable = loadSymbols(ast);
 		chir::Module chirModule = generateCHIR(ast, std::move(symbolTable));
 		ast::AstAllocator::tryRelease();
+		ast::AstTypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::CIR)) {
 			cleanup();
@@ -50,6 +55,7 @@ void compiler::Compiler::build() {
 		cir::Module cirModule = generateCIR(std::move(chirModule));
 		chir::ChirAllocator::tryRelease();
 		symbol::SymbolAllocator::tryRelease();
+		symbol::TypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::LLVM_IR)) {
 			cleanup();
@@ -59,6 +65,7 @@ void compiler::Compiler::build() {
 		llvm_utils::LLVMModule llvmModule { CompilerOptions::getSourceName() };
 		llvm::TargetMachine* targetMachine = generateLLVM(std::move(cirModule), llvmModule);
 		cir::CirAllocator::tryRelease();
+		cir::CirTypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::OBJECT_FILE)) {
 			cleanup();
@@ -276,7 +283,10 @@ void compiler::Compiler::checkForErrors() {
 
 void compiler::Compiler::cleanup() {
 	ast::AstAllocator::tryRelease();
+	ast::AstTypeAllocator::tryRelease();
 	chir::ChirAllocator::tryRelease();
 	symbol::SymbolAllocator::tryRelease();
+	symbol::TypeAllocator::tryRelease();
 	cir::CirAllocator::tryRelease();
+	cir::CirTypeAllocator::tryRelease();
 }

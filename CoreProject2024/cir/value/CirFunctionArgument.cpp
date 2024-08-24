@@ -5,9 +5,9 @@
 #include "CirFunctionArgument.hpp"
 #include <format>
 
-cir::FunctionArgument::FunctionArgument(utf::String name, Type type) noexcept
-	: Value(std::move(name), std::move(type), ValueKind::FUNCTION_ARGUMENT) { }
+cir::FunctionArgument::FunctionArgument(utf::String name, utils::NoNull<Type> type) noexcept
+	: Value(std::move(name), type, ValueKind::FUNCTION_ARGUMENT) { }
 
 utf::String cir::FunctionArgument::toString() const {
-	return std::format("{}: {}", m_name, m_type.toString());
+	return std::format("{}: {}", m_name, m_type->toString());
 }

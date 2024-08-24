@@ -12,7 +12,7 @@ void error::ErrorPrinter::fatalError(const ErrorStruct& err) {
 
 	throw 0;
 }
-
+#pragma optimize("", off)
 void error::ErrorPrinter::error(const ErrorStruct& err) {
 	printMessage('E', err);
 	s_hasErrors = true;

@@ -22,7 +22,7 @@ namespace cir {
 		uint64_t m_instructionCounter; // Used for unique naming of instructions.
 
 	public:
-		CommonFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept;
+		CommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept;
 
 		utils::NoNull<BasicBlock> makeBasicBlock(utf::String name) noexcept;
 

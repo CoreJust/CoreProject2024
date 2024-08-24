@@ -13,7 +13,7 @@ void ast_visitor::AstPrinter::print(utils::NoNull<ast::Node> node) {
 }
 
 void ast_visitor::AstPrinter::visit(ast::LiteralValue& node) {
-	if (node.getType().getTypeName() == "bool") {
+	if (node.getType()->getKind() == ast::TypeKind::BOOL) {
 		m_printer.stream() << (node.parseAsBool() ? "true\0" : "false");
 	} else { // Number
 		m_printer.stream() << node.getRawValue();
@@ -169,8 +169,8 @@ void ast_visitor::AstPrinter::visit(ast::IfElseStatement& node) {
 void ast_visitor::AstPrinter::visit(ast::VariableDeclaration& node) {
 	m_printer.printIndent();
 	m_printer.stream() << "let " << node.getName();
-	if (auto type = node.getVariableType(); !type.isNoType()) {
-		m_printer.stream() << ": " << type.getTypeName();
+	if (auto type = node.getVariableType(); !type->isNoType()) {
+		m_printer.stream() << ": " << type->toString();
 	}
 
 	m_printer.stream() << " = ";
@@ -184,17 +184,17 @@ void ast_visitor::AstPrinter::visit(ast::FunctionDeclaration& node) {
 
 	const std::vector<ast::FunctionDeclaration::Argument>& args = node.getArguments();
 	if (!args.empty()) {
-		m_printer.stream() << args[0].name << ": " << args[0].type.getTypeName();
+		m_printer.stream() << args[0].name << ": " << args[0].type->toString();
 	}
 
 	for (size_t i = 1; i < args.size(); i++) {
 		m_printer.stream() << ", ";
-		m_printer.stream() << args[i].name << ": " << args[i].type.getTypeName();
+		m_printer.stream() << args[i].name << ": " << args[i].type->toString();
 	}
 
 	m_printer.stream() << ')';
-	if (auto returnType = node.getReturnType(); !returnType.isNoType()) {
-		m_printer.stream() << ": " << returnType.getTypeName();
+	if (auto returnType = node.getReturnType(); !returnType->isNoType()) {
+		m_printer.stream() << ": " << returnType->toString();
 	}
 
 	m_printer.stream() << ' ';

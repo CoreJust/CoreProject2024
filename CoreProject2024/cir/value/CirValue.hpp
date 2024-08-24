@@ -29,15 +29,16 @@ namespace cir {
 	protected:
 		std::vector<utils::NoNull<Value>> m_users; // List of instructions that use this value.
 		utf::String m_name;
-		Type m_type;
+		utils::NoNull<Type> m_type;
 		ValueId m_id;
 		ValueKind m_kind;
 
 	public:
-		Value(utf::String name, Type type, ValueKind kind) noexcept;
+		Value(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
+		virtual ~Value() noexcept = default;
 
 		utf::StringView getName() const noexcept;
-		const Type& getType() const noexcept;
+		utils::NoNull<Type> getType() const noexcept;
 		const ValueId getId() const noexcept;
 		const ValueKind getKind() const noexcept;
 		std::vector<utils::NoNull<Value>>& getUsers() noexcept;

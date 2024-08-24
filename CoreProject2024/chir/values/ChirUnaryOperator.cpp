@@ -4,8 +4,8 @@
 
 #include "ChirUnaryOperator.hpp"
 
-chir::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Value> value, symbol::Type type) noexcept
-	: Value(NodeKind::UNARY_OPERATOR, std::move(type)), m_operatorType(operatorType), m_value(value) {
+chir::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Value> value, utils::NoNull<symbol::Type> type) noexcept
+	: Value(NodeKind::UNARY_OPERATOR, type), m_operatorType(operatorType), m_value(value) {
 	Node::setParent(m_value, this);
 }
 

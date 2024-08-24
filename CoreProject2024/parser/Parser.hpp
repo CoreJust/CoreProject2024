@@ -14,7 +14,7 @@
 #include "ast/Declaration.hpp"
 #include "ast/Statement.hpp"
 #include "ast/Expression.hpp"
-#include "ast/AstType.hpp"
+#include "ast/type/AstType.hpp"
 
 namespace parser {
 	class Parser final {
@@ -48,6 +48,7 @@ namespace parser {
 		ast::Expression* primary();
 
 		// Types
-		ast::Type parseType();
+		utils::NoNull<ast::Type> parseType();
+		utils::NoNull<ast::Type> parseFunctionType();
 	};
 }

@@ -6,7 +6,7 @@
 #include <format>
 
 cir::GotoInstruction::GotoInstruction(utils::NoNull<BasicBlock> basicBlockToGo) noexcept
-    : Terminator("", TypeKind::UNIT, ValueKind::GOTO_INSTRUCTION), m_basicBlockToGo(basicBlockToGo) {
+    : Terminator("", Type::make(TypeKind::UNIT), ValueKind::GOTO_INSTRUCTION), m_basicBlockToGo(basicBlockToGo) {
 
 }
 

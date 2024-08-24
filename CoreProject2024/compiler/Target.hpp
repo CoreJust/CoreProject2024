@@ -42,12 +42,26 @@ namespace compiler {
 		uint32_t m_architectureBits = 64;
 		TargetEndianness m_endianness = TargetEndianness::LITTLE_ENDIAN;
 
+		// Those are fields normally derived from the target and you are required to explicitly state them only for some rare architectures.
+
+		// The size of the cint/cuint types in bytes.
+		uint32_t m_intSize = 0;
+
+		// The size of the clong/culong types in bytes.
+		uint32_t m_longSize = 0;
+
+		// The size of the pointer and isize/usize types in bytes.
+		uint32_t m_pointerSize = 0;
+
 	private:
-		Target(utf::String targetTripleStr);
+		Target(utf::String targetTripleStr, uint32_t intSize = 0, uint32_t longSize = 0, uint32_t pointerSize = 0);
+
+		// Sets the type sizes if their were not set previously.
+		void trySetTypeSizes(uint32_t intSize, uint32_t longSize, uint32_t pointerSize);
 
 	public:
 		Target(); // Gets the current architecture
-		Target(utf::String architecture, utf::String vendor, utf::String OS, utf::String environment);
+		Target(utf::String architecture, utf::String vendor, utf::String OS, utf::String environment, uint32_t intSize = 0, uint32_t longSize = 0, uint32_t pointerSize = 0);
 
 		utf::String makeLLVMTargetTriple() const noexcept;
 
@@ -61,6 +75,10 @@ namespace compiler {
 
 		bool isLittleEndian() const noexcept;
 		bool isBigEndian() const noexcept;
+
+		uint32_t getIntSize() const noexcept;
+		uint32_t getLongSize() const noexcept;
+		uint32_t getPointerSize() const noexcept;
 
 		const llvm::Target* makeLLVMTarget() const;
 		llvm::TargetMachine* makeLLVMTargetMachine() const;

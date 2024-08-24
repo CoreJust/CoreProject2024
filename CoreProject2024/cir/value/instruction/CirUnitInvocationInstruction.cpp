@@ -7,7 +7,7 @@
 #include "utils/CollectionUtils.hpp"
 
 cir::UnitInvocationInstruction::UnitInvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments) noexcept
-	: Instruction("", TypeKind::UNIT, ValueKind::UNIT_INVOCATION_INSTRUCTION),
+	: Instruction("", Type::make(TypeKind::UNIT), ValueKind::UNIT_INVOCATION_INSTRUCTION),
 	m_callee(callee),
 	m_arguments(std::move(arguments)) 
 {

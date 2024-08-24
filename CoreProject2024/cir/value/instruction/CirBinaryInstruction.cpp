@@ -6,7 +6,7 @@
 #include <format>
 
 cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) noexcept
-	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),
+	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? Type::make(TypeKind::BOOL) : left->getType(), ValueKind::BINARY_INSTRUCTION),
 	m_instuctionKind(instructionKind), m_left(left), m_right(right) 
 {
 	Value::addUser(m_left, *this);

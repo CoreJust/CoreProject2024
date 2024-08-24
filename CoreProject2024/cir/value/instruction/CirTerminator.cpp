@@ -3,9 +3,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirTerminator.hpp"
-#include <cassert>
+#include "error/InternalAssert.hpp"
 
-cir::Terminator::Terminator(utf::String name, Type type, ValueKind kind) noexcept 
-	: Instruction(std::move(name), std::move(type), kind) {
-	assert(cir::isTerminator(kind));
+cir::Terminator::Terminator(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
+	: Instruction(std::move(name), type, kind) {
+	error::internalAssert(cir::isTerminator(kind));
 }

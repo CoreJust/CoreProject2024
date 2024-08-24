@@ -10,6 +10,8 @@
 */
 
 #pragma once
+#include "utils/NoNull.hpp"
+#include "utils/PooledAllocator.hpp"
 #include "utf/String.hpp"
 #include "CirTypeKind.hpp"
 
@@ -25,22 +27,27 @@ namespace cir {
 	*	Unlike higher-level type system of symbol::Type, this one is more low-level.
 	*/
 	class Type {
-	private:
+		template<class T> friend class utils::PooledAllocator;
+
+	protected:
 		TypeKind m_typeKind;
 
-	public:
+	protected:
 		Type(TypeKind typeKind) noexcept;
 
-		llvm::Type* makeLLVMType(llvm::LLVMContext& context) const;
+	public:
+		static utils::NoNull<Type> make(TypeKind typeKind);
+
+		virtual llvm::Type* makeLLVMType(llvm::LLVMContext& context) const;
 
 		bool operator==(const Type& other) const noexcept;
 
 		TypeKind getTypeKind() const noexcept;
 
 		// Returns the size of the type in bytes.
-		uint32_t getTypeSize() const noexcept;
+		virtual uint32_t getTypeSize() const noexcept;
 
 		// Returns the string representation of the type as if in the code.
-		utf::String toString() const;
+		virtual utf::String toString() const;
 	};
 }

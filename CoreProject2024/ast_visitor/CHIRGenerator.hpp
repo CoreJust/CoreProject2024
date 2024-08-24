@@ -32,7 +32,7 @@ namespace ast_visitor {
 
 		// For function type inquires.
 		// It specifies the argument types that we expect the function to have.
-		std::vector<symbol::Type> m_typeInquire;
+		std::vector<utils::NoNull<symbol::Type>> m_typeInquire;
 
 	public:
 		CHIRGenerator(symbol::SymbolTable& symbols) noexcept;

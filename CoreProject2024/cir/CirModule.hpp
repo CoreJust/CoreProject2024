@@ -32,9 +32,9 @@ namespace cir {
 		// Prints the module in a human-friendly manner to the given stream.
 		void print(std::ostream& out);
 
-		utils::NoNull<GlobalVariable> addGlobalVariable(utf::String name, Type type, utils::NoNull<Constant> initialValue);
-		utils::NoNull<NativeFunction> addNativeFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
-		utils::NoNull<CommonFunction> addCommonFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
+		utils::NoNull<GlobalVariable> addGlobalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Constant> initialValue);
+		utils::NoNull<NativeFunction> addNativeFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
+		utils::NoNull<CommonFunction> addCommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
 
 		utf::StringView getName() const noexcept;
 		std::vector<utils::NoNull<GlobalValue>>& getGlobals() noexcept;

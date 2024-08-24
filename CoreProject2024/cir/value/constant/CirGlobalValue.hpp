@@ -19,7 +19,7 @@ namespace cir {
 		utils::NoNull<Module> m_parentModule;
 
 	public:
-		GlobalValue(utf::String name, Type type, ValueKind kind, utils::NoNull<Module> parentModule) noexcept;
+		GlobalValue(utf::String name, utils::NoNull<Type> type, ValueKind kind, utils::NoNull<Module> parentModule) noexcept;
 
 		Module& getParentModule() noexcept;
 	};

@@ -15,7 +15,7 @@
 namespace cir {
 	class Instruction : public Value {
 	public:
-		Instruction(utf::String name, Type type, ValueKind kind) noexcept;
+		Instruction(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
 
 		// Appends the index of the instruction within a function to instruction name.
 		void appendInstructionIndexToName(uint64_t index);

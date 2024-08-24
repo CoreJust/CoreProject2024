@@ -10,7 +10,7 @@
 #include "cir_pass/CirPrinterPass.hpp"
 
 cir::Module::Module(utf::String name) noexcept 
-	: m_name(std::move(name)), m_globalConstructor(CirAllocator::make<CommonFunction>("$GlobalInit", TypeKind::UNIT, std::vector<utils::NoNull<FunctionArgument>>(), this)) {
+	: m_name(std::move(name)), m_globalConstructor(CirAllocator::make<CommonFunction>("$GlobalInit", Type::make(TypeKind::UNIT), std::vector<utils::NoNull<FunctionArgument>>(), this)) {
 	m_globalConstructor->makeBasicBlock("entry");
 }
 
@@ -21,15 +21,15 @@ void cir::Module::print(std::ostream& out) {
 	printerPass.pass(this);
 }
 
-utils::NoNull<cir::GlobalVariable> cir::Module::addGlobalVariable(utf::String name, Type type, utils::NoNull<Constant> initialValue) {
+utils::NoNull<cir::GlobalVariable> cir::Module::addGlobalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Constant> initialValue) {
 	return m_globals.emplace_back(CirAllocator::make<GlobalVariable>(std::move(name), std::move(type), initialValue, this)).as<GlobalVariable>();
 }
 
-utils::NoNull<cir::NativeFunction> cir::Module::addNativeFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments) {
+utils::NoNull<cir::NativeFunction> cir::Module::addNativeFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments) {
 	return m_globals.emplace_back(CirAllocator::make<NativeFunction>(std::move(name), std::move(returnType), std::move(arguments), this)).as<NativeFunction>();
 }
 
-utils::NoNull<cir::CommonFunction> cir::Module::addCommonFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments) {
+utils::NoNull<cir::CommonFunction> cir::Module::addCommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments) {
 	return m_globals.emplace_back(CirAllocator::make<CommonFunction>(std::move(name), std::move(returnType), std::move(arguments), this)).as<CommonFunction>();
 }
 

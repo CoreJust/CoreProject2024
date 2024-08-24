@@ -13,8 +13,8 @@ symbol::SymbolTable::SymbolTable()
 	m_currentScope = m_rootScope.get();
 }
 
-symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::String name, symbol::Type type) {
-	utils::NoNull<VariableSymbol> variable = SymbolAllocator::make<VariableSymbol>(std::move(path), std::move(name), std::move(type));
+symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::String name, utils::NoNull<Type> type) {
+	utils::NoNull<VariableSymbol> variable = SymbolAllocator::make<VariableSymbol>(std::move(path), std::move(name), type);
 
 	if (m_currentScope->isGlobal()) {
 		std::vector<utils::NoNull<Symbol>>& symbolsWithSuchName = m_symbolsByName
@@ -30,11 +30,11 @@ symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::S
 	return *variable;
 }
 
-symbol::FunctionSymbol& symbol::SymbolTable::addFunction(SymbolPath path, utf::String name, symbol::Type returnType, std::vector<utils::NoNull<VariableSymbol>> arguments) {
+symbol::FunctionSymbol& symbol::SymbolTable::addFunction(SymbolPath path, utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<VariableSymbol>> arguments) {
 	utils::NoNull<FunctionSymbol> function = SymbolAllocator::make<FunctionSymbol>(
 		std::move(path), 
 		std::move(name), 
-		std::move(returnType), 
+		returnType, 
 		std::move(arguments)
 	);
 
@@ -119,7 +119,7 @@ const symbol::VariableSymbol* symbol::SymbolTable::getVariable(utf::StringView n
 	return reinterpret_cast<symbol::VariableSymbol*>(symbols[0].get());
 }
 
-const symbol::FunctionSymbol* symbol::SymbolTable::getFunction(utf::StringView name, const std::vector<symbol::Type>& argumentTypes) const {
+const symbol::FunctionSymbol* symbol::SymbolTable::getFunction(utf::StringView name, const std::vector<utils::NoNull<Type>>& argumentTypes) const {
 	std::vector<utils::NoNull<Symbol>> symbols = getSymbols(name);
 	if (symbols.empty() || symbols[0]->getKind() != symbol::FUNCTION) {
 		return nullptr;
@@ -131,8 +131,8 @@ const symbol::FunctionSymbol* symbol::SymbolTable::getFunction(utf::StringView n
 		} 
 
 		const FunctionSymbol& function = *symbol.as<FunctionSymbol>();
-		if (utils::areEqual(function.getArguments(), argumentTypes, [](utils::NoNull<VariableSymbol> var, const symbol::Type& type) -> bool { // Check the argument types for match.
-			return var->getType() == type;
+		if (utils::areEqual(function.getArguments(), argumentTypes, [](auto var, auto type) -> bool { // Check the argument types for match.
+			return var->getType()->equals(*type);
 		})) {
 			return &function;
 		}

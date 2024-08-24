@@ -26,7 +26,7 @@ void chir_visitor::CirGenerator::visitRoot(chir::Module& module) {
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::ConstantValue& node) {
-	return cir::CirAllocator::make<cir::ConstantNumber>(node.getValueType().makeCirType(), node.getValue());
+	return cir::CirAllocator::make<cir::ConstantNumber>(node.getValueType()->makeCirType(), node.getValue());
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::SymbolValue& node) {
@@ -42,7 +42,7 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::InvocationOper
 		}
 	);
 
-	if (node.getValueType() == symbol::TypeKind::UNIT) {
+	if (node.getValueType()->getTypeKind() == symbol::TypeKind::UNIT) {
 		return m_builder.makeUnitInvoke(callee, std::move(arguments));
 	} else {
 		return m_builder.makeInvoke(callee, std::move(arguments));
@@ -132,7 +132,7 @@ void chir_visitor::CirGenerator::visit(chir::IfElseStatement& node) {
 void chir_visitor::CirGenerator::visit(chir::VariableStatement& node) {
 	symbol::VariableSymbol& variable = node.getVariable();
 	utils::NoNull<cir::Value> initialValue = Parent::visit(node.getInitialValue());
-	m_symbols.try_emplace(variable.getId(), m_builder.makeLocal(variable.getName(), variable.getType().makeCirType(), initialValue));
+	m_symbols.try_emplace(variable.getId(), m_builder.makeLocal(variable.getName(), variable.getType()->makeCirType(), initialValue));
 }
 
 void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
@@ -174,7 +174,7 @@ void chir_visitor::CirGenerator::visit(chir::FunctionDeclaration& node) {
 
 	Parent::visit(node.getBodyAsStatement());
 
-	if (function.getReturnType() == symbol::TypeKind::UNIT && !m_builder.getCurrentBasicBlock()->hasTerminator()) {
+	if (function.getReturnType()->getTypeKind() == symbol::TypeKind::UNIT && !m_builder.getCurrentBasicBlock()->hasTerminator()) {
 		m_builder.makeRetUnit();
 	}
 }

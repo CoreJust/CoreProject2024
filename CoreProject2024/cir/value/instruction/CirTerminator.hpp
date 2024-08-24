@@ -15,6 +15,6 @@
 namespace cir {
 	class Terminator : public Instruction {
 	public:
-		Terminator(utf::String name, Type type, ValueKind kind) noexcept;
+		Terminator(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
 	};
 }

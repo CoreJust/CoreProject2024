@@ -5,8 +5,8 @@
 #include "CirCommonFunction.hpp"
 #include "cir/CirAllocator.hpp"
 
-cir::CommonFunction::CommonFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept
-	: Function(std::move(name), std::move(returnType), std::move(arguments), ValueKind::COMMON_FUNCTION, parentModule),
+cir::CommonFunction::CommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept
+	: Function(std::move(name), returnType, std::move(arguments), ValueKind::COMMON_FUNCTION, parentModule),
 	m_instructionCounter(0) {
 
 }

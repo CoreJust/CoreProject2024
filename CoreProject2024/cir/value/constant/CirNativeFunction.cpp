@@ -4,6 +4,6 @@
 
 #include "CirNativeFunction.hpp"
 
-cir::NativeFunction::NativeFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept
-	: Function(std::move(name), std::move(returnType), std::move(arguments), ValueKind::NATIVE_FUNCTION, parentModule) {
+cir::NativeFunction::NativeFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept
+	: Function(std::move(name), returnType, std::move(arguments), ValueKind::NATIVE_FUNCTION, parentModule) {
 }

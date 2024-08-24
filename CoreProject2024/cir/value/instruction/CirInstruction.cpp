@@ -3,12 +3,12 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirInstruction.hpp"
-#include <cassert>
+#include "error/InternalAssert.hpp"
 #include "utf/FastFmt.hpp"
 
-cir::Instruction::Instruction(utf::String name, Type type, ValueKind kind) noexcept 
-	: Value(std::move(name), std::move(type), kind) {
-	assert(cir::isIntruction(kind));
+cir::Instruction::Instruction(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
+	: Value(std::move(name), type, kind) {
+	error::internalAssert(cir::isIntruction(kind));
 }
 
 void cir::Instruction::appendInstructionIndexToName(uint64_t index) {

@@ -131,7 +131,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BENCHMARK_STATIC_DEFINE;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libs\llvm\llvm\llvm\include;C:\Users\egor2\source\repos\CoreProject2024\CoreProject2024;C:\libs\google-benchmark\benchmark\include;C:\libs\llvm\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libs\llvm\llvm\llvm\include;C:\Users\egor2\source\repos\CoreProject2024\CoreProject2024;C:\libs\google-benchmark\benchmark\include;C:\libs\llvm\build\include;C:\libs\ap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
@@ -153,7 +153,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ast\AstType.cpp" />
+    <ClCompile Include="ast\type\AstFunctionType.cpp" />
+    <ClCompile Include="ast\type\AstType.cpp" />
     <ClCompile Include="ast\Declaration.cpp" />
     <ClCompile Include="ast\declarations\FunctionDeclaration.cpp" />
     <ClCompile Include="ast\declarations\ModuleDeclarations.cpp" />
@@ -196,6 +197,8 @@
     <ClCompile Include="chir_visitor\CirGlobalsLoader.cpp" />
     <ClCompile Include="cir\CirBuilder.cpp" />
     <ClCompile Include="cir\CirModule.cpp" />
+    <ClCompile Include="cir\type\CirFunctionType.cpp" />
+    <ClCompile Include="cir\type\CirIntegerType.cpp" />
     <ClCompile Include="cir\value\constant\CirBasicBlock.cpp" />
     <ClCompile Include="cir\value\constant\CirConstanNumber.cpp" />
     <ClCompile Include="cir\value\constant\CirConstant.cpp" />
@@ -239,9 +242,10 @@
     <ClCompile Include="symbol\Symbol.cpp" />
     <ClCompile Include="symbol\SymbolPath.cpp" />
     <ClCompile Include="symbol\SymbolTable.cpp" />
+    <ClCompile Include="symbol\type\FunctionType.cpp" />
     <ClCompile Include="symbol\VariableSymbol.cpp" />
     <ClCompile Include="test\SourceCodeGenerator.cpp" />
-    <ClCompile Include="symbol\types\Type.cpp" />
+    <ClCompile Include="symbol\type\Type.cpp" />
     <ClCompile Include="utf\StringUtils.cpp" />
     <ClCompile Include="utf\Utf.cpp" />
     <ClCompile Include="utils\File.cpp" />
@@ -251,7 +255,10 @@
     <ClInclude Include="ast\AstAllocator.hpp" />
     <ClInclude Include="ast\AstClassDeclarations.hpp" />
     <ClInclude Include="ast\AstClassImplementations.hpp" />
-    <ClInclude Include="ast\AstType.hpp" />
+    <ClInclude Include="ast\type\AstFunctionType.hpp" />
+    <ClInclude Include="ast\type\AstType.hpp" />
+    <ClInclude Include="ast\type\AstTypeAllocator.hpp" />
+    <ClInclude Include="ast\type\AstTypeKind.hpp" />
     <ClInclude Include="ast\Declaration.hpp" />
     <ClInclude Include="ast\declarations\FunctionDeclaration.hpp" />
     <ClInclude Include="ast\declarations\ModuleDeclarations.hpp" />
@@ -302,6 +309,9 @@
     <ClInclude Include="cir\CirAllocator.hpp" />
     <ClInclude Include="cir\CirBuilder.hpp" />
     <ClInclude Include="cir\CirModule.hpp" />
+    <ClInclude Include="cir\type\CirFunctionType.hpp" />
+    <ClInclude Include="cir\type\CirIntegerType.hpp" />
+    <ClInclude Include="cir\type\CirTypeAllocator.hpp" />
     <ClInclude Include="cir\value\CirValueId.hpp" />
     <ClInclude Include="cir\value\CirValueClassDeclarations.hpp" />
     <ClInclude Include="cir\value\CirValueClassImplementations.hpp" />
@@ -351,11 +361,13 @@
     <ClInclude Include="symbol\SymbolAllocator.hpp" />
     <ClInclude Include="symbol\SymbolPath.hpp" />
     <ClInclude Include="symbol\SymbolTable.hpp" />
+    <ClInclude Include="symbol\type\FunctionType.hpp" />
+    <ClInclude Include="symbol\type\TypeAllocator.hpp" />
     <ClInclude Include="symbol\VariableSymbol.hpp" />
     <ClInclude Include="test\BenchmarkMain.hpp" />
     <ClInclude Include="test\SourceCodeGenerator.hpp" />
-    <ClInclude Include="symbol\types\TypeKind.hpp" />
-    <ClInclude Include="symbol\types\Type.hpp" />
+    <ClInclude Include="symbol\type\TypeKind.hpp" />
+    <ClInclude Include="symbol\type\Type.hpp" />
     <ClInclude Include="utf\FastFmt.hpp" />
     <ClInclude Include="utf\StringUtils.hpp" />
     <ClInclude Include="utf\Utf.hpp" />
@@ -363,6 +375,7 @@
     <ClInclude Include="utils\Bit.hpp" />
     <ClInclude Include="utils\Concept.hpp" />
     <ClInclude Include="error\ErrorPrinter.hpp" />
+    <ClInclude Include="utils\IntValue.hpp" />
     <ClInclude Include="utils\NoNull.hpp" />
     <ClInclude Include="utils\PooledAllocator.hpp" />
     <ClInclude Include="utf\StringHash.hpp" />

@@ -32,11 +32,11 @@ void cir_pass::LLVMGlobalsLoaderPass::loadFunction(utils::NoNull<cir::Function> 
 	std::vector<llvm::Type*> argumentTypes = utils::map<std::vector<llvm::Type*>>(
 		function->getArguments(),
 		[this](auto argument) -> auto {
-			return argument->getType().makeLLVMType(m_llvmModule.getContext());
+			return argument->getType()->makeLLVMType(m_llvmModule.getContext());
 		}
 	);
 
-	llvm::FunctionType* functionType = llvm::FunctionType::get(function->getReturnType().makeLLVMType(m_llvmModule.getContext()), argumentTypes, false);
+	llvm::FunctionType* functionType = llvm::FunctionType::get(function->getReturnType()->makeLLVMType(m_llvmModule.getContext()), argumentTypes, false);
 	llvm::Function::LinkageTypes linkage = 
 		function->isNativeFunction() || function->getName() == "main" 
 		? llvm::Function::ExternalLinkage : llvm::Function::InternalLinkage;
@@ -59,13 +59,13 @@ void cir_pass::LLVMGlobalsLoaderPass::loadFunction(utils::NoNull<cir::Function> 
 }
 
 void cir_pass::LLVMGlobalsLoaderPass::loadGlobalVariable(utils::NoNull<cir::GlobalVariable> variable) {
-	const int64_t intValue = variable->getInitialValue()->getKind() == cir::ValueKind::CONSTANT_NUMBER
+	const utils::IntValue intValue = variable->getInitialValue()->getKind() == cir::ValueKind::CONSTANT_NUMBER
 		? variable->getInitialValue().as<cir::ConstantNumber>()->getValue() : 0;
 
-	llvm::Constant* initialValue = llvm::ConstantInt::get(m_llvmModule.getContext(), llvm::APInt(32, intValue, true));
+	llvm::Constant* initialValue = llvm::ConstantInt::get(m_llvmModule.getContext(), llvm::APInt(variable->getType()->getTypeSize() * 8, intValue.str(10), 10));
 	llvm::GlobalVariable* llvmVariable = new llvm::GlobalVariable(
 		m_llvmModule.getModule(),
-		variable->getType().makeLLVMType(m_llvmModule.getContext()),
+		variable->getType()->makeLLVMType(m_llvmModule.getContext()),
 		true,
 		llvm::GlobalValue::InternalLinkage,
 		initialValue,

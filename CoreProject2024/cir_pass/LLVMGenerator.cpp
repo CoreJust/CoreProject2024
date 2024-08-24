@@ -120,7 +120,7 @@ llvm::Value* cir_pass::LLVMGenerator::getLLVMValue(utils::NoNull<cir::Value> val
 	if (value->isInstruction() || value->getKind() == cir::ValueKind::FUNCTION_ARGUMENT) {
 		llvm::Value* result = m_values[value->getId()];
 		if (result->getType()->isPointerTy()) { // Temporary for handling variables.
-			result = m_builder.CreateLoad(value->getType().makeLLVMType(m_llvmModule.getContext()), result);
+			result = m_builder.CreateLoad(value->getType()->makeLLVMType(m_llvmModule.getContext()), result);
 		}
 
 		return result;
@@ -135,8 +135,15 @@ llvm::BasicBlock* cir_pass::LLVMGenerator::getLLVMBB(utils::NoNull<cir::BasicBlo
 
 llvm::Value* cir_pass::LLVMGenerator::compileConstant(utils::NoNull<cir::Constant> constant) {
 	switch (constant->getKind()) {
-		case cir::ValueKind::CONSTANT_NUMBER: return llvm::ConstantInt::get(m_llvmModule.getContext(), llvm::APInt(32, constant.as<cir::ConstantNumber>()->getValue(), true));
-		case cir::ValueKind::GLOBAL_VARIABLE: return m_builder.CreateLoad(constant->getType().makeLLVMType(m_llvmModule.getContext()), m_symbols[constant->getId()]);
+		case cir::ValueKind::CONSTANT_NUMBER: return llvm::ConstantInt::get(
+			m_llvmModule.getContext(), 
+			llvm::APInt(
+				constant->getType()->getTypeSize() * 8,
+				constant.as<cir::ConstantNumber>()->getValue().str(10), 
+				10
+			)
+		);
+		case cir::ValueKind::GLOBAL_VARIABLE: return m_builder.CreateLoad(constant->getType()->makeLLVMType(m_llvmModule.getContext()), m_symbols[constant->getId()]);
 		case cir::ValueKind::COMMON_FUNCTION: [[fallthrough]];
 		case cir::ValueKind::NATIVE_FUNCTION: return m_symbols[constant->getId()];
 		case cir::ValueKind::BASIC_BLOCK: return m_values[constant->getId()];
@@ -188,7 +195,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileInvocationInstruction(utils::NoNull
 
 llvm::Value* cir_pass::LLVMGenerator::compileLocalVariable(utils::NoNull<cir::LocalVariable> instruction) {
 	llvm::Value* initialValue = getLLVMValue(instruction->getInitialValue());
-	llvm::Value* result = m_builder.CreateAlloca(instruction->getType().makeLLVMType(m_llvmModule.getContext()), 0, instruction->getName());
+	llvm::Value* result = m_builder.CreateAlloca(instruction->getType()->makeLLVMType(m_llvmModule.getContext()), 0, instruction->getName());
 	m_builder.CreateStore(initialValue, result);
 	return result;
 }

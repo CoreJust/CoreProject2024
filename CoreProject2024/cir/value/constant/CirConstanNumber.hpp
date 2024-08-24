@@ -11,6 +11,7 @@
 
 #pragma once
 #include "CirConstant.hpp"
+#include "utils/IntValue.hpp"
 
 namespace cir {
 	/*
@@ -19,8 +20,9 @@ namespace cir {
 	*/
 	class ConstantNumber final : public Constant {
 	public:
-		ConstantNumber(Type type, int64_t value) noexcept;
+		ConstantNumber(utils::NoNull<Type> type, utils::IntValue value) noexcept;
+		~ConstantNumber() noexcept;
 
-		int64_t getValue() const noexcept;
+		const utils::IntValue& getValue() const noexcept;
 	};
 }

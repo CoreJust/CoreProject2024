@@ -23,10 +23,6 @@ utils::NoNull<cir::BasicBlock> cir::CirBuilder::makeAnsSetBasicBlock(utf::String
 	return m_currentBasicBlock = m_currentFunction->makeBasicBlock(std::move(name)).get();
 }
 
-utils::NoNull<cir::FunctionArgument> cir::CirBuilder::makeFunctionArgument(utf::String name, Type type) {
-	return CirAllocator::make<FunctionArgument>(std::move(name), std::move(type));
-}
-
 utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeNeg(utils::NoNull<Value> operand, utf::String name) {
 	return makeInstruction<UnaryInstruction>(UnaryInstruction::NEG, operand, std::move(name));
 }
@@ -95,8 +91,8 @@ utils::NoNull<cir::UnitInvocationInstruction> cir::CirBuilder::makeUnitInvoke(ut
 	return makeInstruction<UnitInvocationInstruction>(callee, std::move(arguments));
 }
 
-utils::NoNull<cir::LocalVariable> cir::CirBuilder::makeLocal(utf::String name, Type type, utils::NoNull<Value> initialValue) {
-	return makeInstruction<LocalVariable>(std::move(name), std::move(type), initialValue);
+utils::NoNull<cir::LocalVariable> cir::CirBuilder::makeLocal(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue) {
+	return makeInstruction<LocalVariable>(std::move(name), type, initialValue);
 }
 
 utils::NoNull<cir::GotoInstruction> cir::CirBuilder::makeGoto(utils::NoNull<BasicBlock> basicBlockToGo) {
