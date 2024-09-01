@@ -32,6 +32,7 @@ namespace cir {
 
 		llvm::FunctionType* makeRawLLVMFunctionType(llvm::LLVMContext& context) const;
 		llvm::Type* makeLLVMType(llvm::LLVMContext& context) const override;
+		bool equals(utils::NoNull<Type> other) const noexcept override;
 
 		uint32_t getTypeSize() const noexcept override;
 		const std::vector<utils::NoNull<Type>>& getArgumentTypes() const noexcept;

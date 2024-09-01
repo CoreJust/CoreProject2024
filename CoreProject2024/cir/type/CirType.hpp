@@ -40,7 +40,7 @@ namespace cir {
 
 		virtual llvm::Type* makeLLVMType(llvm::LLVMContext& context) const;
 
-		bool operator==(const Type& other) const noexcept;
+		virtual bool equals(utils::NoNull<Type> other) const noexcept;
 
 		TypeKind getTypeKind() const noexcept;
 

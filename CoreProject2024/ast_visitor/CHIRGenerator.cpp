@@ -56,7 +56,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValu
 						utils::joinToString(m_typeInquire)
 					),
 					.explanation = "Maybe you forgot to declare this function or made a mistake in its name, or forgot to convert argument types."
-												});
+				});
 			}
 
 			return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), const_cast<symbol::FunctionSymbol*>(function));
@@ -93,8 +93,8 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 
 	m_typeInquire = std::move(argumentTypes);
 	utils::NoNull<chir::Value> callee = Parent::visit(node.getCallee());
-	m_typeInquire.clear();
 
+	// Verification of the callee type.
 	if (!callee->getValueType()->isFunctionType()) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::INVALID_CALLEE,
@@ -102,7 +102,23 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 			.selectionStart = node.getPosition(),
 			.description = "A callee must be a function, but a non-callable expression was encountered."
 		});
+	} else if (const auto& calleeArgumentTypes = callee->getValueType().as<symbol::FunctionType>()->getArgumentTypes();
+			   !utils::areEqual(calleeArgumentTypes, m_typeInquire, [](const auto& argumentType, const auto& inquiredType) -> bool {
+				   return argumentType->equals(*inquiredType);
+				})) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::INVALID_CALLEE,
+			.name = "Semantic error: Invalid callee",
+			.selectionStart = node.getPosition(),
+			.description = std::format(
+				"Callee arguments types <{}> mismatch with the given argument types <{}>.",
+				utils::joinToString(calleeArgumentTypes),
+				utils::joinToString(m_typeInquire)
+			)
+		});
 	}
+
+	m_typeInquire.clear();
 
 	// Literal type inquire
 	const std::vector<utils::NoNull<symbol::Type>>& calleeTypes = callee->getValueType().as<symbol::FunctionType>()->getArgumentTypes();
@@ -165,6 +181,54 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator&
 		value,
 		value->getValueType()
 	);
+}
+
+utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::AsOperator& node) {
+	utils::NoNull<chir::Value> value = Parent::visit(node.getValue());
+	utils::NoNull<symbol::Type> valueType = value->getValueType();
+	utils::NoNull<symbol::Type> resultType = node.getType()->makeSymbolType();
+
+	// Check for correct convertion.
+	if (valueType->isIntegerType()) {
+		if (!resultType->isIntegerType() && !resultType->isFunctionType()) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::INVALID_TYPE_CONVERTION,
+				.name = "Semantic error: Invalid type convertion",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Cannot convert {} to {} using operator as.", valueType->toString(), resultType->toString()),
+				.explanation = "Integer type can only be converted to another integer type or to a function pointer type."
+			});
+		}
+	} else if (valueType->isFunctionType()) {
+		if (!resultType->isIntegerType()) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::INVALID_TYPE_CONVERTION,
+				.name = "Semantic error: Invalid type convertion",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Cannot convert {} to {} using operator as.", valueType->toString(), resultType->toString()),
+				.explanation = "Function pointer type can only be converted to an integer type."
+			});
+		}
+	} else if (valueType->isBoolType()) {
+		if (!resultType->isIntegerType()) {
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::INVALID_TYPE_CONVERTION,
+				.name = "Semantic error: Invalid type convertion",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Cannot convert {} to {} using operator as.", valueType->toString(), resultType->toString()),
+				.explanation = "Bool type can only be converted to an integer type."
+			});
+		}
+	} else {
+		error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::INVALID_TYPE_CONVERTION,
+				.name = "Semantic error: Invalid type convertion",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Cannot convert {} to {} using operator as.", valueType->toString(), resultType->toString())
+		});
+	}
+
+	return chir::ChirAllocator::make<chir::AsOperator>(node.getPosition(), value, resultType);
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator& node) {

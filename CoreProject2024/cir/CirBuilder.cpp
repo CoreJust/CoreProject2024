@@ -31,6 +31,10 @@ utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeLogicNot(utils::NoNull
 	return makeInstruction<UnaryInstruction>(UnaryInstruction::LOGIC_NOT, operand, std::move(name));
 }
 
+utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeCast(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name) {
+	return makeInstruction<UnaryInstruction>(operand, type, std::move(name));
+}
+
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
 	return makeInstruction<BinaryInstruction>(BinaryInstruction::ADD, left, right, std::move(name));
 }

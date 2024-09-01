@@ -21,6 +21,15 @@ llvm::Type* cir::IntegerType::makeLLVMType(llvm::LLVMContext& context) const {
     return llvm::Type::getIntNTy(context, m_bitSize);
 }
 
+bool cir::IntegerType::equals(utils::NoNull<Type> other) const noexcept {
+    if (other->getTypeKind() != TypeKind::INTEGER) {
+        return false;
+    }
+
+    utils::NoNull<IntegerType> otherAsInteger = other.as<IntegerType>();
+    return otherAsInteger->getBitSize() == m_bitSize && otherAsInteger->isSigned() == m_isSigned;
+}
+
 uint32_t cir::IntegerType::getTypeSize() const noexcept {
     return m_bitSize >> 3;
 }

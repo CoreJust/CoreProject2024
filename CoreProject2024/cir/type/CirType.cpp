@@ -25,8 +25,8 @@ llvm::Type* cir::Type::makeLLVMType(llvm::LLVMContext& context) const {
 	}
 }
 
-bool cir::Type::operator==(const Type& other) const noexcept {
-	return m_typeKind == other.getTypeKind();
+bool cir::Type::equals(utils::NoNull<Type> other) const noexcept {
+	return m_typeKind == other->getTypeKind();
 }
 
 cir::TypeKind cir::Type::getTypeKind() const noexcept {

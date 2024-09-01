@@ -38,6 +38,7 @@ namespace cir {
 		// Functions that create an Instruction. append it to the current BasicBlock, and return it.
 		utils::NoNull<UnaryInstruction> makeNeg(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<UnaryInstruction> makeLogicNot(utils::NoNull<Value> operand, utf::String name = "u");
+		utils::NoNull<UnaryInstruction> makeCast(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name = "u");
 		utils::NoNull<BinaryInstruction> makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeSub(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeMul(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");

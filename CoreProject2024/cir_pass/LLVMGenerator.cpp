@@ -15,6 +15,7 @@
 #include "utils/Macro.hpp"
 #include "compiler/CompilerOptions.hpp"
 #include "cir/CirModule.hpp"
+#include "cir/type/CirIntegerType.hpp"
 #include "cir/type/CirFunctionType.hpp"
 #include "cir/value/CirValueClassImplementations.hpp"
 
@@ -120,7 +121,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileInstruction(utils::NoNull<cir::Inst
 llvm::Value* cir_pass::LLVMGenerator::getLLVMValue(utils::NoNull<cir::Value> value) {
 	if (value->isInstruction() || value->getKind() == cir::ValueKind::FUNCTION_ARGUMENT) {
 		llvm::Value* result = m_values[value->getId()];
-		if (result->getType()->isPointerTy()) { // Temporary for handling variables.
+		if (value->isGlobalVariable() || value->getKind() == cir::ValueKind::LOCAL_VARIABLE || value->getKind() == cir::ValueKind::FUNCTION_ARGUMENT) { // Temporary for handling variables.
 			result = m_builder.CreateLoad(value->getType()->makeLLVMType(m_llvmModule.getContext()), result);
 		}
 
@@ -157,6 +158,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileUnaryInstruction(utils::NoNull<cir:
 	switch (instruction->getInstructionKind()) {
 		case cir::UnaryInstruction::NEG:	   return m_builder.CreateNeg(operand, instruction->getName());
 		case cir::UnaryInstruction::LOGIC_NOT: return m_builder.CreateNot(operand, instruction->getName());
+		case cir::UnaryInstruction::CAST:	   return compileValueCast(operand, instruction->getOperand()->getType(), instruction->getType(), instruction->getName());
 	default: unreachable();
 	}
 }
@@ -228,6 +230,33 @@ llvm::Value* cir_pass::LLVMGenerator::compileRetInstruction(utils::NoNull<cir::R
 		llvm::Value* value = getLLVMValue(instruction->getOperand());
 		return m_builder.CreateRet(value);
 	}
+}
+
+llvm::Value* cir_pass::LLVMGenerator::compileValueCast(llvm::Value* operand, utils::NoNull<cir::Type> originalType, utils::NoNull<cir::Type> resultType, utf::StringView name) {
+	if (originalType->equals(resultType)) {
+		return operand;
+	}
+
+	llvm::Type* resultLLVMType = resultType->makeLLVMType(m_llvmModule.getContext());
+	if (originalType->getTypeKind() == cir::TypeKind::INTEGER || originalType->getTypeKind() == cir::TypeKind::BOOL) {
+		if (resultType->getTypeKind() == cir::TypeKind::INTEGER) { // Integer to integer cast
+			if (originalType->getTypeSize() == resultType->getTypeSize()) {
+				return operand; // Signedness cast doesn't need to be performed in LLVM IR.
+			}
+
+			return m_builder.CreateIntCast(operand, resultLLVMType, originalType.as<cir::IntegerType>()->isSigned(), name);
+		} else if (resultType->getTypeKind() == cir::TypeKind::FUNCTION) {
+			return m_builder.CreateIntToPtr(operand, resultLLVMType, name);
+		}
+	} else if (originalType->getTypeKind() == cir::TypeKind::FUNCTION) {
+		if (resultType->getTypeKind() == cir::TypeKind::INTEGER) {
+			return m_builder.CreatePtrToInt(operand, resultLLVMType, name);
+		} else if (resultType->getTypeKind() == cir::TypeKind::FUNCTION) {
+			return m_builder.CreateBitCast(operand, resultLLVMType, name);
+		}
+	}
+
+	unreachable();
 }
 
 llvm::Value* cir_pass::LLVMGenerator::getFunctionValue(utils::NoNull<cir::Value> value) {

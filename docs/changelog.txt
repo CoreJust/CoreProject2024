@@ -22,3 +22,5 @@ Alpha 0.1.2 (16.08.2024 - ?)
 - Added function type.
 - Added type inquire for int literals.
 - Added compile-time computation of expressions with literals.
+- Added variables of function type.
+- Added type cast operator (as).

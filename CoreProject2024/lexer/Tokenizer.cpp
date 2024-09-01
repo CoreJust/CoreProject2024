@@ -24,6 +24,7 @@ constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuil
 		case utils::hashOf("elif"): return TokenType::ELIF;
 		case utils::hashOf("else"): return TokenType::ELSE;
 		case utils::hashOf("let"): return TokenType::LET;
+		case utils::hashOf("as"): return TokenType::AS;
 		case utils::hashOf("i8"): return TokenType::I8;
 		case utils::hashOf("i16"): return TokenType::I16;
 		case utils::hashOf("i32"): return TokenType::I32;
@@ -372,6 +373,8 @@ void lexer::Tokenizer::skipSinglelineComment() {
 	nextChar();
 
 	utf::skipToNextLine(m_char, m_ptr, m_end);
+	m_position.character = 1;
+	m_position.line += 1;
 }
 
 void lexer::Tokenizer::skipMultilineComment() {

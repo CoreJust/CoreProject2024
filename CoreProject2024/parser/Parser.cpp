@@ -194,10 +194,10 @@ ast::Expression* parser::Parser::logical() {
 	ast::Expression* result = comparative();
 	while (true) {
 		if (m_toks.match(lexer::LOGIC_AND)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::LOGIC_AND, result, comparative()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::LOGIC_AND, result, comparative()).get();
 			continue;
 		} else if (m_toks.match(lexer::LOGIC_OR)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::LOGIC_OR, result, comparative()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::LOGIC_OR, result, comparative()).get();
 			continue;
 		}
 
@@ -258,10 +258,10 @@ ast::Expression* parser::Parser::additive() {
 	ast::Expression* result = multiplicative();
 	while (true) {
 		if (m_toks.match(lexer::PLUS)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::PLUS, result, multiplicative()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::PLUS, result, multiplicative()).get();
 			continue;
 		} else if (m_toks.match(lexer::MINUS)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MINUS, result, multiplicative()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::MINUS, result, multiplicative()).get();
 			continue;
 		}
 
@@ -272,16 +272,16 @@ ast::Expression* parser::Parser::additive() {
 }
 
 ast::Expression* parser::Parser::multiplicative() {
-	ast::Expression* result = unary();
+	ast::Expression* result = convertive();
 	while (true) {
 		if (m_toks.match(lexer::STAR)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::MULTIPLY, result, unary()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::MULTIPLY, result, convertive()).get();
 			continue;
 		} else if (m_toks.match(lexer::SLASH)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::DIVIDE, result, unary()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::DIVIDE, result, convertive()).get();
 			continue;
 		} else if (m_toks.match(lexer::PERCENT)) {
-			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.current().position, ast::BinaryOperator::REMAINDER, result, unary()).get();
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::REMAINDER, result, convertive()).get();
 			continue;
 		}
 
@@ -291,13 +291,24 @@ ast::Expression* parser::Parser::multiplicative() {
 	return result;
 }
 
+ast::Expression* parser::Parser::convertive() {
+	ast::Expression* result = unary();
+
+	while (m_toks.match(lexer::AS)) {
+		utils::NoNull<ast::Type> resultType = parseType();
+		result = ast::AstAllocator::make<ast::AsOperator>(m_toks.previous().position, result, resultType).get();
+	}
+
+	return result;
+}
+
 ast::Expression* parser::Parser::unary() {
 	if (m_toks.match(lexer::PLUS)) {
-		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::PLUS, unary()).get();
+		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::PLUS, unary()).get();
 	} else if (m_toks.match(lexer::MINUS)) {
-		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::MINUS, unary()).get();
+		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::MINUS, unary()).get();
 	} else if (m_toks.match(lexer::NOT)) {
-		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.current().position, ast::UnaryOperator::LOGIC_NOT, unary()).get();
+		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::LOGIC_NOT, unary()).get();
 	}
 
 	return postprimary();
@@ -307,6 +318,7 @@ ast::Expression* parser::Parser::postprimary() {
 	ast::Expression* result = primary();
 	while (true) {
 		if (m_toks.match(lexer::LPAREN)) { // Invocation
+			utils::TextPosition position = m_toks.current().position;
 			std::vector<utils::NoNull<ast::Expression>> arguments;
 			while (!m_toks.match(lexer::RPAREN)) {
 				arguments.push_back(expression());
@@ -317,7 +329,7 @@ ast::Expression* parser::Parser::postprimary() {
 				}
 			}
 
-			result = ast::AstAllocator::make<ast::InvocationOperator>(m_toks.current().position, result, std::move(arguments)).get();
+			result = ast::AstAllocator::make<ast::InvocationOperator>(position, result, std::move(arguments)).get();
 			continue;
 		}
 

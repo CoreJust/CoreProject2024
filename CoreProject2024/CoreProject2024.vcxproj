@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ast\expressions\AsOperator.cpp" />
     <ClCompile Include="ast\type\AstFunctionType.cpp" />
     <ClCompile Include="ast\type\AstType.cpp" />
     <ClCompile Include="ast\Declaration.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="chir\statements\ChirScopeStatement.cpp" />
     <ClCompile Include="chir\statements\ChirValueStatement.cpp" />
     <ClCompile Include="chir\statements\ChirVariableStatement.cpp" />
+    <ClCompile Include="chir\values\ChirAsOperator.cpp" />
     <ClCompile Include="chir\values\ChirBinaryOperator.cpp" />
     <ClCompile Include="chir\values\ChirConstantValue.cpp" />
     <ClCompile Include="chir\values\ChirInvocationOperator.cpp" />
@@ -255,6 +257,7 @@
     <ClInclude Include="ast\AstAllocator.hpp" />
     <ClInclude Include="ast\AstClassDeclarations.hpp" />
     <ClInclude Include="ast\AstClassImplementations.hpp" />
+    <ClInclude Include="ast\expressions\AsOperator.hpp" />
     <ClInclude Include="ast\type\AstFunctionType.hpp" />
     <ClInclude Include="ast\type\AstType.hpp" />
     <ClInclude Include="ast\type\AstTypeAllocator.hpp" />
@@ -296,6 +299,7 @@
     <ClInclude Include="chir\statements\ChirScopeStatement.hpp" />
     <ClInclude Include="chir\statements\ChirValueStatement.hpp" />
     <ClInclude Include="chir\statements\ChirVariableStatement.hpp" />
+    <ClInclude Include="chir\values\ChirAsOperator.hpp" />
     <ClInclude Include="chir\values\ChirBinaryOperator.hpp" />
     <ClInclude Include="chir\values\ChirConstantValue.hpp" />
     <ClInclude Include="chir\values\ChirSymbolValue.hpp" />

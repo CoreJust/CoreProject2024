@@ -44,6 +44,7 @@ namespace ast_visitor {
 		utils::NoNull<chir::Value> visit(ast::IdentifierValue& node) override;
 		utils::NoNull<chir::Value> visit(ast::InvocationOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::UnaryOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::AsOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::BinaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::ComparativeBinaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::ReturnOperator& node) override;

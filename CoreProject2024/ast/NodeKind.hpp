@@ -39,6 +39,13 @@ namespace ast {
 		UNARY_OPERATOR,
 
 		/*
+		*	Type convertion operator:
+		*	<value> as <type>
+		*	e.g. a as i8, fun as culong
+		*/
+		AS_OPERATOR,
+
+		/*
 		*	Any general-kind binary operator:
 		*	<left expr> <operator> <right expr>
 		*	e.g. a + b, (x - y) / z

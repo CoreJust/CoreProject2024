@@ -20,6 +20,7 @@ void ast_visitor::SymbolLoader::visit(ast::LiteralValue& node) { }
 void ast_visitor::SymbolLoader::visit(ast::IdentifierValue& node) { }
 void ast_visitor::SymbolLoader::visit(ast::InvocationOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::UnaryOperator& node) { }
+void ast_visitor::SymbolLoader::visit(ast::AsOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::BinaryOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::ComparativeBinaryOperator& node) { }
 void ast_visitor::SymbolLoader::visit(ast::ReturnOperator& node) { }

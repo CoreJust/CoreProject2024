@@ -41,6 +41,12 @@ namespace chir {
 		UNARY_OPERATOR,
 
 		/*
+		*	Type convertion operator:
+		*	e.g. a as i8
+		*/
+		AS_OPERATOR,
+
+		/*
 		*	Any binary operator:
 		*	e.g. a + b, (x - y) / z
 		*/

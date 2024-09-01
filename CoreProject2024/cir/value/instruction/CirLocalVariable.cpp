@@ -8,7 +8,7 @@
 cir::LocalVariable::LocalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue) noexcept
 	: Instruction(std::move(name), type, ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
 	error::internalAssert(m_type->getTypeKind() != TypeKind::UNIT);
-	error::internalAssert(*m_type == *m_initialValue->getType());
+	error::internalAssert(m_type->equals(m_initialValue->getType()));
 
 	Value::addUser(m_initialValue, *this);
 }

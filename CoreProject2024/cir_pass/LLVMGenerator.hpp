@@ -21,6 +21,7 @@
 
 namespace cir {
 	class Constant;
+	class Type;
 }
 
 namespace cir_pass {
@@ -69,6 +70,7 @@ namespace cir_pass {
 		llvm::Value* compileBranchInstruction(utils::NoNull<cir::BranchInstruction> instruction);
 		llvm::Value* compileRetInstruction(utils::NoNull<cir::RetInstruction> instruction);
 
+		llvm::Value* compileValueCast(llvm::Value* operand, utils::NoNull<cir::Type> originalType, utils::NoNull<cir::Type> resultType, utf::StringView name);
 		llvm::Value* getFunctionValue(utils::NoNull<cir::Value> value);
 	};
 }

@@ -25,8 +25,15 @@ void ast_visitor::AstPrinter::visit(ast::IdentifierValue& node) {
 }
 
 void ast_visitor::AstPrinter::visit(ast::InvocationOperator& node) {
-	Parent::visit(node.getCallee());
-	m_printer.stream() << "(";
+	if (node.getCallee()->getKind() != ast::NodeKind::IDENTIFIER_VALUE) {
+		m_printer.stream() << '(';
+		Parent::visit(node.getCallee());
+		m_printer.stream() << ')';
+	} else {
+		Parent::visit(node.getCallee());
+	}
+
+	m_printer.stream() << '(';
 	
 	const std::vector<utils::NoNull<ast::Expression>>& args = node.getArguments();
 	if (!args.empty()) {
@@ -56,6 +63,12 @@ void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 		Parent::visit(node.getExpression());
 		m_printer.stream() << ')';
 	}
+}
+
+void ast_visitor::AstPrinter::visit(ast::AsOperator& node) {
+	m_printer.stream() << '(';
+	Parent::visit(node.getValue());
+	m_printer.stream() << ") as " << node.getType()->toString();
 }
 
 void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {

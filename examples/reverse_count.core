@@ -19,17 +19,20 @@ fn print(n: i64) {
 	}
 }
 
-fn factorial(n: i64): i64 {
-	if n <= 1 {
-		return 1
+fn repeat(fun: fn(i32), cnt: i32) {
+	if cnt >= 0 {
+		fun(cnt)
+		repeat(fun, cnt - 1)
 	}
-
-	return n * factorial(n - 1)
 }
 
-fn main(): i32 {
-	print(factorial(20))
+fn test_fn(i: i32) {
+	print(i as i64)
 	putchar(10)
+}
+
+fn main(): cint {
+	repeat(test_fn, 10)
 
 	return 0
 }

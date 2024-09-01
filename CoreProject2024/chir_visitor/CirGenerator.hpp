@@ -42,6 +42,7 @@ namespace chir_visitor {
 		utils::NoNull<cir::Value> visit(chir::SymbolValue& node) override;
 		utils::NoNull<cir::Value> visit(chir::InvocationOperator& node) override;
 		utils::NoNull<cir::Value> visit(chir::UnaryOperator& node) override;
+		utils::NoNull<cir::Value> visit(chir::AsOperator& node) override;
 		utils::NoNull<cir::Value> visit(chir::BinaryOperator& node) override;
 		utils::NoNull<cir::Value> visit(chir::ReturnOperator& node) override;
 		void visit(chir::ValueStatement& node) override;

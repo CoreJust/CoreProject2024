@@ -59,6 +59,11 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::UnaryOperator&
 	}
 }
 
+utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::AsOperator& node) {
+	utils::NoNull<cir::Value> operand = Parent::visit(node.getValue());
+	return m_builder.makeCast(operand, node.getValueType()->makeCirType());
+}
+
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::BinaryOperator& node) {
 	utils::NoNull<cir::Value> left = Parent::visit(node.getLeft());
 	utils::NoNull<cir::Value> right = Parent::visit(node.getRight());

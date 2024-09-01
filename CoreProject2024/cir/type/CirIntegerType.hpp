@@ -26,6 +26,7 @@ namespace cir {
 		static utils::NoNull<IntegerType> make(uint32_t bitSize, bool isSigned);
 
 		llvm::Type* makeLLVMType(llvm::LLVMContext& context) const override;
+		bool equals(utils::NoNull<Type> other) const noexcept override;
 
 		uint32_t getTypeSize() const noexcept override;
 		uint32_t getBitSize() const noexcept;

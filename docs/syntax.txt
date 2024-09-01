@@ -68,6 +68,7 @@ Also, it is allowed to do shadowing, thus overriding an existing variable with a
 	i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|cint|clong|cuint|culong|bool|unit.
 bool is the boolean type with 2 possible values: true and false.
 unit is the type of no value, it can only be used as the return type of a function.
+cint, clong, cuint, culong are C-compatible types. Their size can vary depending on the target.
 
 When a number literal is used, its type can be inquired from context if it is stated in the parent expression:
 let a: u64 = 0 // Will be of u64 type
@@ -96,9 +97,12 @@ There are following expressions available:
 	|<multiplicative> - <additive>
 	|<multiplicative>
 <multiplicative> :=
-	<unary> * <multiplicative>
-	|<unary> / <multiplicative>
-	|<unary> % <multiplicative>
+	<convertive> * <multiplicative>
+	|<convertive> / <multiplicative>
+	|<convertive> % <multiplicative>
+	|<convertive>
+<convertive> :=
+	<convertive> as <type>
 	|<unary>
 <unary> :=
 	+<unary>
@@ -115,6 +119,14 @@ There are following expressions available:
 Conditional expressions may be chained: a < b < c is the same as a < b && b < c.
 
 Expressions where all the parts are literals are guaranteed to be computed at compile time.
+
+###  Type convertions  ###
+It is disallowed to have implicit type convertions in Core.
+To make a type conversion explicitly, one must use the as operator.
+Convertion rules:
+Integer types are convertible to other integer types.
+Bool and function pointers are convertible to integers.
+Integers are convertible to function pointer.
 
 ###  Literals  ###
 There are currently only two type of literals: numbers and strings.

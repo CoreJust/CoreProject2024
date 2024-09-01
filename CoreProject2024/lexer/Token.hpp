@@ -29,6 +29,7 @@ namespace lexer {
 		ELIF,
 		ELSE,
 		LET,
+		AS,
 		I8,
 		I16,
 		I32,

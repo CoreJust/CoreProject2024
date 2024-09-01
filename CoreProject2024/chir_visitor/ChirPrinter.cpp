@@ -40,7 +40,14 @@ void chir_visitor::ChirPrinter::visit(chir::SymbolValue& node) {
 }
 
 void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
-	Parent::visit(node.getCallee());
+	if (node.getCallee()->getKind() != chir::NodeKind::SYMBOL_VALUE) {
+		m_printer.stream() << '(';
+		Parent::visit(node.getCallee());
+		m_printer.stream() << ')';
+	} else {
+		Parent::visit(node.getCallee());
+	}
+
 	m_printer.stream() << "(";
 
 	const std::vector<utils::NoNull<chir::Value>>& args = node.getArguments();
@@ -54,6 +61,12 @@ void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
 	}
 
 	m_printer.stream() << ")";
+}
+
+void chir_visitor::ChirPrinter::visit(chir::AsOperator& node) {
+	m_printer.stream() << '(';
+	Parent::visit(node.getValue());
+	m_printer.stream() << ") as " << node.getValueType()->toString();
 }
 
 void chir_visitor::ChirPrinter::visit(chir::UnaryOperator& node) {

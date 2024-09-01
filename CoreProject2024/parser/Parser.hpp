@@ -43,6 +43,7 @@ namespace parser {
 		ast::Expression* comparative();
 		ast::Expression* additive();
 		ast::Expression* multiplicative();
+		ast::Expression* convertive();
 		ast::Expression* unary();
 		ast::Expression* postprimary();
 		ast::Expression* primary();
