@@ -6,18 +6,18 @@
 #include "utf/FastFmt.hpp" // For ilog2
 #include "error/ErrorPrinter.hpp"
 
-const utils::IntValue INT_LIMITS[][2] = { // [log2(bytes) - 1][is_signed]
-	{ 0xff, 0x7f }, // u8, i8
-	{ 0xffff, 0x7fff }, // u16, i16
-	{ 0xffffffff, 0x7fffffff }, // u32, i32
-	{ 0xffffffffffffffff, 0x7fffffffffffffff }, // u64, i64
+const utils::IntValue INT_LIMITS[][2] = { // [ilog2(bytes) - 1][is_signed]
+	{ utils::IntValue(0xff), utils::IntValue(0x7f) }, // u8, i8
+	{ utils::IntValue(0xffff), utils::IntValue(0x7fff) }, // u16, i16
+	{ utils::IntValue(0xffffffff), utils::IntValue(0x7fffffff) }, // u32, i32
+	{ utils::IntValue(0xffffffffffffffff), utils::IntValue(0x7fffffffffffffff) }, // u64, i64
 	{ utils::IntValue("ffffffffffffffffffffffffffffffff", 16), utils::IntValue("7fffffffffffffffffffffffffffffff", 16) }, // u128, i128
 };
 
 const bool canTypeHoldIntValue(utils::NoNull<symbol::Type> type, utils::IntValue& value) noexcept {
 	utils::IntValue maxValue = INT_LIMITS[utf::ilog2(type->getTypeSize()) - 1][type->isSignedType()];
-	if (type->isSignedType() && value >= 0) {
-		maxValue -= utils::IntValue(int64_t(1));
+	if (type->isSignedType() && value >= utils::IntValue(0)) {
+		maxValue -= utils::IntValue(1);
 	}
 
 	return utils::abs(value) <= maxValue;

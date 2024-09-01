@@ -183,7 +183,7 @@ ast::Expression* parser::Parser::expression() {
 
 ast::Expression* parser::Parser::returnOperator() {
 	const utils::TextPosition position = m_toks.current().position;
-	if (m_toks.matchRange(lexer::SEMICOLON, lexer::NO_TOKEN_TYPE)) {
+	if (m_toks.current().type >= lexer::SEMICOLON && m_toks.current().type <= lexer::NO_TOKEN_TYPE) {
 		return ast::AstAllocator::make<ast::ReturnOperator>(position).get();
 	} else {
 		return ast::AstAllocator::make<ast::ReturnOperator>(position, expression()).get();
@@ -386,8 +386,6 @@ utils::NoNull<ast::Type> parser::Parser::parseType() {
 
 utils::NoNull<ast::Type> parser::Parser::parseFunctionType() {
 	std::vector<utils::NoNull<ast::Type>> argumentTypes;
-
-	m_toks.next(); // Skipping the fn keyword.
 
 	m_toks.consume(lexer::LPAREN, "Expected an opening paren of a function type");
 	if (!m_toks.match(lexer::RPAREN)) {

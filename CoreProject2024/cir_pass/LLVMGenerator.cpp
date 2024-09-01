@@ -15,6 +15,7 @@
 #include "utils/Macro.hpp"
 #include "compiler/CompilerOptions.hpp"
 #include "cir/CirModule.hpp"
+#include "cir/type/CirFunctionType.hpp"
 #include "cir/value/CirValueClassImplementations.hpp"
 
 cir_pass::LLVMGenerator::LLVMGenerator(llvm_utils::LLVMModule& llvmModule, std::unordered_map<cir::ValueId, llvm::Value*> globals) 
@@ -182,7 +183,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileBinaryInstruction(utils::NoNull<cir
 }
 
 llvm::Value* cir_pass::LLVMGenerator::compileInvocationInstruction(utils::NoNull<cir::InvocationInstruction> instruction) {
-	llvm::Function* callee = reinterpret_cast<llvm::Function*>(getLLVMValue(instruction->getCallee()));
+	llvm::Value* callee = getFunctionValue(instruction->getCallee());
 	std::vector<llvm::Value*> arguments = utils::map<std::vector<llvm::Value*>>(
 		instruction->getArguments(),
 		[this](auto argument) -> auto {
@@ -190,7 +191,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileInvocationInstruction(utils::NoNull
 		}
 	);
 
-	return m_builder.CreateCall(callee->getFunctionType(), callee, arguments, instruction->getName());
+	return m_builder.CreateCall(instruction->getCallee()->getType().as<cir::FunctionType>()->makeRawLLVMFunctionType(m_llvmModule.getContext()), callee, arguments, instruction->getName());
 }
 
 llvm::Value* cir_pass::LLVMGenerator::compileLocalVariable(utils::NoNull<cir::LocalVariable> instruction) {
@@ -201,7 +202,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileLocalVariable(utils::NoNull<cir::Lo
 }
 
 llvm::Value* cir_pass::LLVMGenerator::compileUnitInvocationInstruction(utils::NoNull<cir::UnitInvocationInstruction> instruction) {
-	llvm::Function* callee = reinterpret_cast<llvm::Function*>(getLLVMValue(instruction->getCallee()));
+	llvm::Value* callee = getFunctionValue(instruction->getCallee());
 	std::vector<llvm::Value*> arguments = utils::map<std::vector<llvm::Value*>>(
 		instruction->getArguments(),
 		[this](auto argument) -> auto {
@@ -209,7 +210,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileUnitInvocationInstruction(utils::No
 		}
 	);
 
-	return m_builder.CreateCall(callee->getFunctionType(), callee, arguments);
+	return m_builder.CreateCall(instruction->getCallee()->getType().as<cir::FunctionType>()->makeRawLLVMFunctionType(m_llvmModule.getContext()), callee, arguments);
 }
 
 llvm::Value* cir_pass::LLVMGenerator::compileGotoInstruction(utils::NoNull<cir::GotoInstruction> instruction) {
@@ -227,4 +228,11 @@ llvm::Value* cir_pass::LLVMGenerator::compileRetInstruction(utils::NoNull<cir::R
 		llvm::Value* value = getLLVMValue(instruction->getOperand());
 		return m_builder.CreateRet(value);
 	}
+}
+
+llvm::Value* cir_pass::LLVMGenerator::getFunctionValue(utils::NoNull<cir::Value> value) {
+	error::internalAssert(value->getType()->getTypeKind() == cir::TypeKind::FUNCTION);
+
+	llvm::Value* source = getLLVMValue(value);
+	return source;
 }

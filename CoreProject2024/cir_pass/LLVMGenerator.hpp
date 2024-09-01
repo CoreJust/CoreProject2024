@@ -68,5 +68,7 @@ namespace cir_pass {
 		llvm::Value* compileGotoInstruction(utils::NoNull<cir::GotoInstruction> instruction);
 		llvm::Value* compileBranchInstruction(utils::NoNull<cir::BranchInstruction> instruction);
 		llvm::Value* compileRetInstruction(utils::NoNull<cir::RetInstruction> instruction);
+
+		llvm::Value* getFunctionValue(utils::NoNull<cir::Value> value);
 	};
 }

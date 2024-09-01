@@ -31,27 +31,6 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& 
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
-	if (!m_typeInquire.empty()) { // Has requirements for function argument types.
-		const symbol::FunctionSymbol* function = m_symbols.getFunction(node.getIdentifier(), m_typeInquire);
-		if (function == nullptr) {
-			error::ErrorPrinter::fatalError({
-				.code = error::ErrorCode::UNRESOLVED_SYMBOL,
-				.name = "Semantic error: Unresolved symbol",
-				.selectionStart = node.getPosition(),
-				.selectionLength = node.getIdentifier().size(),
-				.description = std::format(
-					"Failed to find function {} with argument types <{}>.",
-					node.getIdentifier(),
-					utils::joinToString(m_typeInquire)
-				),
-				.explanation = "Maybe you forgot to declare this function or made a mistake in its name, or forgot to convert argument types."
-			});
-		}
-
-		return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), const_cast<symbol::FunctionSymbol*>(function));
-	}
-
-	// No requirements, but it can still be a function.
 	std::vector<utils::NoNull<symbol::Symbol>> symbols = m_symbols.getSymbols(node.getIdentifier());
 	if (symbols.empty()) {
 		error::ErrorPrinter::fatalError({
@@ -63,6 +42,26 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValu
 			.explanation = "Maybe you forgot to declare this symbol or made a mistake in its name."
 		});
 	} else if (symbols.size() > 1) {
+		if (!m_typeInquire.empty()) { // Has requirements for function argument types.
+			const symbol::FunctionSymbol* function = m_symbols.getFunction(node.getIdentifier(), m_typeInquire);
+			if (function == nullptr) {
+				error::ErrorPrinter::fatalError({
+					.code = error::ErrorCode::UNRESOLVED_SYMBOL,
+					.name = "Semantic error: Unresolved symbol",
+					.selectionStart = node.getPosition(),
+					.selectionLength = node.getIdentifier().size(),
+					.description = std::format(
+						"Failed to find function {} with argument types <{}>.",
+						node.getIdentifier(),
+						utils::joinToString(m_typeInquire)
+					),
+					.explanation = "Maybe you forgot to declare this function or made a mistake in its name, or forgot to convert argument types."
+												});
+			}
+
+			return chir::ChirAllocator::make<chir::SymbolValue>(node.getPosition(), const_cast<symbol::FunctionSymbol*>(function));
+		}
+
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::TOO_MANY_SYMBOLS,
 			.name = "Semantic error: Cannot choose function",
@@ -96,7 +95,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 	utils::NoNull<chir::Value> callee = Parent::visit(node.getCallee());
 	m_typeInquire.clear();
 
-	if (callee->getKind() != chir::NodeKind::SYMBOL_VALUE || callee.as<chir::SymbolValue>()->getSymbolKind() != symbol::FUNCTION) {
+	if (!callee->getValueType()->isFunctionType()) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::INVALID_CALLEE,
 			.name = "Semantic error: Invalid callee",
@@ -122,7 +121,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 		node.getPosition(),
 		callee,
 		std::move(arguments),
-		callee.as<chir::SymbolValue>()->getFunction().getReturnType()
+		callee->getValueType().as<symbol::FunctionType>()->getReturnType()
 	);
 }
 
@@ -374,15 +373,16 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator
 
 	if (node.getExpression() != nullptr) {
 		utils::NoNull<chir::Value> value = Parent::visit(node.getExpression());
+		utils::NoNull<symbol::Type> functionReturnType = function->getReturnType();
 
 		// Literal type inquire
-		if (value->getValueType()->isLiteralType()) {
+		if (value->getValueType()->isLiteralType() && functionReturnType->isArithmeticType()) {
 			error::internalAssert(value->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
-			value.as<chir::ConstantValue>()->setIntLiteralType(m_symbols.getCurrentScope().getFunction()->getReturnType());
+			value.as<chir::ConstantValue>()->setIntLiteralType(functionReturnType);
 		}
 
-		if (!value->getValueType()->equals(*function->getReturnType())) {
+		if (!value->getValueType()->equals(*functionReturnType)) {
 			error::ErrorPrinter::fatalError({
 				.code = error::ErrorCode::TYPE_MISMATCH,
 				.name = "Semantic error: Type mismatch",

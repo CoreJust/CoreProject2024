@@ -1,21 +1,6 @@
 // A function of the standard C runtime library.
 fn putchar(ch: cint): cint = native("putchar")
 
-fn print(b: bool) {
-	if (b) {
-		putchar(116)
-		putchar(114)
-		putchar(117)
-		putchar(101)
-	} else {
-		putchar(102)
-		putchar(97)
-		putchar(108)
-		putchar(115)
-		putchar(101)
-	}
-}
-
 fn print(n: cint) {
 	fn printImpl(n: cint) {
 		if n != 0 {
@@ -34,29 +19,22 @@ fn print(n: cint) {
 	}
 }
 
-fn fib(n: cint): cint {
-	if n < 1 {
-		return 1
+fn repeat(fun: fn(cint), cnt: cint) {
+	if cnt < 0 {
+		return
 	} else {
-		return fib(n - 1) + fib(n - 2)
+		fun(cnt)
+		repeat(fun, cnt - 1)
 	}
 }
 
+fn test_fn(i: cint) {
+	print(i)
+	putchar(10)
+}
+
 fn main(): i32 {
-	// Bool expressions test
-	let a = 10
-	let b = 11
-	let c = 13
-	let bool_test = !(a < b < c) || false
-	
-	print(bool_test)
-	putchar(10)
-	print(bool_test == false)
-	putchar(10)
-	
-	// Recursion test
-	print(fib(30))
-	putchar(10)
+	repeat(test_fn, 10)
 
 	return 0
 }

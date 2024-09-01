@@ -142,7 +142,7 @@ void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
 	m_builder.setBasicBlock(m_cirModule.getGlobalConstructor()->getBasicBlocks().back());
 	utils::NoNull<cir::Value> initialValue = Parent::visit(node.getInitialValue());
 
-	/* TMP */if (!initialValue->isConstant()) {
+	if (!initialValue->isConstant()) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INTERNAL_ERROR,
 			.name = "Internal error: Cannot use non-constant value for global variable initialization",

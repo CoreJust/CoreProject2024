@@ -13,7 +13,7 @@
 
 cir::GlobalVariable::GlobalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Constant> initialValue, utils::NoNull<Module> parentModule) noexcept
 	: GlobalValue(std::move(name), type, ValueKind::GLOBAL_VARIABLE, parentModule), m_initialValue(initialValue) {
-	assert(m_type != TypeKind::UNIT);
+	assert(m_type->getTypeKind() == cir::TypeKind::UNIT);
 	assert(m_type == m_initialValue->getType());
 
 	Value::addUser(m_initialValue, *this);

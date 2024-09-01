@@ -398,22 +398,19 @@ void lexer::Tokenizer::skipMultilineComment() {
 				if (*m_ptr == '*') {
 					depth += 1;
 					nextChar();
-					nextChar();
 				} break;
 			case utf::encodeUtf('*'):
 				if (*m_ptr == '/') {
 					depth -= 1;
 					nextChar();
-					nextChar();
 				} break;
 			case utf::encodeUtf('"'):
 				isInString = true;
-				nextChar();
 				break;
-		default: 
-			nextChar(); // Skip the custom character.
-			break;
+		default: break;
 		}
+
+		nextChar();
 	}
 
 	if (depth) {

@@ -12,6 +12,10 @@
 #include <vector>
 #include "CirType.hpp"
 
+namespace llvm {
+	class FunctionType;
+}
+
 namespace cir {
 	class FunctionType final : public Type {
 		template<class T> friend class utils::PooledAllocator;
@@ -26,6 +30,7 @@ namespace cir {
 	public:
 		static utils::NoNull<FunctionType> make(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes);
 
+		llvm::FunctionType* makeRawLLVMFunctionType(llvm::LLVMContext& context) const;
 		llvm::Type* makeLLVMType(llvm::LLVMContext& context) const override;
 
 		uint32_t getTypeSize() const noexcept override;

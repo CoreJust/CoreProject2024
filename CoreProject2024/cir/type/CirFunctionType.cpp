@@ -17,17 +17,21 @@ utils::NoNull<cir::FunctionType> cir::FunctionType::make(utils::NoNull<Type> ret
     return CirTypeAllocator::make<FunctionType>(returnType, std::move(argumentTypes));
 }
 
-llvm::Type* cir::FunctionType::makeLLVMType(llvm::LLVMContext& context) const {
+llvm::FunctionType* cir::FunctionType::makeRawLLVMFunctionType(llvm::LLVMContext& context) const {
     return llvm::FunctionType::get(
-        m_returnType->makeLLVMType(context), 
+        m_returnType->makeLLVMType(context),
         utils::map<std::vector<llvm::Type*>>(
             m_argumentTypes,
             [&context](auto argumentType) -> auto {
                 return argumentType->makeLLVMType(context);
             }
-        ), 
+        ),
         false
     );
+}
+
+llvm::Type* cir::FunctionType::makeLLVMType(llvm::LLVMContext& context) const {
+    return llvm::PointerType::get(makeRawLLVMFunctionType(context), 0);
 }
 
 uint32_t cir::FunctionType::getTypeSize() const noexcept {

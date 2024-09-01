@@ -10,10 +10,14 @@
 */
 
 #pragma once
-#include <source_location>
 #include "utf/String.hpp"
 
 namespace error {
+#ifndef _DEBUG
+#define error::internalAssert _INTERNAL_ASSERT_DUMMY
+#define _INTERNAL_ASSERT_DUMMY(...)
+#else
 	// If the condition is false, causes fatal internal error with the given message for description.
-	void internalAssert(bool condition, utf::StringView message = "", const std::source_location& location = std::source_location::current());
+	void internalAssert(bool condition, utf::StringView message = "");
+#endif
 }
