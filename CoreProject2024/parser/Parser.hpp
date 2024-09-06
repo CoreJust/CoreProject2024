@@ -41,6 +41,10 @@ namespace parser {
 		ast::Expression* returnOperator();
 		ast::Expression* logical();
 		ast::Expression* comparative();
+		ast::Expression* bitwise_or();
+		ast::Expression* bitwise_xor();
+		ast::Expression* bitwise_and();
+		ast::Expression* shifts();
 		ast::Expression* additive();
 		ast::Expression* multiplicative();
 		ast::Expression* convertive();

@@ -75,6 +75,8 @@ namespace error {
 
 			// Compile-time evaluation error
 			DIVISION_BY_ZERO,
+			NEGATIVE_BITWISE_SHIFT,
+			TOO_LARGE_BITWISE_SHIFT,
 
 			// CIR errors
 			INSTRUCTION_AFTER_TERMINATOR,

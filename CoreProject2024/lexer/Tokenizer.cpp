@@ -61,6 +61,10 @@ constexpr TokenType getOperatorTokenType(const utils::StringHashBuilder& hashBui
 		case utils::hashOf("%"): return TokenType::PERCENT;
 		case utils::hashOf("&"): return TokenType::AND;
 		case utils::hashOf("|"): return TokenType::OR;
+		case utils::hashOf("<<"): return TokenType::LSHIFT;
+		case utils::hashOf(">>"): return TokenType::RSHIFT;
+		case utils::hashOf("~"): return TokenType::TILDE;
+		case utils::hashOf("^"): return TokenType::CARET;
 		case utils::hashOf("=="): return TokenType::EQEQ;
 		case utils::hashOf("!="): return TokenType::NOTEQ;
 		case utils::hashOf("<="): return TokenType::LESSEQ;

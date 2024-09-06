@@ -76,7 +76,7 @@ namespace symbol {
 	}
 
 	constexpr bool isInteger(TypeKind type) noexcept {
-		return type >= TypeKind::I8 && type <= TypeKind::CULONG;
+		return type >= TypeKind::I8 && type <= TypeKind::INT_LITERAL;
 	}
 
 	constexpr bool isSigned(TypeKind type) noexcept {

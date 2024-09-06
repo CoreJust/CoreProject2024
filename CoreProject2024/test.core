@@ -1,8 +1,17 @@
+fn main(): cint {
+	let a = 10 | 11;
+	let a = a ^ 2;
+	let a = a << a;
+	println(a)
+
+	return 0
+}
+
 // A function of the standard C runtime library.
 fn putchar(ch: cint): cint = native("putchar")
 
-fn print(n: i64) {
-	fn printImpl(n: i64) {
+fn println(n: i32) {
+	fn printImpl(n: i32) {
 		if n != 0 {
 			printImpl(n / 10)
 			putchar(48 + (n % 10) as cint)
@@ -17,19 +26,6 @@ fn print(n: i64) {
 	} else {
 		printImpl(n)
 	}
-}
-
-fn factorial(n: i64): i64 {
-	if n <= 1 {
-		return 1
-	}
-
-	return n * factorial(n - 1)
-}
-
-fn main(): i32 {
-	print(factorial(20))
+	
 	putchar(10)
-
-	return 0
 }

@@ -158,6 +158,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileUnaryInstruction(utils::NoNull<cir:
 	llvm::Value* operand = getLLVMValue(instruction->getOperand());
 	switch (instruction->getInstructionKind()) {
 		case cir::UnaryInstruction::NEG:	   return m_builder.CreateNeg(operand, instruction->getName());
+		case cir::UnaryInstruction::BITWISE_NOT: return m_builder.CreateNot(operand, instruction->getName());
 		case cir::UnaryInstruction::LOGIC_NOT: return m_builder.CreateNot(operand, instruction->getName());
 		case cir::UnaryInstruction::CAST:	   return compileValueCast(operand, instruction->getOperand()->getType(), instruction->getType(), instruction->getName());
 	default: unreachable();
@@ -173,6 +174,11 @@ llvm::Value* cir_pass::LLVMGenerator::compileBinaryInstruction(utils::NoNull<cir
 		case cir::BinaryInstruction::MUL: return m_builder.CreateMul(left, right, instruction->getName());
 		case cir::BinaryInstruction::DIV: return m_builder.CreateSDiv(left, right, instruction->getName());
 		case cir::BinaryInstruction::REM: return m_builder.CreateSRem(left, right, instruction->getName());
+		case cir::BinaryInstruction::BITWISE_AND: return m_builder.CreateAnd(left, right, instruction->getName());
+		case cir::BinaryInstruction::BITWISE_OR: return m_builder.CreateOr(left, right, instruction->getName());
+		case cir::BinaryInstruction::BITWISE_XOR: return m_builder.CreateXor(left, right, instruction->getName());
+		case cir::BinaryInstruction::BITWISE_SHL: return m_builder.CreateShl(left, right, instruction->getName());
+		case cir::BinaryInstruction::BITWISE_SHR: return m_builder.CreateLShr(left, right, instruction->getName());
 		case cir::BinaryInstruction::LOGIC_AND: return m_builder.CreateAnd(left, right, instruction->getName());
 		case cir::BinaryInstruction::LOGIC_OR: return m_builder.CreateOr(left, right, instruction->getName());
 		case cir::BinaryInstruction::CMP_EQ: return m_builder.CreateICmpEQ(left, right, instruction->getName());

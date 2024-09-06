@@ -37,6 +37,7 @@ namespace cir {
 
 		// Functions that create an Instruction. append it to the current BasicBlock, and return it.
 		utils::NoNull<UnaryInstruction> makeNeg(utils::NoNull<Value> operand, utf::String name = "u");
+		utils::NoNull<UnaryInstruction> makeBitwiseNot(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<UnaryInstruction> makeLogicNot(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<UnaryInstruction> makeCast(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name = "u");
 		utils::NoNull<BinaryInstruction> makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
@@ -44,6 +45,11 @@ namespace cir {
 		utils::NoNull<BinaryInstruction> makeMul(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeDiv(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeRem(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseXor(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeShl(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeShr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeLogicAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeLogicOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeEq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");

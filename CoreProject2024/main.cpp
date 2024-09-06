@@ -53,7 +53,7 @@
 #define CORE_BENCHMARKING_MODE 1
 
 // By changing this macro value one can run current benchmarks, or build the actual project.
-#define CURRENT_COMPILATION_MODE 1
+#define CURRENT_COMPILATION_MODE 0
 
 #if CURRENT_COMPILATION_MODE == CORE_BUILD_MODE
 #include <chrono>

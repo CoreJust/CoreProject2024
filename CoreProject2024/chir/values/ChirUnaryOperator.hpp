@@ -18,6 +18,7 @@ namespace chir {
 		enum UnaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
+			BITWISE_NOT,
 			LOGIC_NOT,
 
 			UNARY_OPERATOR_TYPES_COUNT

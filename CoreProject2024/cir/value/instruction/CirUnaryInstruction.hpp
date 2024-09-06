@@ -18,6 +18,7 @@ namespace cir {
 	public:
 		enum UnaryInstructionKind : unsigned char {
 			NEG = 0,
+			BITWISE_NOT,
 			LOGIC_NOT,
 			CAST,
 

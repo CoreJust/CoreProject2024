@@ -23,6 +23,12 @@ namespace cir {
 			DIV,
 			REM,
 
+			BITWISE_AND,
+			BITWISE_OR,
+			BITWISE_XOR,
+			BITWISE_SHL,
+			BITWISE_SHR,
+
 			LOGIC_AND,
 			LOGIC_OR,
 

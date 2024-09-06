@@ -73,6 +73,7 @@ void chir_visitor::ChirPrinter::visit(chir::UnaryOperator& node) {
 	switch (node.getOperator()) {
 		case chir::UnaryOperator::PLUS:		 m_printer.stream() << '+'; break;
 		case chir::UnaryOperator::MINUS:	 m_printer.stream() << '-'; break;
+		case chir::UnaryOperator::BITWISE_NOT: m_printer.stream() << '~'; break;
 		case chir::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
@@ -101,6 +102,11 @@ void chir_visitor::ChirPrinter::visit(chir::BinaryOperator& node) {
 		case chir::BinaryOperator::MULTIPLY:	m_printer.stream() << " * "; break;
 		case chir::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
 		case chir::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case chir::BinaryOperator::BITWISE_AND:	m_printer.stream() << " & "; break;
+		case chir::BinaryOperator::BITWISE_OR:	m_printer.stream() << " | "; break;
+		case chir::BinaryOperator::BITWISE_XOR:	m_printer.stream() << " ^ "; break;
+		case chir::BinaryOperator::BITWISE_LEFT_SHIFT:	m_printer.stream() << " << "; break;
+		case chir::BinaryOperator::BITWISE_RIGHT_SHIFT:	m_printer.stream() << " >> "; break;
 		case chir::BinaryOperator::LOGICAL_AND: m_printer.stream() << " && "; break;
 		case chir::BinaryOperator::LOGICAL_OR:	m_printer.stream() << " || "; break;
 		case chir::BinaryOperator::EQUALS:		m_printer.stream() << " == "; break;

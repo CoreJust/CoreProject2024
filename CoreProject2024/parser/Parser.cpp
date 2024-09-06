@@ -211,33 +211,33 @@ ast::Expression* parser::Parser::comparative() {
 	static thread_local std::vector<utils::NoNull<ast::Expression>> s_comparedExpressions;
 	static thread_local std::vector<ast::ComparativeBinaryOperator::ComparativeOperatorType> s_operators;
 
-	ast::Expression* result = additive();
+	ast::Expression* result = bitwise_or();
 	s_comparedExpressions.clear();
 	s_comparedExpressions.emplace_back(result);
 
 	while (true) {
 		if (m_toks.match(lexer::EQEQ)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::EQUALS);
 			continue;
 		} else if (m_toks.match(lexer::NOTEQ)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::NOT_EQUALS);
 			continue;
 		} else if (m_toks.match(lexer::LESSEQ)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::LESS_EQUALS);
 			continue;
 		} else if (m_toks.match(lexer::GREATEREQ)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::GREATER_EQUALS);
 			continue;
 		} else if (m_toks.match(lexer::LESS)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::LESS);
 			continue;
 		} else if (m_toks.match(lexer::GREATER)) {
-			s_comparedExpressions.emplace_back(additive());
+			s_comparedExpressions.emplace_back(bitwise_or());
 			s_operators.emplace_back(ast::ComparativeBinaryOperator::GREATER);
 			continue;
 		}
@@ -254,13 +254,73 @@ ast::Expression* parser::Parser::comparative() {
 	return ast::AstAllocator::make<ast::ComparativeBinaryOperator>(result->getPosition(), std::exchange(s_operators, { }), std::exchange(s_comparedExpressions, { })).get();
 }
 
+ast::Expression* parser::Parser::bitwise_or() {
+	ast::Expression* result = bitwise_xor();
+	while (true) {
+		if (m_toks.match(lexer::OR)) {
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::BITWISE_OR, result, bitwise_xor()).get();
+			continue;
+		}
+
+		break;
+	}
+
+	return result;
+}
+
+ast::Expression* parser::Parser::bitwise_xor() {
+	ast::Expression* result = bitwise_and();
+	while (true) {
+		if (m_toks.match(lexer::CARET)) {
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::BITWISE_XOR, result, bitwise_and()).get();
+			continue;
+		}
+
+		break;
+	}
+
+	return result;
+}
+
+ast::Expression* parser::Parser::bitwise_and() {
+	ast::Expression* result = shifts();
+	while (true) {
+		if (m_toks.match(lexer::AND)) {
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::BITWISE_AND, result, shifts()).get();
+			continue;
+		}
+
+		break;
+	}
+
+	return result;
+}
+
+ast::Expression* parser::Parser::shifts() {
+	ast::Expression* result = additive();
+	while (true) {
+		if (m_toks.match(lexer::LSHIFT)) {
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::BITWISE_LEFT_SHIFT, result, additive()).get();
+			continue;
+		} else if (m_toks.match(lexer::RSHIFT)) {
+			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::BITWISE_RIGHT_SHIFT, result, additive()).get();
+			continue;
+		}
+
+		break;
+	}
+
+	return result;
+}
+
 ast::Expression* parser::Parser::additive() {
 	ast::Expression* result = multiplicative();
 	while (true) {
 		if (m_toks.match(lexer::PLUS)) {
 			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::PLUS, result, multiplicative()).get();
 			continue;
-		} else if (m_toks.match(lexer::MINUS)) {
+		}
+		else if (m_toks.match(lexer::MINUS)) {
 			result = ast::AstAllocator::make<ast::BinaryOperator>(m_toks.previous().position, ast::BinaryOperator::MINUS, result, multiplicative()).get();
 			continue;
 		}
@@ -309,6 +369,8 @@ ast::Expression* parser::Parser::unary() {
 		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::MINUS, unary()).get();
 	} else if (m_toks.match(lexer::NOT)) {
 		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::LOGIC_NOT, unary()).get();
+	} else if (m_toks.match(lexer::TILDE)) {
+		return ast::AstAllocator::make<ast::UnaryOperator>(m_toks.previous().position, ast::UnaryOperator::BITWISE_NOT, unary()).get();
 	}
 
 	return postprimary();

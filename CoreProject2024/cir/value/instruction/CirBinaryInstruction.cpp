@@ -31,7 +31,7 @@ utils::NoNull<cir::Value>& cir::BinaryInstruction::getRight() noexcept {
 }
 
 utf::String cir::BinaryInstruction::toInstuctionString() const {
-	static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
+	static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
 
 	return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), OPERATORS[m_instuctionKind], m_right->toString());
 }

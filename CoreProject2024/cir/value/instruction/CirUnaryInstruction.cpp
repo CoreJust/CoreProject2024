@@ -31,6 +31,6 @@ utf::String cir::UnaryInstruction::toInstuctionString() const {
 	if (m_instuctionKind == UnaryInstructionKind::CAST) {
 		return std::format("tmp {} = cast {} to {}", m_name, m_operand->toString(), m_type->toString());
 	} else {
-		return std::format("tmp {} = {} {}", m_name, "-!"[m_instuctionKind], m_operand->toString());
+		return std::format("tmp {} = {} {}", m_name, "-~!"[m_instuctionKind], m_operand->toString());
 	}
 }

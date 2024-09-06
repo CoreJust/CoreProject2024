@@ -25,6 +25,10 @@ bool ast::UnaryOperator::isArithmetical() const noexcept {
 	return m_operator <= UnaryOperatorType::MINUS;
 }
 
+bool ast::UnaryOperator::isBitwise() const noexcept {
+	return m_operator == UnaryOperatorType::BITWISE_NOT;
+}
+
 bool ast::UnaryOperator::isLogical() const noexcept {
-	return m_operator > UnaryOperatorType::MINUS;
+	return m_operator == UnaryOperatorType::LOGIC_NOT;
 }

@@ -52,6 +52,7 @@ void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 	switch (node.getOperator()) {
 		case ast::UnaryOperator::PLUS:		m_printer.stream() << '+'; break;
 		case ast::UnaryOperator::MINUS:		m_printer.stream() << '-'; break;
+		case ast::UnaryOperator::BITWISE_NOT: m_printer.stream() << '~'; break;
 		case ast::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
@@ -86,6 +87,11 @@ void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {
 		case ast::BinaryOperator::MULTIPLY:		m_printer.stream() << " * "; break;
 		case ast::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
 		case ast::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case ast::BinaryOperator::BITWISE_AND:	m_printer.stream() << " & "; break;
+		case ast::BinaryOperator::BITWISE_OR:	m_printer.stream() << " | "; break;
+		case ast::BinaryOperator::BITWISE_XOR:	m_printer.stream() << " ^ "; break;
+		case ast::BinaryOperator::BITWISE_LEFT_SHIFT:  m_printer.stream() << " << "; break;
+		case ast::BinaryOperator::BITWISE_RIGHT_SHIFT: m_printer.stream() << " >> "; break;
 		case ast::BinaryOperator::LOGIC_AND:	m_printer.stream() << " && "; break;
 		case ast::BinaryOperator::LOGIC_OR:		m_printer.stream() << " || "; break;
 	default: unreachable();

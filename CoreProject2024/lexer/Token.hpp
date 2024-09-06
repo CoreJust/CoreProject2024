@@ -60,6 +60,10 @@ namespace lexer {
 		PERCENT, // %
 		AND, // &
 		OR, // |
+		LSHIFT, // <<
+		RSHIFT, // >>
+		TILDE, // ~
+		CARET, // ^
 		EQEQ, // ==
 		NOTEQ, // !=
 		LESSEQ, // <=

@@ -1,0 +1,62 @@
+fn main(): cint {
+	println(reduce_range(min, 0, 90))
+	println(reduce_range(max, 0, 90))
+	
+	println(invoke(id, 10))
+	println(invoke(next, 10))
+
+	return 0
+}
+
+fn reduce_range(f: fn(i32, i32): i32, a: i32, b: i32): i32 {
+	if a == b - 1 {
+		return f(a, b)
+	}
+	
+	return reduce_range(f, f(a, a + 1), b)
+}
+
+fn invoke(f: fn(i32): i32, x: i32): i32 = f(x)
+
+fn id(x: i32): i32 = x
+
+fn next(x: i32): i32 = x + 1
+
+fn min(a: i32, b: i32): i32 {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+
+fn max(a: i32, b: i32): i32 {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
+// A function of the standard C runtime library.
+fn putchar(ch: cint): cint = native("putchar")
+
+fn println(n: i64) {
+	fn printImpl(n: i64) {
+		if n != 0 {
+			printImpl(n / 10)
+			putchar(48 + (n % 10) as cint)
+		}
+	}
+	
+	if n == 0 {
+		putchar(48)
+	} elif n < 0 {
+		putchar(45)
+		printImpl(-n)
+	} else {
+		printImpl(n)
+	}
+	
+	putchar(10)
+}

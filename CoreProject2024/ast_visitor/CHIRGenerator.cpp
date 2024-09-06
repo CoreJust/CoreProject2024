@@ -13,6 +13,26 @@
 #include "chir/ChirClassImplementations.hpp"
 #include "chir/ChirAllocator.hpp"
 
+const utils::IntValue TYPE_MASKS[17] = {
+	utils::IntValue(),
+	utils::IntValue(0xff),
+	utils::IntValue(0xffff),
+	utils::IntValue(0xffffff),
+	utils::IntValue(0xffffffff),
+	utils::IntValue(0xffffffffff),
+	utils::IntValue(0xffffffffffff),
+	utils::IntValue(0xffffffffffffff),
+	utils::IntValue(0xffffffffffffffff),
+	utils::IntValue("ffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffffffffffff", 16),
+	utils::IntValue("ffffffffffffffffffffffffffffffff", 16)
+};
+
 ast_visitor::CHIRGenerator::CHIRGenerator(std::unique_ptr<symbol::SymbolTable> symbols) noexcept
 	: Parent(*this), m_symbols(std::move(symbols)) { }
 
@@ -149,8 +169,15 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator&
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
 			.name = "Semantic error: Unexpected type",
 			.selectionStart = node.getPosition(),
-			.description = std::format("Expression type was expected to be i32, but {} was found.", value->getValueType()->toString())
+			.description = std::format("Expression type was expected to be arithmetical, but {} was found.", value->getValueType()->toString())
 		});
+	} else if(node.isBitwise() && !value->getValueType()->isIntegerType()) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type was expected to be integral, but {} was found.", value->getValueType()->toString())
+										});
 	} else if (node.isLogical() && !value->getValueType()->isBoolType()) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
@@ -167,7 +194,10 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::UnaryOperator&
 			case chir::UnaryOperator::PLUS:
 				return value;
 			case chir::UnaryOperator::MINUS:
-				intValue = -intValue; 
+				intValue = -intValue;
+				return value;
+			case chir::UnaryOperator::BITWISE_NOT:
+				intValue = (~intValue) & TYPE_MASKS[value->getValueType()->getTypeSize()];
 				return value;
 			case chir::UnaryOperator::LOGIC_NOT: 
 				intValue = !intValue; 
@@ -255,6 +285,13 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 			.selectionStart = node.getPosition(),
 			.description = std::format("Expression type in arithmetic operator expected to be arithmetical, but {} was found.", left->getValueType()->toString())
 		});
+	} else if (node.isBitwise() && !left->getValueType()->isIntegerType()) {
+		error::ErrorPrinter::fatalError({
+			.code = error::ErrorCode::UNEXPECTED_TYPE,
+			.name = "Semantic error: Unexpected type",
+			.selectionStart = node.getPosition(),
+			.description = std::format("Expression type in bitwise operator expected to be integral, but {} was found.", left->getValueType()->toString())
+		});
 	} else if (node.isLogical() && !left->getValueType()->isBoolType()) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNEXPECTED_TYPE,
@@ -269,13 +306,46 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 		utils::IntValue& leftIntValue = left.as<chir::ConstantValue>()->getValueAsRef();
 		utils::IntValue& rightIntValue = right.as<chir::ConstantValue>()->getValueAsRef();
 		ast::BinaryOperator::BinaryOperatorType operatorType = node.getOperator();
-		if (rightIntValue == 0 && (operatorType == ast::BinaryOperator::DIVIDE || operatorType == ast::BinaryOperator::REMAINDER)) { // Check for division by zero.
-			error::ErrorPrinter::fatalError({
-				.code = error::ErrorCode::DIVISION_BY_ZERO,
-				.name = "Compile-time evaluation error: Division by zero",
-				.selectionStart = node.getPosition(),
-				.description = std::format("Tried to divide by zero while evaluating compile-time expression: {} / 0.", leftIntValue.str())
-			});
+		if (operatorType == ast::BinaryOperator::DIVIDE || operatorType == ast::BinaryOperator::REMAINDER) {
+			if (rightIntValue == 0) { // Check for division by zero.
+				error::ErrorPrinter::fatalError({
+					.code = error::ErrorCode::DIVISION_BY_ZERO,
+					.name = "Compile-time evaluation error: Division by zero",
+					.selectionStart = node.getPosition(),
+					.description = std::format(
+						"Tried to divide by zero while evaluating compile-time expression: {} {} 0.", 
+						leftIntValue.str(),
+						"/%"[operatorType == ast::BinaryOperator::REMAINDER]
+					)
+				});
+			}
+		} else if (operatorType == ast::BinaryOperator::BITWISE_LEFT_SHIFT || operatorType == ast::BinaryOperator::BITWISE_RIGHT_SHIFT) {
+			const char* OPERATOR_STR[2] = { "<<", ">>" };
+			if (rightIntValue < 0) { // Check for negative value in bitwise shifts.
+				error::ErrorPrinter::fatalError({
+					.code = error::ErrorCode::NEGATIVE_BITWISE_SHIFT,
+					.name = "Compile-time evaluation error: Negative bitwise shift",
+					.selectionStart = node.getPosition(),
+					.description = std::format(
+						"Tried to make a negative bitwise shift while evaluating compile-time expression: {} {} {}.",
+						leftIntValue.str(),
+						OPERATOR_STR[operatorType == ast::BinaryOperator::BITWISE_RIGHT_SHIFT],
+						rightIntValue.str()
+					)
+				});
+			} else if (rightIntValue > left->getValueType()->getTypeSize() * 8) { // Check for too large shift value.
+				error::ErrorPrinter::fatalError({
+					.code = error::ErrorCode::TOO_LARGE_BITWISE_SHIFT,
+					.name = "Compile-time evaluation error: Too large bitwise shift",
+					.selectionStart = node.getPosition(),
+					.description = std::format(
+						"Tried to make a bitwise shift too large for the type shifted while evaluating compile-time expression: {} {} {}.",
+						leftIntValue.str(),
+						OPERATOR_STR[operatorType == ast::BinaryOperator::BITWISE_RIGHT_SHIFT],
+						rightIntValue.str()
+					)
+				});
+			}
 		}
 
 		switch (operatorType) {
@@ -284,6 +354,15 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 			case ast::BinaryOperator::MULTIPLY: leftIntValue *= rightIntValue; return left;
 			case ast::BinaryOperator::DIVIDE: leftIntValue /= rightIntValue; return left;
 			case ast::BinaryOperator::REMAINDER: leftIntValue %= rightIntValue; return left;
+			case ast::BinaryOperator::BITWISE_AND: leftIntValue &= rightIntValue; return left;
+			case ast::BinaryOperator::BITWISE_OR: leftIntValue |= rightIntValue; return left;
+			case ast::BinaryOperator::BITWISE_XOR: leftIntValue ^= rightIntValue; return left;
+			case ast::BinaryOperator::BITWISE_LEFT_SHIFT:
+				leftIntValue = (leftIntValue << int64_t(rightIntValue)) & TYPE_MASKS[left->getValueType()->getTypeSize()]; 
+				return left;
+			case ast::BinaryOperator::BITWISE_RIGHT_SHIFT:
+				leftIntValue = (leftIntValue >> int64_t(rightIntValue)) & TYPE_MASKS[left->getValueType()->getTypeSize()];
+				return left;
 			case ast::BinaryOperator::LOGIC_AND:
 				leftIntValue = (leftIntValue && rightIntValue);
 				left.as<chir::ConstantValue>()->setBoolLiteralType();

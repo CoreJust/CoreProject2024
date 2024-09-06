@@ -21,6 +21,7 @@ utf::String lexer::tokenType2String(TokenType type) {
 		"TRUE", "FALSE",
 		"EQ", "PLUS", "MINUS", "STAR",
 		"SLASH", "PERCENT", "AND", "OR",
+		"LSHIFT", "RSHIFT", "TILDE", "CARET",
 		"EQEQ", "NOTEQ", "LESSEQ", "GREATEREQ", "LESS", "GREATER",
 		"NOT", "LOGIC_AND", "LOGIC_OR",
 		"LPAREN", "RPAREN", "LBRACE", "RBRACE",
