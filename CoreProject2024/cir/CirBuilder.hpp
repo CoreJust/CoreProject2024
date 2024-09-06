@@ -35,17 +35,21 @@ namespace cir {
 		// Creates and returns a new BasicBlock, and makes it the current one.
 		utils::NoNull<BasicBlock> makeAnsSetBasicBlock(utf::String name) noexcept;
 
-		// Generates the FunctionArgument value.
-		utils::NoNull<FunctionArgument> makeFunctionArgument(utf::String name, Type type);
-
 		// Functions that create an Instruction. append it to the current BasicBlock, and return it.
 		utils::NoNull<UnaryInstruction> makeNeg(utils::NoNull<Value> operand, utf::String name = "u");
+		utils::NoNull<UnaryInstruction> makeBitwiseNot(utils::NoNull<Value> operand, utf::String name = "u");
 		utils::NoNull<UnaryInstruction> makeLogicNot(utils::NoNull<Value> operand, utf::String name = "u");
+		utils::NoNull<UnaryInstruction> makeCast(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name = "u");
 		utils::NoNull<BinaryInstruction> makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeSub(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeMul(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeDiv(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeRem(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeBitwiseXor(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeShl(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
+		utils::NoNull<BinaryInstruction> makeShr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeLogicAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeLogicOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<BinaryInstruction> makeEq(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
@@ -56,7 +60,7 @@ namespace cir {
 		utils::NoNull<BinaryInstruction> makeGt(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b");
 		utils::NoNull<InvocationInstruction> makeInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name = "i");
 		utils::NoNull<UnitInvocationInstruction> makeUnitInvoke(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments);
-		utils::NoNull<LocalVariable> makeLocal(utf::String name, Type type, utils::NoNull<Value> initialValue);
+		utils::NoNull<LocalVariable> makeLocal(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue);
 		utils::NoNull<GotoInstruction> makeGoto(utils::NoNull<BasicBlock> basicBlockToGo);
 		utils::NoNull<BranchInstruction> makeBranch(utils::NoNull<Value> value, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch);
 		utils::NoNull<RetInstruction> makeRet(utils::NoNull<Value> value);
@@ -68,7 +72,7 @@ namespace cir {
 	private:
 		template<class T, class... Args> requires std::is_base_of_v<Instruction, T>
 		utils::NoNull<T> makeInstruction(Args&&... args) {
-			error::internalAssert(m_currentBasicBlock != nullptr, "No basic block available to append instructions to");
+			internalAssert(m_currentBasicBlock != nullptr, "No basic block available to append instructions to");
 
 			utils::NoNull<T> result = CirAllocator::make<T, Args...>(std::forward<Args>(args)...);
 			m_currentBasicBlock->addInstruction(result);

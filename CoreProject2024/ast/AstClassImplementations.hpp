@@ -13,6 +13,7 @@
 #include "expressions/IdentifierValue.hpp"
 #include "expressions/InvocationOperator.hpp"
 #include "expressions/UnaryOperator.hpp"
+#include "expressions/AsOperator.hpp"
 #include "expressions/BinaryOperator.hpp"
 #include "expressions/ComparativeBinaryOperator.hpp"
 #include "expressions/ReturnOperator.hpp"

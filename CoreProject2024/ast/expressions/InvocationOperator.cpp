@@ -13,6 +13,13 @@ ast::InvocationOperator::InvocationOperator(utils::NoNull<Expression> callee, st
 	}
 }
 
+ast::InvocationOperator::~InvocationOperator() {
+	m_callee->~Expression();
+	for (auto argument : m_arguments) {
+		argument->~Expression();
+	}
+}
+
 utils::NoNull<ast::Expression>& ast::InvocationOperator::getCallee() noexcept {
 	return m_callee;
 }

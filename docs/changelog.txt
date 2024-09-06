@@ -15,3 +15,17 @@ Alpha 0.1.1 (15.08.2024 - 16.08.2024)
 - Slightly increased project compilation speed.
 - Fixed bug with local variables names in CIR (they had indices appended to their name).
 - Improved AST and CHIR output (less parens where they are not required).
+
+Alpha 0.1.2 (16.08.2024 - ?)
+- Rewritten internal type system.
+- Added integer types: i8-i128, u8-u128, isize, usize, cint, cuint, clong, culong.
+- Added function type.
+- Added type inquire for int literals.
+- Added compile-time computation of expressions with literals.
+- Added variables of function type.
+- Added type cast operator (as).
+- Added compilation time output.
+- Added bitwise operators (>>, <<, ~, ^, |, &).
+- Fixed bug when compiler failed to choose a function when it has no arguments.
+- Fixed bug where a division by zero during compile-time evaluation somehow went unnoticed.
+- Fixed memory leaks due to destructors not being called.

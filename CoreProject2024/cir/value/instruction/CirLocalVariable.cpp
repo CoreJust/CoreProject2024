@@ -5,12 +5,16 @@
 #include "CirLocalVariable.hpp"
 #include <format>
 
-cir::LocalVariable::LocalVariable(utf::String name, Type type, utils::NoNull<Value> initialValue) noexcept
-	: Instruction(std::move(name), std::move(type), ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
-	error::internalAssert(m_type != TypeKind::UNIT);
-	error::internalAssert(m_type == m_initialValue->getType());
+cir::LocalVariable::LocalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue) noexcept
+	: Instruction(std::move(name), type, ValueKind::LOCAL_VARIABLE), m_initialValue(initialValue) {
+	internalAssert(m_type->getTypeKind() != TypeKind::UNIT);
+	internalAssert(m_type->equals(m_initialValue->getType()));
 
 	Value::addUser(m_initialValue, *this);
+}
+
+cir::LocalVariable::~LocalVariable() {
+	Instruction::destroyIfConstant(m_initialValue);
 }
 
 utils::NoNull<cir::Value>& cir::LocalVariable::getInitialValue() noexcept {
@@ -18,5 +22,5 @@ utils::NoNull<cir::Value>& cir::LocalVariable::getInitialValue() noexcept {
 }
 
 utf::String cir::LocalVariable::toInstuctionString() const {
-	return std::format("let {}: {} = {}", m_name, m_type.toString(), m_initialValue->toString());
+	return std::format("let {}: {} = {}", m_name, m_type->toString(), m_initialValue->toString());
 }

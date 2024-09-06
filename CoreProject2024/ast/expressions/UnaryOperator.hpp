@@ -18,6 +18,8 @@ namespace ast {
 		enum UnaryOperatorType : unsigned char {
 			PLUS = 0,
 			MINUS,
+
+			BITWISE_NOT,
 			LOGIC_NOT,
 
 			UNARY_OPERATOR_TYPES_COUNT
@@ -29,12 +31,16 @@ namespace ast {
 
 	public:
 		UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Expression> expression) noexcept;
+		~UnaryOperator() override;
 
 		utils::NoNull<Expression>& getExpression() noexcept;
 		UnaryOperatorType getOperator() const noexcept;
 
 		// Returns whether the operator is arithmetical.
 		bool isArithmetical() const noexcept;
+
+		// Returns whether the operator is bitwise.
+		bool isBitwise() const noexcept;
 
 		// Returns whether the operator is logical.
 		bool isLogical() const noexcept;

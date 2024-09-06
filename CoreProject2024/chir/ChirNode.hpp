@@ -40,7 +40,6 @@ namespace chir {
 		Node() = delete;
 		Node(const Node&) = default;
 		Node(Node&&) = default;
-
 		inline virtual ~Node() { }
 
 		constexpr bool operator==(const Node& other) const noexcept {

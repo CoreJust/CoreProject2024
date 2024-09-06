@@ -11,6 +11,12 @@ ast::ModuleDeclarations::ModuleDeclarations(std::vector<utils::NoNull<ast::Decla
 	}
 }
 
+ast::ModuleDeclarations::~ModuleDeclarations() {
+	for (auto& declaration : m_declarations) {
+		declaration->~Declaration();
+	}
+}
+
 const std::vector<utils::NoNull<ast::Declaration>>& ast::ModuleDeclarations::getDeclarations() const noexcept {
 	return m_declarations;
 }

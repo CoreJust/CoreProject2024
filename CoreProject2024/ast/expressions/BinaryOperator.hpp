@@ -22,6 +22,12 @@ namespace ast {
 			DIVIDE,
 			REMAINDER,
 
+			BITWISE_AND,
+			BITWISE_OR,
+			BITWISE_XOR,
+			BITWISE_LEFT_SHIFT,
+			BITWISE_RIGHT_SHIFT,
+
 			LOGIC_AND,
 			LOGIC_OR,
 
@@ -35,6 +41,7 @@ namespace ast {
 
 	public:
 		BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Expression> left, utils::NoNull<Expression> right) noexcept;
+		~BinaryOperator() override;
 
 		utils::NoNull<Expression>& getLeft() noexcept;
 		utils::NoNull<Expression>& getRight() noexcept;
@@ -42,6 +49,11 @@ namespace ast {
 
 		// Returns whether the operator is arithmetical.
 		bool isArithmetical() const noexcept;
+
+		// Returns whether the operator is bitwise.
+		bool isBitwise() const noexcept;
+
+		bool isBitwiseShift() const noexcept;
 
 		// Returns whether the operator is logical.
 		bool isLogical() const noexcept;

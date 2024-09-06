@@ -23,6 +23,12 @@ namespace cir {
 			DIV,
 			REM,
 
+			BITWISE_AND,
+			BITWISE_OR,
+			BITWISE_XOR,
+			BITWISE_SHL,
+			BITWISE_SHR,
+
 			LOGIC_AND,
 			LOGIC_OR,
 
@@ -43,6 +49,7 @@ namespace cir {
 
 	public:
 		BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b") noexcept;
+		~BinaryInstruction() override;
 
 		BinaryInstructionKind getInstructionKind() const noexcept;
 		utils::NoNull<Value>& getLeft() noexcept;

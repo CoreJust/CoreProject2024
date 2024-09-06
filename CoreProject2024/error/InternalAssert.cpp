@@ -3,22 +3,16 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "InternalAssert.hpp"
-#include <format>
+#include <cassert>
+#include <iostream>
 #include "ErrorPrinter.hpp"
 
-void error::internalAssert(bool condition, utf::StringView message, const std::source_location& location) {
+#ifdef _DEBUG
+void internalAssert(bool condition, utf::StringView message) {
 	if (!condition) {
-		ErrorPrinter::fatalError({
-			.code = ErrorCode::INTERNAL_ERROR,
-			.name = "Internal error: Internal assertion failure",
-			.description = std::format(
-				"{}, source: {} at {}:{}, function {}.",
-				message,
-				location.file_name(),
-				location.line(),
-				location.column(),
-				location.function_name()
-			)
-		});
+		std::cout << "Internal assertion failed: " << message << std::endl;
 	}
+
+	assert(condition);
 }
+#endif

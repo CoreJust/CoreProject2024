@@ -20,6 +20,7 @@ namespace ast {
 
 	public:
 		ModuleDeclarations(std::vector<utils::NoNull<Declaration>> declarations) noexcept;
+		~ModuleDeclarations() override;
 
 		const std::vector<utils::NoNull<Declaration>>& getDeclarations() const noexcept;
 	};

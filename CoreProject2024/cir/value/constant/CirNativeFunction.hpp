@@ -15,6 +15,6 @@
 namespace cir {
 	class NativeFunction final : public Function {
 	public:
-		NativeFunction(utf::String name, Type returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept;
+		NativeFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept;
 	};
 }

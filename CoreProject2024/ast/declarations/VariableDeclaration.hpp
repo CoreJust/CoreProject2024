@@ -10,22 +10,23 @@
 
 #pragma once
 #include "utf/String.hpp"
-#include "../Declaration.hpp"
-#include "../Expression.hpp"
-#include "../AstType.hpp"
+#include "ast/Declaration.hpp"
+#include "ast/Expression.hpp"
+#include "ast/type/AstType.hpp"
 
 namespace ast {
 	class VariableDeclaration final : public Declaration {
 	private:
 		utf::StringView m_name;
-		Type m_type; // empty if no type is specified
+		utils::NoNull<Type> m_type;
 		utils::NoNull<Expression> m_initialValue;
 
 	public:
-		VariableDeclaration(utf::StringView name, Type type, utils::NoNull<Expression> initialValue) noexcept;
+		VariableDeclaration(utf::StringView name, utils::NoNull<Type> type, utils::NoNull<Expression> initialValue) noexcept;
+		~VariableDeclaration() override;
 
 		utf::StringView getName() const noexcept;
-		const Type& getVariableType() const noexcept;
+		utils::NoNull<Type> getVariableType() const noexcept;
 		utils::NoNull<Expression>& getInitialValue() noexcept;
 	};
 }

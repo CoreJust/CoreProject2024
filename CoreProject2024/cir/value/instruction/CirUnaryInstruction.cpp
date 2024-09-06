@@ -10,6 +10,15 @@ cir::UnaryInstruction::UnaryInstruction(UnaryInstructionKind instructionKind, ut
 	Value::addUser(m_operand, *this);
 }
 
+cir::UnaryInstruction::UnaryInstruction(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name) noexcept 
+	: Instruction(std::move(name), type, ValueKind::UNARY_INSTRUCTION), m_instuctionKind(UnaryInstructionKind::CAST), m_operand(operand) {
+	Value::addUser(m_operand, *this);
+}
+
+cir::UnaryInstruction::~UnaryInstruction() {
+	Instruction::destroyIfConstant(m_operand);
+}
+
 cir::UnaryInstruction::UnaryInstructionKind cir::UnaryInstruction::getInstructionKind() const noexcept {
 	return m_instuctionKind;
 }
@@ -19,5 +28,9 @@ utils::NoNull<cir::Value>& cir::UnaryInstruction::getOperand() noexcept {
 }
 
 utf::String cir::UnaryInstruction::toInstuctionString() const {
-	return std::format("tmp {} = {} {}", m_name, "-!"[m_instuctionKind], m_operand->toString());
+	if (m_instuctionKind == UnaryInstructionKind::CAST) {
+		return std::format("tmp {} = cast {} to {}", m_name, m_operand->toString(), m_type->toString());
+	} else {
+		return std::format("tmp {} = {} {}", m_name, "-~!"[m_instuctionKind], m_operand->toString());
+	}
 }

@@ -29,7 +29,23 @@ namespace lexer {
 		ELIF,
 		ELSE,
 		LET,
+		AS,
+		I8,
+		I16,
 		I32,
+		I64,
+		I128,
+		ISIZE,
+		U8,
+		U16,
+		U32,
+		U64,
+		U128,
+		USIZE,
+		CINT,
+		CLONG,
+		CUINT,
+		CULONG,
 		BOOL,
 		UNIT,
 		TRUE,
@@ -44,6 +60,10 @@ namespace lexer {
 		PERCENT, // %
 		AND, // &
 		OR, // |
+		LSHIFT, // <<
+		RSHIFT, // >>
+		TILDE, // ~
+		CARET, // ^
 		EQEQ, // ==
 		NOTEQ, // !=
 		LESSEQ, // <=

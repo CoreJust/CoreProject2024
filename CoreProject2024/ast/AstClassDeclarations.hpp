@@ -18,6 +18,7 @@ namespace ast {
 	class IdentifierValue;
 	class InvocationOperator;
 	class UnaryOperator;
+	class AsOperator;
 	class BinaryOperator;
 	class ComparativeBinaryOperator;
 	class ReturnOperator;

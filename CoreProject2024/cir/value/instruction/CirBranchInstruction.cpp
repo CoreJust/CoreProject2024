@@ -6,22 +6,26 @@
 #include <format>
 
 cir::BranchInstruction::BranchInstruction(utils::NoNull<Value> condition, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch) noexcept
-    : Terminator("", TypeKind::UNIT, ValueKind::BRANCH_INSTRUCTION), m_condition(condition), m_successBranch(successBranch), m_failureBranch(failureBranch) {
-    error::internalAssert(m_condition->getType() == TypeKind::BOOL);
+	: Terminator("", Type::make(TypeKind::UNIT), ValueKind::BRANCH_INSTRUCTION), m_condition(condition), m_successBranch(successBranch), m_failureBranch(failureBranch) {
+	internalAssert(m_condition->getType()->getTypeKind() == TypeKind::BOOL);
 }
 
-cir::Value*& cir::BranchInstruction::getCondition() noexcept {
-    return m_condition;
+cir::BranchInstruction::~BranchInstruction() {
+	Instruction::destroyIfConstant(m_condition);
+}
+
+utils::NoNull<cir::Value>& cir::BranchInstruction::getCondition() noexcept {
+	return m_condition;
 }
 
 utils::NoNull<cir::BasicBlock>& cir::BranchInstruction::getSuccessBranch() noexcept {
-    return m_successBranch;
+	return m_successBranch;
 }
 
 utils::NoNull<cir::BasicBlock>& cir::BranchInstruction::getFailureBranch() noexcept {
-    return m_failureBranch;
+	return m_failureBranch;
 }
 
 utf::String cir::BranchInstruction::toInstuctionString() const {
-    return std::format("branch {} => {} else {}", m_condition->toString(), m_successBranch->toString(), m_failureBranch->toString());
+	return std::format("branch {} => {} else {}", m_condition->toString(), m_successBranch->toString(), m_failureBranch->toString());
 }

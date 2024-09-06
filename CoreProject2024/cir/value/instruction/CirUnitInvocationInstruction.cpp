@@ -7,13 +7,20 @@
 #include "utils/CollectionUtils.hpp"
 
 cir::UnitInvocationInstruction::UnitInvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments) noexcept
-	: Instruction("", TypeKind::UNIT, ValueKind::UNIT_INVOCATION_INSTRUCTION),
+	: Instruction("", Type::make(TypeKind::UNIT), ValueKind::UNIT_INVOCATION_INSTRUCTION),
 	m_callee(callee),
 	m_arguments(std::move(arguments)) 
 {
 	Value::addUser(m_callee, *this);
 	for (auto argument : m_arguments) {
 		Value::addUser(argument, *this);
+	}
+}
+
+cir::UnitInvocationInstruction::~UnitInvocationInstruction() {
+	Instruction::destroyIfConstant(m_callee);
+	for (auto argument : m_arguments) {
+		Instruction::destroyIfConstant(argument);
 	}
 }
 

@@ -19,6 +19,7 @@ namespace ast {
 
 	public:
 		ExpressionStatement(utils::NoNull<Expression> expression) noexcept;
+		~ExpressionStatement() override;
 
 		utils::NoNull<Expression>& getExpression() noexcept;
 	};

@@ -16,6 +16,6 @@
 namespace cir {
 	class Constant : public Value {
 	public:
-		Constant(utf::String name, Type type, ValueKind kind) noexcept;
+		Constant(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
 	};
 }

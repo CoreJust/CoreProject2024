@@ -87,7 +87,7 @@
     <ClCompile Include="ast\statements\ScopeStatement.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ast\AstType.cpp">
+    <ClCompile Include="ast\type\AstType.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="parser\Parser.cpp">
@@ -96,7 +96,7 @@
     <ClCompile Include="test\SourceCodeGenerator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="symbol\types\Type.cpp">
+    <ClCompile Include="symbol\type\Type.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="symbol\VariableSymbol.cpp">
@@ -300,6 +300,27 @@
     <ClCompile Include="cir_pass\CirPassManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="ast\type\AstFunctionType.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="symbol\type\FunctionType.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="cir\type\CirIntegerType.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="cir\type\CirFunctionType.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ast\expressions\AsOperator.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="chir\values\ChirAsOperator.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\ArrayBuilder.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utf\UtfIO.hpp">
@@ -404,7 +425,7 @@
     <ClInclude Include="ast\statements\ScopeStatement.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ast\AstType.hpp">
+    <ClInclude Include="ast\type\AstType.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="parser\Parser.hpp">
@@ -428,10 +449,10 @@
     <ClInclude Include="symbol\VariableSymbol.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="symbol\types\Type.hpp">
+    <ClInclude Include="symbol\type\Type.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="symbol\types\TypeKind.hpp">
+    <ClInclude Include="symbol\type\TypeKind.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="symbol\SymbolTable.hpp">
@@ -675,6 +696,42 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="cir_pass\CirPassManager.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ast\type\AstTypeKind.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ast\type\AstFunctionType.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ast\type\AstTypeAllocator.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol\type\TypeAllocator.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="symbol\type\FunctionType.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="cir\type\CirTypeAllocator.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="cir\type\CirIntegerType.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="cir\type\CirFunctionType.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\IntValue.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ast\expressions\AsOperator.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="chir\values\ChirAsOperator.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ArrayBuilder.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

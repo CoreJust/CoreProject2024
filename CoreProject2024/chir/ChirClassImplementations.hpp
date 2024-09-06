@@ -13,6 +13,7 @@
 #include "values/ChirSymbolValue.hpp"
 #include "values/ChirInvocationOperator.hpp"
 #include "values/ChirUnaryOperator.hpp"
+#include "values/ChirAsOperator.hpp"
 #include "values/ChirBinaryOperator.hpp"
 #include "values/ChirReturnOperator.hpp"
 #include "statements/ChirValueStatement.hpp"

@@ -16,16 +16,19 @@
 namespace symbol {
 	class FunctionSymbol final : public Symbol {
 	private:
-		symbol::Type m_returnType;
+		utils::NoNull<Type> m_returnType;
 		std::vector<utils::NoNull<VariableSymbol>> m_arguments;
 
 	public:
-		FunctionSymbol(SymbolPath path, utf::String name, symbol::Type returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
+		FunctionSymbol(SymbolPath path, utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
+		~FunctionSymbol() override;
 
 		utf::String makeMangledName() const;
 
-		const symbol::Type& getReturnType() const noexcept;
+		utils::NoNull<Type> getReturnType() const noexcept;
 		const std::vector<utils::NoNull<VariableSymbol>>& getArguments() const noexcept;
+
+		utils::NoNull<Type> getSymbolValueType() const override;
 
 		utf::String toString() const noexcept override;
 	};

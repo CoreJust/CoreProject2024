@@ -18,6 +18,7 @@ namespace chir {
 	class SymbolValue;
 	class InvocationOperator;
 	class UnaryOperator;
+	class AsOperator;
 	class BinaryOperator;
 	class ReturnOperator;
 	class Statement;

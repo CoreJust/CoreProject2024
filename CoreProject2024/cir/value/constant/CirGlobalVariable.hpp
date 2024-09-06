@@ -17,7 +17,8 @@ namespace cir {
 		utils::NoNull<Constant> m_initialValue;
 
 	public:
-		GlobalVariable(utf::String name, Type type, utils::NoNull<Constant> initialValue, utils::NoNull<Module> parentModule) noexcept;
+		GlobalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Constant> initialValue, utils::NoNull<Module> parentModule) noexcept;
+		~GlobalVariable() override;
 
 		utils::NoNull<Constant>& getInitialValue() noexcept;
 	};

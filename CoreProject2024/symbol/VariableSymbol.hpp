@@ -10,17 +10,18 @@
 
 #pragma once
 #include "Symbol.hpp"
-#include "types/Type.hpp"
 
 namespace symbol {
 	class VariableSymbol final : public Symbol {
 	private:
-		symbol::Type m_type;
+		utils::NoNull<Type> m_type;
 
 	public:
-		VariableSymbol(SymbolPath path, utf::String name, symbol::Type type);
+		VariableSymbol(SymbolPath path, utf::String name, utils::NoNull<Type> type);
 
-		const symbol::Type& getType() const noexcept;
+		utils::NoNull<Type> getType() const noexcept;
+
+		utils::NoNull<Type> getSymbolValueType() const override;
 
 		utf::String toString() const noexcept override;
 	};

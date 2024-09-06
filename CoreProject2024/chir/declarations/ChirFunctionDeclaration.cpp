@@ -13,6 +13,12 @@ chir::FunctionDeclaration::FunctionDeclaration(const symbol::FunctionSymbol& fun
 	: Declaration(NodeKind::FUNCTION_DECLARATION), m_function(function), m_body(std::move(nativeFunctionName)) {
 }
 
+chir::FunctionDeclaration::~FunctionDeclaration() {
+	if (!isNative()) {
+		getBodyAsStatement()->~Statement();
+	}
+}
+
 const symbol::FunctionSymbol& chir::FunctionDeclaration::getFunction() const noexcept {
 	return m_function;
 }
@@ -25,6 +31,6 @@ utils::NoNull<chir::Statement>& chir::FunctionDeclaration::getBodyAsStatement() 
 	return std::get<utils::NoNull<Statement>>(m_body);
 }
 
-utf::StringView chir::FunctionDeclaration::getBodyAsNative() const noexcept {
+utf::String chir::FunctionDeclaration::getBodyAsNative() const noexcept {
 	return std::get<utf::String>(m_body);
 }

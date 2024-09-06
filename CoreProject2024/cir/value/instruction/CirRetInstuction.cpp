@@ -6,13 +6,19 @@
 #include <format>
 
 cir::RetInstruction::RetInstruction() noexcept 
-	: Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(nullptr) {
+	: Terminator("", Type::make(TypeKind::UNIT), ValueKind::RET_INSTRUCTION), m_operand(nullptr) {
 
 }
 
 cir::RetInstruction::RetInstruction(utils::NoNull<Value> operand) noexcept
-	: Terminator("", TypeKind::UNIT, ValueKind::RET_INSTRUCTION), m_operand(operand) {
+	: Terminator("", Type::make(TypeKind::UNIT), ValueKind::RET_INSTRUCTION), m_operand(operand) {
 	Value::addUser(m_operand, *this);
+}
+
+cir::RetInstruction::~RetInstruction() {
+	if (m_operand != nullptr) {
+		Instruction::destroyIfConstant(m_operand);
+	}
 }
 
 bool cir::RetInstruction::isRetUnit() const noexcept {
@@ -23,11 +29,9 @@ cir::Value*& cir::RetInstruction::getOperand() noexcept {
 	return m_operand;
 }
 
-const cir::Type& cir::RetInstruction::getReturnType() noexcept {
-	static Type s_unitType = TypeKind::UNIT;
-
+utils::NoNull<cir::Type> cir::RetInstruction::getReturnType() noexcept {
 	if (m_operand == nullptr) {
-		return s_unitType;
+		return Type::make(TypeKind::UNIT);
 	} else {
 		return m_operand->getType();
 	}

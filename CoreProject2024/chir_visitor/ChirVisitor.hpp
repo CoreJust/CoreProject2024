@@ -44,6 +44,7 @@ namespace chir_visitor {
 				case chir::NodeKind::SYMBOL_VALUE:			return m_self.visit(*node.as<chir::SymbolValue>());
 				case chir::NodeKind::INVOCATION_OPERATOR:	return m_self.visit(*node.as<chir::InvocationOperator>());
 				case chir::NodeKind::UNARY_OPERATOR:		return m_self.visit(*node.as<chir::UnaryOperator>());
+				case chir::NodeKind::AS_OPERATOR:			return m_self.visit(*node.as<chir::AsOperator>());
 				case chir::NodeKind::BINARY_OPERATOR:		return m_self.visit(*node.as<chir::BinaryOperator>());
 				case chir::NodeKind::RETURN_OPERATOR:		return m_self.visit(*node.as<chir::ReturnOperator>());
 			default: unreachable();
@@ -73,6 +74,7 @@ namespace chir_visitor {
 		virtual ValueResult visit(chir::SymbolValue & node) = 0;
 		virtual ValueResult visit(chir::InvocationOperator& node) = 0;
 		virtual ValueResult visit(chir::UnaryOperator& node) = 0;
+		virtual ValueResult visit(chir::AsOperator& node) = 0;
 		virtual ValueResult visit(chir::BinaryOperator& node) = 0;
 		virtual ValueResult visit(chir::ReturnOperator& node) = 0;
 		virtual StatementResult visit(chir::ValueStatement & node) = 0;

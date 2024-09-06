@@ -3,23 +3,26 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "Token.hpp"
-#include <cassert>
 #include <format>
 #include "utf/StringUtils.hpp"
+#include "error/InternalAssert.hpp"
 
 utf::String lexer::tokenType2String(TokenType type) {
-	assert(type <= TOKEN_TYPES_COUNT);
+	internalAssert(type <= TOKEN_TYPES_COUNT);
 
 	static const char* TOKEN_TYPE_NAMES[] = {
 		"IDENTIFIER", "NUMBER", "TEXT", "RAW_TEXT",
 		"FN", "NATIVE", "RETURN", 
-		"IF", "ELIF", "ELSE", "LET",
-		"I32", "BOOL", "UNIT",
+		"IF", "ELIF", "ELSE", "LET", "AS",
+		"I8", "I16", "I32", "I64", "I128", "ISIZE",
+		"U8", "U16", "U32", "U64", "U128", "USIZE",
+		"CINT", "CINT", "CUINT", "CULONG", 
+		"BOOL", "UNIT",
 		"TRUE", "FALSE",
 		"EQ", "PLUS", "MINUS", "STAR",
 		"SLASH", "PERCENT", "AND", "OR",
-		"EQEQ", "NOTEQ", "LESSEQ", "GREATEREQ", 
-		"LESS", "GREATER",
+		"LSHIFT", "RSHIFT", "TILDE", "CARET",
+		"EQEQ", "NOTEQ", "LESSEQ", "GREATEREQ", "LESS", "GREATER",
 		"NOT", "LOGIC_AND", "LOGIC_OR",
 		"LPAREN", "RPAREN", "LBRACE", "RBRACE",
 		"COLON", "SEMICOLON", "COMMA",

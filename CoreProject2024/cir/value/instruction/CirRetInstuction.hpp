@@ -20,10 +20,11 @@ namespace cir {
 	public:
 		RetInstruction() noexcept;
 		RetInstruction(utils::NoNull<Value> operand) noexcept;
+		~RetInstruction() override;
 
 		bool isRetUnit() const noexcept;
 		Value*& getOperand() noexcept;
-		const Type& getReturnType() noexcept;
+		utils::NoNull<Type> getReturnType() noexcept;
 
 		utf::String toInstuctionString() const override;
 	};

@@ -5,10 +5,15 @@
 #include "ChirValue.hpp"
 #include <cassert>
 
-chir::Value::Value(NodeKind type, symbol::Type valueType) noexcept : Node(type), m_type(std::move(valueType)) {
+chir::Value::Value(NodeKind type, utils::NoNull<symbol::Type> valueType) noexcept 
+	: Node(type), m_type(std::move(valueType)) {
 	assert(isValue());
 }
 
-symbol::Type& chir::Value::getValueType() noexcept {
+chir::Value::~Value() {
+	m_type->~Type();
+}
+
+utils::NoNull<symbol::Type> chir::Value::getValueType() noexcept {
 	return m_type;
 }

@@ -3,9 +3,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "CirConstant.hpp"
-#include <cassert>
+#include "error/InternalAssert.hpp"
 
-cir::Constant::Constant(utf::String name, Type type, ValueKind kind) noexcept
+cir::Constant::Constant(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
 	: Value(std::move(name), std::move(type), kind) {
-	assert(cir::isConstant(kind));
+	internalAssert(cir::isConstant(kind));
 }

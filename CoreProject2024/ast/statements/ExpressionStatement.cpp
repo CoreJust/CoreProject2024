@@ -9,6 +9,10 @@ ast::ExpressionStatement::ExpressionStatement(utils::NoNull<ast::Expression> exp
 	Node::setParent(m_expression, this);
 }
 
+ast::ExpressionStatement::~ExpressionStatement() {
+	m_expression->~Expression();
+}
+
 utils::NoNull<ast::Expression>& ast::ExpressionStatement::getExpression() noexcept {
 	return m_expression;
 }

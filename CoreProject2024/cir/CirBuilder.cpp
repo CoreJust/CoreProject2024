@@ -23,16 +23,20 @@ utils::NoNull<cir::BasicBlock> cir::CirBuilder::makeAnsSetBasicBlock(utf::String
 	return m_currentBasicBlock = m_currentFunction->makeBasicBlock(std::move(name)).get();
 }
 
-utils::NoNull<cir::FunctionArgument> cir::CirBuilder::makeFunctionArgument(utf::String name, Type type) {
-	return CirAllocator::make<FunctionArgument>(std::move(name), std::move(type));
-}
-
 utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeNeg(utils::NoNull<Value> operand, utf::String name) {
 	return makeInstruction<UnaryInstruction>(UnaryInstruction::NEG, operand, std::move(name));
 }
 
+utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeBitwiseNot(utils::NoNull<Value> operand, utf::String name) {
+	return makeInstruction<UnaryInstruction>(UnaryInstruction::BITWISE_NOT, operand, std::move(name));
+}
+
 utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeLogicNot(utils::NoNull<Value> operand, utf::String name) {
 	return makeInstruction<UnaryInstruction>(UnaryInstruction::LOGIC_NOT, operand, std::move(name));
+}
+
+utils::NoNull<cir::UnaryInstruction> cir::CirBuilder::makeCast(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name) {
+	return makeInstruction<UnaryInstruction>(operand, type, std::move(name));
 }
 
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeAdd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
@@ -53,6 +57,26 @@ utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeDiv(utils::NoNull<Val
 
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeRem(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
 	return makeInstruction<BinaryInstruction>(BinaryInstruction::REM, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeBitwiseAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+	return makeInstruction<BinaryInstruction>(BinaryInstruction::BITWISE_AND, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeBitwiseOr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+	return makeInstruction<BinaryInstruction>(BinaryInstruction::BITWISE_OR, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeBitwiseXor(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+	return makeInstruction<BinaryInstruction>(BinaryInstruction::BITWISE_XOR, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeShl(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+	return makeInstruction<BinaryInstruction>(BinaryInstruction::BITWISE_SHL, left, right, std::move(name));
+}
+
+utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeShr(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
+	return makeInstruction<BinaryInstruction>(BinaryInstruction::BITWISE_SHR, left, right, std::move(name));
 }
 
 utils::NoNull<cir::BinaryInstruction> cir::CirBuilder::makeLogicAnd(utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) {
@@ -95,8 +119,8 @@ utils::NoNull<cir::UnitInvocationInstruction> cir::CirBuilder::makeUnitInvoke(ut
 	return makeInstruction<UnitInvocationInstruction>(callee, std::move(arguments));
 }
 
-utils::NoNull<cir::LocalVariable> cir::CirBuilder::makeLocal(utf::String name, Type type, utils::NoNull<Value> initialValue) {
-	return makeInstruction<LocalVariable>(std::move(name), std::move(type), initialValue);
+utils::NoNull<cir::LocalVariable> cir::CirBuilder::makeLocal(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue) {
+	return makeInstruction<LocalVariable>(std::move(name), type, initialValue);
 }
 
 utils::NoNull<cir::GotoInstruction> cir::CirBuilder::makeGoto(utils::NoNull<BasicBlock> basicBlockToGo) {

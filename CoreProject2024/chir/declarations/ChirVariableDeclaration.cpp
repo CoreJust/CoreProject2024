@@ -9,6 +9,10 @@ chir::VariableDeclaration::VariableDeclaration(const symbol::VariableSymbol& var
 	Node::setParent(m_initialValue, this);
 }
 
+chir::VariableDeclaration::~VariableDeclaration() {
+	m_initialValue->~Value();
+}
+
 const symbol::VariableSymbol& chir::VariableDeclaration::getVariable() const noexcept {
 	return m_variable;
 }

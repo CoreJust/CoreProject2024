@@ -19,11 +19,9 @@ namespace ast {
 		// Creates a new AST node using the current memory resource.
 		template<class T, class... Args> requires std::is_base_of_v<Node, T>
 		static utils::NoNull<T> make(utils::TextPosition position, Args&&... args) {
-			T* result = reinterpret_cast<T*>(s_allocator.allocate_bytes(sizeof(T), alignof(T)));
-			::new(result) T(std::forward<Args>(args)...);
+			utils::NoNull<T> result = utils::PooledAllocator<ast::Node>::make<T, Args...>(std::forward<Args>(args)...);
 
 			result->setTextPosition(position);
-
 			return result;
 		}
 	};

@@ -14,7 +14,7 @@
 #include "ast/Declaration.hpp"
 #include "ast/Statement.hpp"
 #include "ast/Expression.hpp"
-#include "ast/AstType.hpp"
+#include "ast/type/AstType.hpp"
 
 namespace parser {
 	class Parser final {
@@ -24,7 +24,7 @@ namespace parser {
 	public:
 		Parser(lexer::Tokenizer tokenizer);
 
-		ast::Declaration* parse();
+		utils::NoNull<ast::Declaration> parse();
 
 	private:
 		// Declarations
@@ -41,13 +41,19 @@ namespace parser {
 		ast::Expression* returnOperator();
 		ast::Expression* logical();
 		ast::Expression* comparative();
+		ast::Expression* bitwise_or();
+		ast::Expression* bitwise_xor();
+		ast::Expression* bitwise_and();
+		ast::Expression* shifts();
 		ast::Expression* additive();
 		ast::Expression* multiplicative();
+		ast::Expression* convertive();
 		ast::Expression* unary();
 		ast::Expression* postprimary();
 		ast::Expression* primary();
 
 		// Types
-		ast::Type parseType();
+		utils::NoNull<ast::Type> parseType();
+		utils::NoNull<ast::Type> parseFunctionType();
 	};
 }

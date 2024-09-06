@@ -13,7 +13,7 @@ void utils::IndentPrinter::increaseIndent() {
 }
 
 void utils::IndentPrinter::decreaseIndent() {
-	error::internalAssert(!m_currentIndentation.empty(), "Tried to decrease indentation when it already was zero in IndentPrinter.");
+	internalAssert(!m_currentIndentation.empty(), "Tried to decrease indentation when it already was zero in IndentPrinter.");
 
 	for (char _ : m_indentString) {
 		m_currentIndentation.pop_back();

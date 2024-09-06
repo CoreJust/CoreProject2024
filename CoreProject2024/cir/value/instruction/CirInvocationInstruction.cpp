@@ -6,15 +6,23 @@
 #include <format>
 #include "utils/CollectionUtils.hpp"
 #include "../constant/CirCommonFunction.hpp"
+#include "cir/type/CirFunctionType.hpp"
 
 cir::InvocationInstruction::InvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name) noexcept
-	: Instruction(std::move(name), /* TMP */reinterpret_cast<CommonFunction*>(callee.get())->getReturnType(), ValueKind::INVOCATION_INSTRUCTION),
+	: Instruction(std::move(name), callee->getType().as<FunctionType>()->getReturnType(), ValueKind::INVOCATION_INSTRUCTION),
 	m_callee(callee),
 	m_arguments(std::move(arguments)) 
 {
 	Value::addUser(m_callee, *this);
 	for (auto argument : m_arguments) {
 		Value::addUser(argument, *this);
+	}
+}
+
+cir::InvocationInstruction::~InvocationInstruction() {
+	Instruction::destroyIfConstant(m_callee);
+	for (auto argument : m_arguments) {
+		Instruction::destroyIfConstant(argument);
 	}
 }
 

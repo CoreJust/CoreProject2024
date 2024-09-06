@@ -10,10 +10,16 @@
 #include "cir/value/instruction/CirBranchInstruction.hpp"
 
 cir::BasicBlock::BasicBlock(CommonFunction& parentFunction, utf::String name) noexcept
-	: Constant(std::move(name), TypeKind::BASIC_BLOCK, ValueKind::BASIC_BLOCK), 
+	: Constant(std::move(name), Type::make(TypeKind::BASIC_BLOCK), ValueKind::BASIC_BLOCK), 
 	m_parentFunction(parentFunction),
 	m_instructionCounter(parentFunction.getInstructionCounter()) {
 
+}
+
+cir::BasicBlock::~BasicBlock() {
+	for (auto instruction : m_instructions) {
+		instruction->~Instruction();
+	}
 }
 
 void cir::BasicBlock::addInstruction(utils::NoNull<Instruction> instruction) noexcept {

@@ -28,7 +28,7 @@ namespace utils {
 		constexpr NoNull(NoNull&& other) noexcept : m_ptr(other.m_ptr) { }
 		constexpr NoNull(const NoNull& other) noexcept : m_ptr(other.m_ptr) { }
 		constexpr NoNull(T* ptr, const std::source_location& location = std::source_location::current()) noexcept : m_ptr(ptr) {
-			error::internalAssert(ptr != nullptr, "Passed nullptr to NoNull class");
+			internalAssert(ptr != nullptr, "Passed nullptr to NoNull class");
 		}
 
 		constexpr NoNull& operator=(const NoNull& other) noexcept {

@@ -37,6 +37,7 @@ void chir_visitor::CirGlobalsLoader::visit(chir::ConstantValue& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::SymbolValue& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::InvocationOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::UnaryOperator& node) { }
+void chir_visitor::CirGlobalsLoader::visit(chir::AsOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::BinaryOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ReturnOperator& node) { }
 void chir_visitor::CirGlobalsLoader::visit(chir::ValueStatement& node) { }
@@ -48,8 +49,8 @@ void chir_visitor::CirGlobalsLoader::visit(chir::VariableDeclaration& node) {
 	symbol::VariableSymbol variableSymbol = node.getVariable();
 	utils::NoNull<cir::GlobalVariable> variable = m_cirModule.addGlobalVariable(
 		variableSymbol.getName(),
-		variableSymbol.getType().makeCirType(),
-		cir::CirAllocator::make<cir::ConstantNumber>(variableSymbol.getType().makeCirType(), 0)
+		variableSymbol.getType()->makeCirType(),
+		cir::CirAllocator::make<cir::ConstantNumber>(variableSymbol.getType()->makeCirType(), 0)
 	);
 
 	m_globalsMap.try_emplace(variableSymbol.getId(), variable);
@@ -60,11 +61,11 @@ void chir_visitor::CirGlobalsLoader::visit(chir::FunctionDeclaration& node) {
 	if (node.isNative()) {
 		utils::NoNull<cir::NativeFunction> function = m_cirModule.addNativeFunction(
 			utf::String(node.getBodyAsNative()),
-			functionSymbol.getReturnType().makeCirType(),
+			functionSymbol.getReturnType()->makeCirType(),
 			utils::map<std::vector<utils::NoNull<cir::FunctionArgument>>>(
 				functionSymbol.getArguments(),
 				[](auto argument) -> auto {
-					return cir::CirAllocator::make<cir::FunctionArgument>(argument->getName(), argument->getType().makeCirType());
+					return cir::CirAllocator::make<cir::FunctionArgument>(argument->getName(), argument->getType()->makeCirType());
 				}
 			)
 		);
@@ -73,11 +74,11 @@ void chir_visitor::CirGlobalsLoader::visit(chir::FunctionDeclaration& node) {
 	} else { // Common function
 		utils::NoNull<cir::CommonFunction> function = m_cirModule.addCommonFunction(
 			functionSymbol.makeMangledName(),
-			functionSymbol.getReturnType().makeCirType(),
+			functionSymbol.getReturnType()->makeCirType(),
 			utils::map<std::vector<utils::NoNull<cir::FunctionArgument>>>(
 				functionSymbol.getArguments(),
 				[](auto argument) -> auto {
-					return cir::CirAllocator::make<cir::FunctionArgument>(argument->getName(), argument->getType().makeCirType());
+					return cir::CirAllocator::make<cir::FunctionArgument>(argument->getName(), argument->getType()->makeCirType());
 				}
 			)
 		);

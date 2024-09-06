@@ -42,6 +42,7 @@ namespace chir_visitor {
 		void visit(chir::SymbolValue& node) override;
 		void visit(chir::InvocationOperator& node) override;
 		void visit(chir::UnaryOperator& node) override;
+		void visit(chir::AsOperator& node) override;
 		void visit(chir::BinaryOperator& node) override;
 		void visit(chir::ReturnOperator& node) override;
 		void visit(chir::ValueStatement& node) override;

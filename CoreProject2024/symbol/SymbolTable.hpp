@@ -33,14 +33,16 @@ namespace symbol {
 
 	public:
 		SymbolTable();
+		SymbolTable(SymbolTable&&) = default;
+		~SymbolTable();
 
 		// Adds a new variable to the table.
 		// It must be checked outside that there were no such variable previously.
-		VariableSymbol& addVariable(SymbolPath path, utf::String name, symbol::Type type);
+		VariableSymbol& addVariable(SymbolPath path, utf::String name, utils::NoNull<Type> type);
 
 		// Adds a new function to the table.
 		// It must be checked outside that there were no such function previously.
-		FunctionSymbol& addFunction(SymbolPath path, utf::String name, symbol::Type returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
+		FunctionSymbol& addFunction(SymbolPath path, utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
 
 		// Adds a new local scope.
 		// All the symbols will be added to this scope until it is popped or a new one is pushed.
@@ -68,7 +70,7 @@ namespace symbol {
 
 		// Returns the function with the given name and argument types.
 		// If no such function exists or the function is not visible from the current scope, returns nullptr.
-		const FunctionSymbol* getFunction(utf::StringView name, const std::vector<symbol::Type>& argumentTypes) const;
+		const FunctionSymbol* getFunction(utf::StringView name, const std::vector<utils::NoNull<Type>>& argumentTypes) const;
 
 		// Returns the symbol with the given id.
 		// If no such symbol exists, returns nullptr.

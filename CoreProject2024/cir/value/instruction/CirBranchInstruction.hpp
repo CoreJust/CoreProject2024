@@ -16,14 +16,15 @@
 namespace cir {
 	class BranchInstruction final : public Terminator {
 	private:
-		Value* m_condition;
+		utils::NoNull<Value> m_condition;
 		utils::NoNull<BasicBlock> m_successBranch;
 		utils::NoNull<BasicBlock> m_failureBranch;
 
 	public:
 		BranchInstruction(utils::NoNull<Value> condition, utils::NoNull<BasicBlock> successBranch, utils::NoNull<BasicBlock> failureBranch) noexcept;
+		~BranchInstruction() override;
 
-		Value*& getCondition() noexcept;
+		utils::NoNull<Value>& getCondition() noexcept;
 		utils::NoNull<BasicBlock>& getSuccessBranch() noexcept;
 		utils::NoNull<BasicBlock>& getFailureBranch() noexcept;
 

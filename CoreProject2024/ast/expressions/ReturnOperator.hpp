@@ -20,6 +20,7 @@ namespace ast {
 	public:
 		ReturnOperator() noexcept; // When returning from function that has unit return type.
 		ReturnOperator(utils::NoNull<Expression> expression) noexcept;
+		~ReturnOperator() override;
 
 		Expression*& getExpression() noexcept;
 	};

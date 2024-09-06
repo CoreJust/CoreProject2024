@@ -2,23 +2,28 @@
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+// TODO: refactor
 #include "Compiler.hpp"
 #include <iostream>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/ManagedStatic.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include "CompilerOptions.hpp"
 #include "utils/File.hpp"
 #include "error/ErrorPrinter.hpp"
 #include "parser/Parser.hpp"
 #include "symbol/SymbolAllocator.hpp"
+#include "symbol/type/TypeAllocator.hpp"
 #include "ast_visitor/AstPrinter.hpp"
 #include "ast_visitor/SymbolLoader.hpp"
 #include "ast_visitor/CHIRGenerator.hpp"
 #include "ast/AstAllocator.hpp"
+#include "ast/type/AstTypeAllocator.hpp"
 #include "chir/ChirAllocator.hpp"
 #include "chir_visitor/CirGlobalsLoader.hpp"
 #include "chir_visitor/CirGenerator.hpp"
+#include "cir/type/CirTypeAllocator.hpp"
 #include "cir_pass/CirPassManager.hpp"
 #include "cir_pass/optimization/CirDeadInstructionsEliminatorPass.hpp"
 #include "cir_pass/CirVerificationPass.hpp"
@@ -31,25 +36,29 @@ compiler::Compiler::Compiler() { }
 void compiler::Compiler::build() {
 	try {
 		utf::StringView program = loadModule();
-		ast::Declaration* ast = parseModule(program);
+		utils::NoNull<ast::Declaration> ast = parseModule(program);
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::CHIR)) {
+			ast->~Declaration();
 			cleanup();
 			return;
 		}
 
-		symbol::SymbolTable symbolTable = loadSymbols(ast);
-		chir::Module chirModule = generateCHIR(ast, std::move(symbolTable));
+		std::unique_ptr<symbol::SymbolTable> symbolTable = loadSymbols(ast);
+		std::unique_ptr<chir::Module> chirModule = generateCHIR(ast, std::move(symbolTable));
+		ast->~Declaration();
 		ast::AstAllocator::tryRelease();
+		ast::AstTypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::CIR)) {
 			cleanup();
 			return;
 		}
 
-		cir::Module cirModule = generateCIR(std::move(chirModule));
+		std::unique_ptr<cir::Module> cirModule = generateCIR(std::move(chirModule));
 		chir::ChirAllocator::tryRelease();
 		symbol::SymbolAllocator::tryRelease();
+		symbol::TypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::LLVM_IR)) {
 			cleanup();
@@ -59,6 +68,7 @@ void compiler::Compiler::build() {
 		llvm_utils::LLVMModule llvmModule { CompilerOptions::getSourceName() };
 		llvm::TargetMachine* targetMachine = generateLLVM(std::move(cirModule), llvmModule);
 		cir::CirAllocator::tryRelease();
+		cir::CirTypeAllocator::tryRelease();
 
 		if (!CompilerOptions::shallCompileUpToPhase(EmitMode::OBJECT_FILE)) {
 			cleanup();
@@ -80,6 +90,7 @@ void compiler::Compiler::build() {
 		}
 
 		execute();
+		cleanup();
 	} catch (...) {
 		std::cerr << "Build failed!" << std::endl;
 
@@ -98,8 +109,8 @@ utf::StringView compiler::Compiler::loadModule() {
 	return error::ErrorPrinter::setSource(std::move(*program));
 }
 
-ast::Declaration* compiler::Compiler::parseModule(utf::StringView sourceCode) {
-	ast::Declaration* result = parser::Parser(lexer::Tokenizer(sourceCode)).parse();
+utils::NoNull<ast::Declaration> compiler::Compiler::parseModule(utf::StringView sourceCode) {
+	utils::NoNull<ast::Declaration> result = parser::Parser(lexer::Tokenizer(sourceCode)).parse();
 	checkForErrors();
 
 	if (CompilerOptions::shallEmitAST()) {
@@ -113,16 +124,16 @@ ast::Declaration* compiler::Compiler::parseModule(utf::StringView sourceCode) {
 	return result;
 }
 
-symbol::SymbolTable compiler::Compiler::loadSymbols(ast::Declaration* ast) {
-	symbol::SymbolTable result;
-	ast_visitor::SymbolLoader symbolLoader(result);
+std::unique_ptr<symbol::SymbolTable> compiler::Compiler::loadSymbols(utils::NoNull<ast::Declaration> ast) {
+	std::unique_ptr<symbol::SymbolTable> result = std::make_unique<symbol::SymbolTable>();
+	ast_visitor::SymbolLoader symbolLoader(*result);
 
-	symbolLoader.loadSymbols(ast);
+	symbolLoader.loadSymbols(ast.get());
 	checkForErrors();
 
 	// TMP: Check for main function
 	if (CompilerOptions::isExecutableMode()) {
-		const symbol::FunctionSymbol* mainFunction = result.getFunction("main", { });
+		const symbol::FunctionSymbol* mainFunction = result->getFunction("main", { });
 		if (mainFunction == nullptr) {
 			error::ErrorPrinter::fatalError({
 				.code = error::ErrorCode::NO_MAIN_FUNCTION,
@@ -135,36 +146,36 @@ symbol::SymbolTable compiler::Compiler::loadSymbols(ast::Declaration* ast) {
 	return result;
 }
 
-chir::Module compiler::Compiler::generateCHIR(ast::Declaration* ast, symbol::SymbolTable&& symbolTable) {
-	ast_visitor::CHIRGenerator chirGenerator(symbolTable);
-	chir::Module result = chirGenerator.generateCHIRModule(ast);
+std::unique_ptr<chir::Module> compiler::Compiler::generateCHIR(utils::NoNull<ast::Declaration> ast, std::unique_ptr<symbol::SymbolTable> symbolTable) {
+	ast_visitor::CHIRGenerator chirGenerator(std::move(symbolTable));
+	std::unique_ptr<chir::Module> result = chirGenerator.generateCHIRModule(ast);
 	checkForErrors();
 
 	if (CompilerOptions::shallEmitCHIR()) {
 		std::cout << "\n\nCHIR:\n\n";
 
 		utils::IndentPrinter printer(std::cout, "	");
-		result.print(printer);
+		result->print(printer);
 	}
 
 	return result;
 }
 
-cir::Module compiler::Compiler::generateCIR(chir::Module&& chirModule) {
-	cir::Module result { CompilerOptions::getSourceName() };
+std::unique_ptr<cir::Module> compiler::Compiler::generateCIR(std::unique_ptr<chir::Module> chirModule) {
+	std::unique_ptr<cir::Module> result = std::make_unique<cir::Module>(CompilerOptions::getSourceName());
 
-	chir_visitor::CirGlobalsLoader globalsLoader(result);
-	globalsLoader.visitRoot(chirModule);
+	chir_visitor::CirGlobalsLoader globalsLoader(*result);
+	globalsLoader.visitRoot(*chirModule);
 	checkForErrors();
 
-	chir_visitor::CirGenerator cirGenerator(result, globalsLoader.getGlobalsMap());
-	cirGenerator.visitRoot(chirModule);
+	chir_visitor::CirGenerator cirGenerator(*result, globalsLoader.getGlobalsMap());
+	cirGenerator.visitRoot(*chirModule);
 	checkForErrors();
 
 	// Printing the CIR.
 	if (CompilerOptions::shallEmitCIR()) {
 		std::cout << "\n\nCIR:\n\n";
-		result.print(std::cout);
+		result->print(std::cout);
 	}
 
 	// CIR passes.
@@ -174,22 +185,22 @@ cir::Module compiler::Compiler::generateCIR(chir::Module&& chirModule) {
 	cirPassManager.registerPass(std::make_unique<cir_pass::DeadInstructionsEliminatorPass>());
 	cirPassManager.registerPass(std::make_unique<cir_pass::VerificationPass>()); // CIR verification.
 
-	cirPassManager.pass(&result);
+	cirPassManager.pass(result.get());
 	checkForErrors();
 
 	// Printing the CIR after all the optimizations.
 	if (CompilerOptions::shallEmitOptimizedCIR()) {
 		std::cout << "\n\nOptimized CIR:\n\n";
-		result.print(std::cout);
+		result->print(std::cout);
 	}
 
 	return result;
 }
 
-llvm::TargetMachine* compiler::Compiler::generateLLVM(cir::Module&& cirModule, llvm_utils::LLVMModule& result) {
+llvm::TargetMachine* compiler::Compiler::generateLLVM(std::unique_ptr<cir::Module> cirModule, llvm_utils::LLVMModule& result) {
 	cir_pass::LLVMGlobalsLoaderPass llvmGlobalLoaderPass(result);
 
-	llvmGlobalLoaderPass.pass(&cirModule);
+	llvmGlobalLoaderPass.pass(cirModule.get());
 
 	// Generating LLVM IR.
 	llvm::InitializeAllTargetInfos();
@@ -199,7 +210,7 @@ llvm::TargetMachine* compiler::Compiler::generateLLVM(cir::Module&& cirModule, l
 	llvm::InitializeAllAsmPrinters();
 	
 	cir_pass::LLVMGenerator llvmGenerator(result, llvmGlobalLoaderPass.getLLVMGlobals());
-	llvmGenerator.pass(&cirModule);
+	llvmGenerator.pass(cirModule.get());
 
 	// Printing LLVM IR.
 	if (CompilerOptions::shallEmitLLVMIR()) {
@@ -276,7 +287,13 @@ void compiler::Compiler::checkForErrors() {
 
 void compiler::Compiler::cleanup() {
 	ast::AstAllocator::tryRelease();
+	ast::AstTypeAllocator::tryRelease();
 	chir::ChirAllocator::tryRelease();
 	symbol::SymbolAllocator::tryRelease();
+	symbol::TypeAllocator::tryRelease();
 	cir::CirAllocator::tryRelease();
+	cir::CirTypeAllocator::tryRelease();
+
+	error::ErrorPrinter::resetSource();
+	llvm::llvm_shutdown();
 }

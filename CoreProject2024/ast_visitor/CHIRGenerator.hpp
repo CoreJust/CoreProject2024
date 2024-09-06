@@ -27,23 +27,25 @@ namespace ast_visitor {
 		friend class Parent;
 
 	private:
-		symbol::SymbolTable& m_symbols;
+		std::unique_ptr<symbol::SymbolTable> m_symbols;
 		std::vector<utils::NoNull<chir::Declaration>> m_declarations;
 
 		// For function type inquires.
 		// It specifies the argument types that we expect the function to have.
-		std::vector<symbol::Type> m_typeInquire;
+		std::vector<utils::NoNull<symbol::Type>> m_typeInquire;
+		bool m_hasTypeInquire = false;
 
 	public:
-		CHIRGenerator(symbol::SymbolTable& symbols) noexcept;
+		CHIRGenerator(std::unique_ptr<symbol::SymbolTable> symbols) noexcept;
 
-		chir::Module generateCHIRModule(utils::NoNull<ast::Declaration> node);
+		std::unique_ptr<chir::Module> generateCHIRModule(utils::NoNull<ast::Declaration> node);
 
 	private:
 		utils::NoNull<chir::Value> visit(ast::LiteralValue& node) override;
 		utils::NoNull<chir::Value> visit(ast::IdentifierValue& node) override;
 		utils::NoNull<chir::Value> visit(ast::InvocationOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::UnaryOperator& node) override;
+		utils::NoNull<chir::Value> visit(ast::AsOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::BinaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::ComparativeBinaryOperator& node) override;
 		utils::NoNull<chir::Value> visit(ast::ReturnOperator& node) override;

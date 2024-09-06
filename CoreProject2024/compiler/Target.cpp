@@ -11,7 +11,8 @@
 #include <llvm/Target/TargetMachine.h>
 #include "error/ErrorPrinter.hpp"
 
-compiler::Target::Target(utf::String targetTripleStr) {
+compiler::Target::Target(utf::String targetTripleStr, uint32_t intSize, uint32_t longSize, uint32_t pointerSize)
+	: m_intSize(intSize), m_longSize(longSize), m_pointerSize(pointerSize) {
 	llvm::Triple targetTriple { targetTripleStr };
 	m_architecture = llvm::Triple::getArchTypeName(targetTriple.getArch());
 	m_subArchitecture = llvm::Triple::getArchName(targetTriple.getArch(), targetTriple.getSubArch());
@@ -21,22 +22,43 @@ compiler::Target::Target(utf::String targetTripleStr) {
 
 	if (targetTriple.isArch16Bit()) {
 		m_architectureBits = 16;
+
+		if (targetTriple.isOSWindows()) { // Win16
+			trySetTypeSizes(2, 4, 4);
+		} else {
+			trySetTypeSizes(2, 2, 2);
+		}
 	} else if (targetTriple.isArch32Bit()) {
 		m_architectureBits = 32;
+		trySetTypeSizes(4, 4, 4);
 	} else if (targetTriple.isArch64Bit()) {
 		m_architectureBits = 64;
+
+		if (targetTriple.isOSWindows()) { // Win64
+			trySetTypeSizes(4, 4, 8);
+		} else {
+			trySetTypeSizes(4, 8, 8);
+		}
 	} else {
-		m_architectureBits = 64; // Default value.
+		// Default values.
+		m_architectureBits = 64;
+		trySetTypeSizes(4, 4, 8);
 	}
 
 	m_endianness = targetTriple.isLittleEndian() ? TargetEndianness::LITTLE_ENDIAN : TargetEndianness::BIG_ENDIAN;
 }
 
+void compiler::Target::trySetTypeSizes(uint32_t intSize, uint32_t longSize, uint32_t pointerSize) {
+	m_intSize = m_intSize ? m_intSize : intSize;
+	m_longSize = m_longSize ? m_longSize : longSize;
+	m_pointerSize = m_pointerSize ? m_pointerSize : pointerSize;
+}
+
 compiler::Target::Target() 
 	: Target(llvm::sys::getDefaultTargetTriple()) { }
 
-compiler::Target::Target(utf::String architecture, utf::String vendor, utf::String OS, utf::String environment) 
-	: Target(llvm::Triple::normalize(std::format("{}-{}-{}-{}", architecture, vendor, OS, environment))) { }
+compiler::Target::Target(utf::String architecture, utf::String vendor, utf::String OS, utf::String environment, uint32_t intSize, uint32_t longSize, uint32_t pointerSize)
+	: Target(llvm::Triple::normalize(std::format("{}-{}-{}-{}", architecture, vendor, OS, environment)), intSize, longSize, pointerSize) { }
 
 utf::String compiler::Target::makeLLVMTargetTriple() const noexcept {
 	return std::format("{}-{}-{}-{}", m_subArchitecture, m_vendor, m_OS, m_environment);
@@ -76,6 +98,18 @@ bool compiler::Target::isLittleEndian() const noexcept {
 
 bool compiler::Target::isBigEndian() const noexcept {
 	return m_endianness == TargetEndianness::BIG_ENDIAN;
+}
+
+uint32_t compiler::Target::getIntSize() const noexcept {
+	return m_intSize;
+}
+
+uint32_t compiler::Target::getLongSize() const noexcept {
+	return m_longSize;
+}
+
+uint32_t compiler::Target::getPointerSize() const noexcept {
+	return m_pointerSize;
 }
 
 const llvm::Target* compiler::Target::makeLLVMTarget() const {

@@ -26,7 +26,7 @@ void chir_visitor::CirGenerator::visitRoot(chir::Module& module) {
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::ConstantValue& node) {
-	return cir::CirAllocator::make<cir::ConstantNumber>(node.getValueType().makeCirType(), node.getValue());
+	return cir::CirAllocator::make<cir::ConstantNumber>(node.getValueType()->makeCirType(), node.getValue());
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::SymbolValue& node) {
@@ -42,7 +42,7 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::InvocationOper
 		}
 	);
 
-	if (node.getValueType() == symbol::TypeKind::UNIT) {
+	if (node.getValueType()->getTypeKind() == symbol::TypeKind::UNIT) {
 		return m_builder.makeUnitInvoke(callee, std::move(arguments));
 	} else {
 		return m_builder.makeInvoke(callee, std::move(arguments));
@@ -54,9 +54,15 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::UnaryOperator&
 
 	switch (node.getOperator()) {
 		case chir::UnaryOperator::MINUS:	 return m_builder.makeNeg(operand);
+		case chir::UnaryOperator::BITWISE_NOT: return m_builder.makeBitwiseNot(operand);
 		case chir::UnaryOperator::LOGIC_NOT: return m_builder.makeLogicNot(operand);
 	default: return operand;
 	}
+}
+
+utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::AsOperator& node) {
+	utils::NoNull<cir::Value> operand = Parent::visit(node.getValue());
+	return m_builder.makeCast(operand, node.getValueType()->makeCirType());
 }
 
 utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::BinaryOperator& node) {
@@ -64,19 +70,24 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::visit(chir::BinaryOperator
 	utils::NoNull<cir::Value> right = Parent::visit(node.getRight());
 
 	switch (node.getOperator()) {
-		case chir::BinaryOperator::PLUS:		return m_builder.makeAdd(left, right);
-		case chir::BinaryOperator::MINUS:	   return m_builder.makeSub(left, right);
-		case chir::BinaryOperator::MULTIPLY:	return m_builder.makeMul(left, right);
-		case chir::BinaryOperator::DIVIDE:	  return m_builder.makeDiv(left, right);
-		case chir::BinaryOperator::REMAINDER:   return m_builder.makeRem(left, right);
-		case chir::BinaryOperator::LOGICAL_AND: return m_builder.makeLogicAnd(left, right);
-		case chir::BinaryOperator::LOGICAL_OR:  return m_builder.makeLogicOr(left, right);
-		case chir::BinaryOperator::EQUALS:	  return m_builder.makeEq(left, right);
-		case chir::BinaryOperator::NOT_EQUALS:  return m_builder.makeNeq(left, right);
-		case chir::BinaryOperator::LESS_EQUALS: return m_builder.makeLeq(left, right);
-		case chir::BinaryOperator::GREATER_EQUALS: return m_builder.makeGeq(left, right);
-		case chir::BinaryOperator::LESS:		return m_builder.makeLt(left, right);
-		case chir::BinaryOperator::GREATER:	 return m_builder.makeGt(left, right);
+		case chir::BinaryOperator::PLUS:			return m_builder.makeAdd(left, right);
+		case chir::BinaryOperator::MINUS:			return m_builder.makeSub(left, right);
+		case chir::BinaryOperator::MULTIPLY:		return m_builder.makeMul(left, right);
+		case chir::BinaryOperator::DIVIDE:			return m_builder.makeDiv(left, right);
+		case chir::BinaryOperator::REMAINDER:		return m_builder.makeRem(left, right);
+		case chir::BinaryOperator::BITWISE_AND:		return m_builder.makeBitwiseAnd(left, right);
+		case chir::BinaryOperator::BITWISE_OR:		return m_builder.makeBitwiseOr(left, right);
+		case chir::BinaryOperator::BITWISE_XOR:		return m_builder.makeBitwiseXor(left, right);
+		case chir::BinaryOperator::BITWISE_LEFT_SHIFT: return m_builder.makeShl(left, right);
+		case chir::BinaryOperator::BITWISE_RIGHT_SHIFT: return m_builder.makeShr(left, right);
+		case chir::BinaryOperator::LOGICAL_AND:		return m_builder.makeLogicAnd(left, right);
+		case chir::BinaryOperator::LOGICAL_OR:		return m_builder.makeLogicOr(left, right);
+		case chir::BinaryOperator::EQUALS:			return m_builder.makeEq(left, right);
+		case chir::BinaryOperator::NOT_EQUALS:		return m_builder.makeNeq(left, right);
+		case chir::BinaryOperator::LESS_EQUALS:		return m_builder.makeLeq(left, right);
+		case chir::BinaryOperator::GREATER_EQUALS:	return m_builder.makeGeq(left, right);
+		case chir::BinaryOperator::LESS:			return m_builder.makeLt(left, right);
+		case chir::BinaryOperator::GREATER:			return m_builder.makeGt(left, right);
 	default: unreachable();
 	}
 }
@@ -132,7 +143,7 @@ void chir_visitor::CirGenerator::visit(chir::IfElseStatement& node) {
 void chir_visitor::CirGenerator::visit(chir::VariableStatement& node) {
 	symbol::VariableSymbol& variable = node.getVariable();
 	utils::NoNull<cir::Value> initialValue = Parent::visit(node.getInitialValue());
-	m_symbols.try_emplace(variable.getId(), m_builder.makeLocal(variable.getName(), variable.getType().makeCirType(), initialValue));
+	m_symbols.try_emplace(variable.getId(), m_builder.makeLocal(variable.getName(), variable.getType()->makeCirType(), initialValue));
 }
 
 void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
@@ -142,14 +153,14 @@ void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
 	m_builder.setBasicBlock(m_cirModule.getGlobalConstructor()->getBasicBlocks().back());
 	utils::NoNull<cir::Value> initialValue = Parent::visit(node.getInitialValue());
 
-	/* TMP */if (!initialValue->isConstant()) {
+	if (!initialValue->isConstant()) {
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INTERNAL_ERROR,
 			.name = "Internal error: Cannot use non-constant value for global variable initialization",
 			.description = "Not supported yet."
 		});
 
-		error::internalAssert(false); // For debug mode.
+		internalAssert(false); // For debug mode.
 		return;
 	}
 
@@ -174,7 +185,7 @@ void chir_visitor::CirGenerator::visit(chir::FunctionDeclaration& node) {
 
 	Parent::visit(node.getBodyAsStatement());
 
-	if (function.getReturnType() == symbol::TypeKind::UNIT && !m_builder.getCurrentBasicBlock()->hasTerminator()) {
+	if (function.getReturnType()->getTypeKind() == symbol::TypeKind::UNIT && !m_builder.getCurrentBasicBlock()->hasTerminator()) {
 		m_builder.makeRetUnit();
 	}
 }
@@ -185,10 +196,10 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::getSymbolValue(symbol::Sym
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INTERNAL_ERROR,
 			.name = "Internal error: Tried to get a symbol by unknown ID",
-			.description = std::format( "Symbols map in CIR generators doesn't have symbol with ID {}.", symbolId),
+			.description = std::format( "Symbol map in CIR generator doesn't have symbol with ID {}.", symbolId),
 		});
 
-		error::internalAssert(false); // For debug mode.
+		internalAssert(false); // For debug mode.
 	}
 
 	return it->second;

@@ -1,26 +1,20 @@
-// A function of the standard C runtime library.
-fn putchar(ch: i32): i32 = native("putchar")
+fn main(): cint {
+	let a = 10 | 11;
+	let a = a ^ 2;
+	let a = a << a;
+	println(a)
 
-fn print(b: bool) {
-	if (b) {
-		putchar(116)
-		putchar(114)
-		putchar(117)
-		putchar(101)
-	} else {
-		putchar(102)
-		putchar(97)
-		putchar(108)
-		putchar(115)
-		putchar(101)
-	}
+	return 0
 }
 
-fn print(n: i32) {
+// A function of the standard C runtime library.
+fn putchar(ch: cint): cint = native("putchar")
+
+fn println(n: i32) {
 	fn printImpl(n: i32) {
 		if n != 0 {
 			printImpl(n / 10)
-			putchar(48 + n % 10)
+			putchar(48 + (n % 10) as cint)
 		}
 	}
 	
@@ -32,31 +26,6 @@ fn print(n: i32) {
 	} else {
 		printImpl(n)
 	}
-}
-
-fn fib(n: i32): i32 {
-	if n < 1 {
-		return 1
-	} else {
-		return fib(n - 1) + fib(n - 2)
-	}
-}
-
-fn main(): i32 {
-	// Bool expressions test
-	let a = 10
-	let b = 11
-	let c = 13
-	let bool_test = !(a < b < c) || false
 	
-	print(bool_test)
 	putchar(10)
-	print(bool_test == false)
-	putchar(10)
-	
-	// Recursion test
-	print(fib(30))
-	putchar(10)
-
-	return 0
 }

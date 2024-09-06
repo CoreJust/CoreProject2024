@@ -7,16 +7,16 @@
 #include <format>
 #include "constant/CirConstanNumber.hpp"
 
-cir::Value::Value(utf::String name, Type type, ValueKind kind) noexcept
+cir::Value::Value(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
 	: m_name(std::move(name)), m_type(std::move(type)), m_kind(kind), m_id(generateUniqueId()) {
-	error::internalAssert((type == TypeKind::UNIT) == !cir::isUsable(kind));
+	internalAssert((type->getTypeKind() == TypeKind::UNIT) == !cir::isUsable(kind));
 }
 
-utf::StringView cir::Value::getName() const noexcept {
+utf::String cir::Value::getName() const noexcept {
 	return m_name;
 }
 
-const cir::Type& cir::Value::getType() const noexcept {
+utils::NoNull<cir::Type> cir::Value::getType() const noexcept {
 	return m_type;
 }
 
@@ -70,22 +70,22 @@ bool cir::Value::isUsable() const noexcept {
 
 utf::String cir::Value::toString() const {
 	switch (m_kind) {
-		case cir::ValueKind::CONSTANT_NUMBER: return std::format("{} {}", m_type.toString(), reinterpret_cast<const ConstantNumber*>(this)->getValue());
-		case cir::ValueKind::GLOBAL_VARIABLE: return std::format("{} global {}", m_type.toString(), m_name);
+		case cir::ValueKind::CONSTANT_NUMBER: return std::format("{} {}", m_type->toString(), reinterpret_cast<const ConstantNumber*>(this)->getValue().str());
+		case cir::ValueKind::GLOBAL_VARIABLE: return std::format("{} global {}", m_type->toString(), m_name);
 		case cir::ValueKind::COMMON_FUNCTION: [[fallthrough]];
 		case cir::ValueKind::NATIVE_FUNCTION: return std::format("fn {}", m_name);
 		case cir::ValueKind::BASIC_BLOCK: return std::format("${}", m_name);
 		case cir::ValueKind::UNARY_INSTRUCTION: [[fallthrough]];
 		case cir::ValueKind::BINARY_INSTRUCTION: [[fallthrough]];
-		case cir::ValueKind::INVOCATION_INSTRUCTION: return std::format("{} tmp {}", m_type.toString(), m_name);
+		case cir::ValueKind::INVOCATION_INSTRUCTION: return std::format("{} tmp {}", m_type->toString(), m_name);
 		case cir::ValueKind::LOCAL_VARIABLE: [[fallthrough]];
-		case cir::ValueKind::FUNCTION_ARGUMENT: return std::format("{} local {}", m_type.toString(), m_name);
+		case cir::ValueKind::FUNCTION_ARGUMENT: return std::format("{} local {}", m_type->toString(), m_name);
 	default: return "";
 	}
 }
 
 void cir::Value::addUser(utils::NoNull<Value> value, Value& user) {
-	error::internalAssert(value->isUsable());
+	internalAssert(value->isUsable());
 
 	value->m_users.emplace_back(&user);
 }

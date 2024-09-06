@@ -6,9 +6,12 @@
 *	Type.hpp by CoreJust
 *	Created on 02.08.2024
 *	Contains the Type class that represents a type within the Core symbol table and CIR.
+*	No type is used when the type is not yet known and must be inquired from context.
 */
 
 #pragma once
+#include "utils/NoNull.hpp"
+#include "utils/PooledAllocator.hpp"
 #include "utf/String.hpp"
 #include "TypeKind.hpp"
 
@@ -24,16 +27,23 @@ namespace symbol {
 	*	primitive types / references to the symbol table.
 	*/
 	class Type {
-	private:
+		template<class T> friend class utils::PooledAllocator;
+
+	protected:
 		TypeKind m_typeKind;
 
-	public:
+	protected:
 		Type(TypeKind typeKind) noexcept;
 
-		// Creates the CIR type from CHIR type.
-		cir::Type makeCirType() const;
+	public:
+		inline virtual ~Type() { }
 
-		bool operator==(const Type& other) const noexcept;
+		static utils::NoNull<Type> make(TypeKind typeKind);
+
+		// Creates the CIR type from CHIR type.
+		virtual utils::NoNull<cir::Type> makeCirType() const;
+
+		virtual bool equals(const Type& other) const noexcept;
 
 		TypeKind getTypeKind() const noexcept;
 
@@ -41,12 +51,23 @@ namespace symbol {
 		uint32_t getTypeSize() const noexcept;
 
 		// Returns the string representation of the type as if in the code.
-		utf::String toString() const;
+		virtual utf::String toString() const;
 
 		// Returns the string representation of the type that is used for name mangling purposes.
-		utf::String toMangleString() const;
+		virtual utf::String toMangleString() const;
 
 		// Returns true if the basic type is NO_TYPE
 		bool isNoType() const noexcept;
+
+		bool isNeverType() const noexcept;
+		bool isPrimitiveType() const noexcept;
+		bool isComplexType() const noexcept;
+		bool isLiteralType() const noexcept;
+		bool isFunctionType() const noexcept;
+		bool isBoolType() const noexcept;
+		bool isCCompatibleType() const noexcept;
+		bool isIntegerType() const noexcept;
+		bool isSignedType() const noexcept;
+		bool isArithmeticType() const noexcept;
 	};
 }

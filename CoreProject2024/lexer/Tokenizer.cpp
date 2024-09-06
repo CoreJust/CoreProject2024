@@ -24,7 +24,23 @@ constexpr TokenType getKeywordTokenType(const utils::StringHashBuilder& hashBuil
 		case utils::hashOf("elif"): return TokenType::ELIF;
 		case utils::hashOf("else"): return TokenType::ELSE;
 		case utils::hashOf("let"): return TokenType::LET;
+		case utils::hashOf("as"): return TokenType::AS;
+		case utils::hashOf("i8"): return TokenType::I8;
+		case utils::hashOf("i16"): return TokenType::I16;
 		case utils::hashOf("i32"): return TokenType::I32;
+		case utils::hashOf("i64"): return TokenType::I64;
+		case utils::hashOf("i128"): return TokenType::I128;
+		case utils::hashOf("isize"): return TokenType::ISIZE;
+		case utils::hashOf("u8"): return TokenType::U8;
+		case utils::hashOf("u16"): return TokenType::U16;
+		case utils::hashOf("u32"): return TokenType::U32;
+		case utils::hashOf("u64"): return TokenType::U64;
+		case utils::hashOf("u128"): return TokenType::U128;
+		case utils::hashOf("usize"): return TokenType::USIZE;
+		case utils::hashOf("cint"): return TokenType::CINT;
+		case utils::hashOf("clong"): return TokenType::CLONG;
+		case utils::hashOf("cuint"): return TokenType::CUINT;
+		case utils::hashOf("culong"): return TokenType::CULONG;
 		case utils::hashOf("bool"): return TokenType::BOOL;
 		case utils::hashOf("unit"): return TokenType::UNIT;
 		case utils::hashOf("true"): return TokenType::TRUE;
@@ -45,6 +61,10 @@ constexpr TokenType getOperatorTokenType(const utils::StringHashBuilder& hashBui
 		case utils::hashOf("%"): return TokenType::PERCENT;
 		case utils::hashOf("&"): return TokenType::AND;
 		case utils::hashOf("|"): return TokenType::OR;
+		case utils::hashOf("<<"): return TokenType::LSHIFT;
+		case utils::hashOf(">>"): return TokenType::RSHIFT;
+		case utils::hashOf("~"): return TokenType::TILDE;
+		case utils::hashOf("^"): return TokenType::CARET;
 		case utils::hashOf("=="): return TokenType::EQEQ;
 		case utils::hashOf("!="): return TokenType::NOTEQ;
 		case utils::hashOf("<="): return TokenType::LESSEQ;
@@ -357,6 +377,8 @@ void lexer::Tokenizer::skipSinglelineComment() {
 	nextChar();
 
 	utf::skipToNextLine(m_char, m_ptr, m_end);
+	m_position.character = 1;
+	m_position.line += 1;
 }
 
 void lexer::Tokenizer::skipMultilineComment() {
@@ -383,22 +405,19 @@ void lexer::Tokenizer::skipMultilineComment() {
 				if (*m_ptr == '*') {
 					depth += 1;
 					nextChar();
-					nextChar();
 				} break;
 			case utf::encodeUtf('*'):
 				if (*m_ptr == '/') {
 					depth -= 1;
 					nextChar();
-					nextChar();
 				} break;
 			case utf::encodeUtf('"'):
 				isInString = true;
-				nextChar();
 				break;
-		default: 
-			nextChar(); // Skip the custom character.
-			break;
+		default: break;
 		}
+
+		nextChar();
 	}
 
 	if (depth) {

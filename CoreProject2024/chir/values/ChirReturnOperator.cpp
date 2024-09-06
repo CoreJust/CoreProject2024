@@ -5,12 +5,18 @@
 #include "ChirReturnOperator.hpp"
 
 chir::ReturnOperator::ReturnOperator() noexcept
-	: Value(NodeKind::RETURN_OPERATOR, symbol::TypeKind::NEVER_TYPE), m_value(nullptr) {
+	: Value(NodeKind::RETURN_OPERATOR, symbol::Type::make(symbol::TypeKind::NEVER_TYPE)), m_value(nullptr) {
 }
 
 chir::ReturnOperator::ReturnOperator(utils::NoNull<Value> value) noexcept
-	: Value(NodeKind::RETURN_OPERATOR, symbol::TypeKind::NEVER_TYPE), m_value(value) {
+	: Value(NodeKind::RETURN_OPERATOR, symbol::Type::make(symbol::TypeKind::NEVER_TYPE)), m_value(value) {
 	Node::setParent(m_value, this);
+}
+
+chir::ReturnOperator::~ReturnOperator() {
+	if (m_value) {
+		m_value->~Value();
+	}
 }
 
 chir::Value*& chir::ReturnOperator::getValue() noexcept {

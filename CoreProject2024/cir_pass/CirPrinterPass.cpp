@@ -32,7 +32,7 @@ void cir_pass::PrinterPass::printFunction(utils::NoNull<cir::Function> function)
 		m_printer.stream() << "native ";
 	}
 
-	m_printer.stream() << std::format("fn {}({}): {}", function->getName(), utils::joinToString(function->getArguments()), function->getReturnType().toString());
+	m_printer.stream() << std::format("fn {}({}): {}", function->getName(), utils::joinToString(function->getArguments()), function->getReturnType()->toString());
 
 	if (!function->isNativeFunction()) {
 		m_printer.stream() << " {\n";
@@ -47,7 +47,7 @@ void cir_pass::PrinterPass::printFunction(utils::NoNull<cir::Function> function)
 }
 
 void cir_pass::PrinterPass::printGlobalVariable(utils::NoNull<cir::GlobalVariable> variable) {
-	m_printer.stream() << std::format("let global {}: {} = {}\n\n", variable->getName(), variable->getType().toString(), variable->getInitialValue()->toString());
+	m_printer.stream() << std::format("let global {}: {} = {}\n\n", variable->getName(), variable->getType()->toString(), variable->getInitialValue()->toString());
 }
 
 void cir_pass::PrinterPass::printBasicBlock(utils::NoNull<cir::BasicBlock> basicBlock) {

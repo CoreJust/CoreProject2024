@@ -22,6 +22,7 @@ namespace chir {
 
 	public:
 		IfElseStatement(std::vector<utils::NoNull<Value>> conditions, std::vector<utils::NoNull<Statement>> ifBodies, Statement* elseBody) noexcept;
+		~IfElseStatement() override;
 
 		std::vector<utils::NoNull<Value>>& getConditions() noexcept;
 		std::vector<utils::NoNull<Statement>>& getIfBodies() noexcept;

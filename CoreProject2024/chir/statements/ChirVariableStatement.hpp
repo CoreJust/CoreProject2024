@@ -21,6 +21,7 @@ namespace chir {
 
 	public:
 		VariableStatement(symbol::VariableSymbol& variable, utils::NoNull<Value> initialValue) noexcept;
+		~VariableStatement() override;
 
 		symbol::VariableSymbol& getVariable() noexcept;
 		utils::NoNull<Value>& getInitialValue() noexcept;

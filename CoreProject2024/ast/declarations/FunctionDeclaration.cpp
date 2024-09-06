@@ -4,19 +4,31 @@
 
 #include "FunctionDeclaration.hpp"
 
-ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, ast::Type returnType, std::vector<Argument> arguments, utils::NoNull<Statement> body) noexcept
+ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utils::NoNull<Type> returnType, std::vector<Argument> arguments, utils::NoNull<Statement> body) noexcept
 	: Declaration(NodeKind::FUNCTION_DECLARATION), m_name(name), m_returnType(returnType), m_arguments(std::move(arguments)), m_body(body) {
 	Node::setParent(body, this);
 }
 
-ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, ast::Type returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept
+ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utils::NoNull<Type> returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept
 	: Declaration(NodeKind::FUNCTION_DECLARATION), m_name(name), m_returnType(returnType), m_arguments(std::move(arguments)), m_body(nativeFunctionName) { }
+
+ast::FunctionDeclaration::~FunctionDeclaration() {
+	m_returnType->~Type();
+
+	for (auto& argument : m_arguments) {
+		argument.type->~Type();
+	}
+
+	if (!isNative()) {
+		getBodyAsStatement()->~Statement();
+	}
+}
 
 utf::StringView ast::FunctionDeclaration::getName() const noexcept {
 	return m_name;
 }
 
-const ast::Type& ast::FunctionDeclaration::getReturnType() const noexcept {
+utils::NoNull<ast::Type> ast::FunctionDeclaration::getReturnType() const noexcept {
 	return m_returnType;
 }
 

@@ -17,8 +17,7 @@ namespace utils {
 	template<class ObjectBase>
 	class PooledAllocator {
 	protected:
-		inline static thread_local std::pmr::unsynchronized_pool_resource s_resource { };
-		inline static thread_local std::pmr::polymorphic_allocator<ObjectBase> s_allocator { &s_resource };
+		inline static std::pmr::unsynchronized_pool_resource s_resource;
 
 	public:
 		// Frees all the memory.
@@ -30,7 +29,7 @@ namespace utils {
 		// Creates a new object using the current memory resource.
 		template<class T, class... Args> requires std::is_base_of_v<ObjectBase, T>
 		static NoNull<T> make(Args&&... args) {
-			T* result = reinterpret_cast<T*>(s_allocator.allocate_bytes(sizeof(T), alignof(T)));
+			T* result = reinterpret_cast<T*>(s_resource.allocate(sizeof(T), alignof(T)));
 			::new(result) T(std::forward<Args>(args)...);
 
 			return result;

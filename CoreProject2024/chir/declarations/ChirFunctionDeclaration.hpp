@@ -23,11 +23,12 @@ namespace chir {
 	public:
 		FunctionDeclaration(const symbol::FunctionSymbol& function, utils::NoNull<Statement> body) noexcept;
 		FunctionDeclaration(const symbol::FunctionSymbol& function, utf::String nativeName) noexcept;
+		~FunctionDeclaration() override;
 
 		const symbol::FunctionSymbol& getFunction() const noexcept;
 
 		bool isNative() const noexcept;
 		utils::NoNull<Statement>& getBodyAsStatement() noexcept;
-		utf::StringView getBodyAsNative() const noexcept;
+		utf::String getBodyAsNative() const noexcept;
 	};
 }

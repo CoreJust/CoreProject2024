@@ -116,7 +116,13 @@ bool utf::matchNewLineOrCrLf(Char& ch, char const*& ptr, const char* end) {
 			}
 
 			return true;
-		case encodeUtf(0xA): [[fallthrough]]; // LF (line feed) or \n
+		case encodeUtf(0xA): // LF (line feed) or \n
+			ch = nextChar(ptr);
+			if (ptr < end && ch == encodeUtf(0xD)) { // If it is a LF+CR
+				ch = nextChar(ptr);
+			}
+
+			return true;
 		case encodeUtf(0x85): [[fallthrough]]; // NEL (next line)
 		case encodeUtf(0x2028): [[fallthrough]]; // LS (line separator)
 		case encodeUtf(0x2029): ch = nextChar(ptr); return true; // PS (paragraph separator)

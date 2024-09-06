@@ -6,11 +6,16 @@
 #include <format>
 
 cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name) noexcept
-	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? TypeKind::BOOL : left->getType(), ValueKind::BINARY_INSTRUCTION),
+	: Instruction(std::move(name), instructionKind >= BinaryInstructionKind::LOGIC_AND ? Type::make(TypeKind::BOOL) : left->getType(), ValueKind::BINARY_INSTRUCTION),
 	m_instuctionKind(instructionKind), m_left(left), m_right(right) 
 {
 	Value::addUser(m_left, *this);
 	Value::addUser(m_right, *this);
+}
+
+cir::BinaryInstruction::~BinaryInstruction() {
+	Instruction::destroyIfConstant(m_left);
+	Instruction::destroyIfConstant(m_right);
 }
 
 cir::BinaryInstruction::BinaryInstructionKind cir::BinaryInstruction::getInstructionKind() const noexcept {
@@ -26,7 +31,7 @@ utils::NoNull<cir::Value>& cir::BinaryInstruction::getRight() noexcept {
 }
 
 utf::String cir::BinaryInstruction::toInstuctionString() const {
-	static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
+	static const char* OPERATORS[] = { "+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", "&&", "||", "==", "!=", "<=", ">=", "<", ">" };
 
 	return std::format("tmp {} = {} {} {}", m_name, m_left->toString(), OPERATORS[m_instuctionKind], m_right->toString());
 }

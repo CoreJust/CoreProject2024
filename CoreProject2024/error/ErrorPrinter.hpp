@@ -65,11 +65,18 @@ namespace error {
 			TOO_MANY_SYMBOLS,
 			INVALID_CALLEE,
 			UNEXPECTED_TYPE,
+			INVALID_TYPE_CONVERTION,
 			TYPE_MISMATCH,
 			BOOL_TYPE_REQUIRED,
 			NON_FUNCTION_CONTEXT,
 			RETURN_IN_RETURN,
 			NO_MAIN_FUNCTION,
+			IMPOSIBLE_INT_LITERAL,
+
+			// Compile-time evaluation error
+			DIVISION_BY_ZERO,
+			NEGATIVE_BITWISE_SHIFT,
+			TOO_LARGE_BITWISE_SHIFT,
 
 			// CIR errors
 			INSTRUCTION_AFTER_TERMINATOR,
@@ -126,6 +133,9 @@ namespace error {
 		// Sets the currently compiled source string, which is used to print source code lines on errors.
 		// Must be called on new file compilation start.
 		static utf::StringView setSource(utf::String source) noexcept;
+
+		// Must be called in the end of the compilation to release the memory.
+		static void resetSource() noexcept;
 
 		// Returns true if there were any errors.
 		static bool hasErrors() noexcept;

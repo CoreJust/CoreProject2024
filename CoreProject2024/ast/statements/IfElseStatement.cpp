@@ -5,35 +5,49 @@
 #include "IfElseStatement.hpp"
 
 ast::IfElseStatement::IfElseStatement(std::vector<utils::NoNull<ast::Expression>> conditions, std::vector<utils::NoNull<ast::Statement>> ifBodies, Statement* elseBody) noexcept
-    : Statement(NodeKind::IF_ELSE_STATEMENT), m_conditions(std::move(conditions)), m_ifBodies(std::move(ifBodies)), m_elseBody(elseBody) {
-    error::internalAssert(m_conditions.size() == m_ifBodies.size());
-    error::internalAssert(!m_conditions.empty());
+	: Statement(NodeKind::IF_ELSE_STATEMENT), m_conditions(std::move(conditions)), m_ifBodies(std::move(ifBodies)), m_elseBody(elseBody) {
+	internalAssert(m_conditions.size() == m_ifBodies.size());
+	internalAssert(!m_conditions.empty());
 
-    for (auto condition : m_conditions) {
-        Node::setParent(condition, this);
-    }
+	for (auto condition : m_conditions) {
+		Node::setParent(condition, this);
+	}
 
-    for (auto ifBody : m_ifBodies) {
-        Node::setParent(ifBody, this);
-    }
+	for (auto ifBody : m_ifBodies) {
+		Node::setParent(ifBody, this);
+	}
 
-    if (m_elseBody != nullptr) {
-        Node::setParent(m_elseBody, this);
-    }
+	if (m_elseBody != nullptr) {
+		Node::setParent(m_elseBody, this);
+	}
+}
+
+ast::IfElseStatement::~IfElseStatement() {
+	for (auto condition : m_conditions) {
+		condition->~Expression();
+	}
+
+	for (auto ifBody : m_ifBodies) {
+		ifBody->~Statement();
+	}
+
+	if (m_elseBody != nullptr) {
+		m_elseBody->~Statement();
+	}
 }
 
 std::vector<utils::NoNull<ast::Expression>>& ast::IfElseStatement::getConditions() noexcept {
-    return m_conditions;
+	return m_conditions;
 }
 
 std::vector<utils::NoNull<ast::Statement>>& ast::IfElseStatement::getIfBodies() noexcept {
-    return m_ifBodies;
+	return m_ifBodies;
 }
 
 ast::Statement*& ast::IfElseStatement::getElseBody() noexcept {
-    return m_elseBody;
+	return m_elseBody;
 }
 
 bool ast::IfElseStatement::hasElse() const noexcept {
-    return m_elseBody != nullptr;
+	return m_elseBody != nullptr;
 }

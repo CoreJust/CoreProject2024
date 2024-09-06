@@ -18,10 +18,10 @@ void chir_visitor::ChirPrinter::visitRoot(chir::Module& module) {
 }
 
 void chir_visitor::ChirPrinter::visit(chir::ConstantValue& node) {
-	if (node.getValueType() == symbol::TypeKind::BOOL) {
-		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue() ? "true\0" : "false");
+	if (node.getValueType()->isBoolType()) {
+		m_printer.stream() << std::format("{}({})", node.getValueType()->toString(), node.getValue() ? "true\0" : "false");
 	} else { // Number
-		m_printer.stream() << std::format("{}({})", node.getValueType().toString(), node.getValue());
+		m_printer.stream() << std::format("{}({})", node.getValueType()->toString(), node.getValue().str());
 	}
 }
 
@@ -32,7 +32,7 @@ void chir_visitor::ChirPrinter::visit(chir::SymbolValue& node) {
 			"fn {}<{}>", 
 			node.getFunction().getName(), 
 			utils::joinToString(node.getFunction().getArguments(), ", ", "", "", [](utils::NoNull<symbol::VariableSymbol> argument) -> utf::String {
-				return argument->getType().toString();
+				return argument->getType()->toString();
 			})
 		); break;
 	default: unreachable();
@@ -40,7 +40,14 @@ void chir_visitor::ChirPrinter::visit(chir::SymbolValue& node) {
 }
 
 void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
-	Parent::visit(node.getCallee());
+	if (node.getCallee()->getKind() != chir::NodeKind::SYMBOL_VALUE) {
+		m_printer.stream() << '(';
+		Parent::visit(node.getCallee());
+		m_printer.stream() << ')';
+	} else {
+		Parent::visit(node.getCallee());
+	}
+
 	m_printer.stream() << "(";
 
 	const std::vector<utils::NoNull<chir::Value>>& args = node.getArguments();
@@ -56,10 +63,17 @@ void chir_visitor::ChirPrinter::visit(chir::InvocationOperator& node) {
 	m_printer.stream() << ")";
 }
 
+void chir_visitor::ChirPrinter::visit(chir::AsOperator& node) {
+	m_printer.stream() << '(';
+	Parent::visit(node.getValue());
+	m_printer.stream() << ") as " << node.getValueType()->toString();
+}
+
 void chir_visitor::ChirPrinter::visit(chir::UnaryOperator& node) {
 	switch (node.getOperator()) {
 		case chir::UnaryOperator::PLUS:		 m_printer.stream() << '+'; break;
 		case chir::UnaryOperator::MINUS:	 m_printer.stream() << '-'; break;
+		case chir::UnaryOperator::BITWISE_NOT: m_printer.stream() << '~'; break;
 		case chir::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
@@ -88,6 +102,11 @@ void chir_visitor::ChirPrinter::visit(chir::BinaryOperator& node) {
 		case chir::BinaryOperator::MULTIPLY:	m_printer.stream() << " * "; break;
 		case chir::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
 		case chir::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case chir::BinaryOperator::BITWISE_AND:	m_printer.stream() << " & "; break;
+		case chir::BinaryOperator::BITWISE_OR:	m_printer.stream() << " | "; break;
+		case chir::BinaryOperator::BITWISE_XOR:	m_printer.stream() << " ^ "; break;
+		case chir::BinaryOperator::BITWISE_LEFT_SHIFT:	m_printer.stream() << " << "; break;
+		case chir::BinaryOperator::BITWISE_RIGHT_SHIFT:	m_printer.stream() << " >> "; break;
 		case chir::BinaryOperator::LOGICAL_AND: m_printer.stream() << " && "; break;
 		case chir::BinaryOperator::LOGICAL_OR:	m_printer.stream() << " || "; break;
 		case chir::BinaryOperator::EQUALS:		m_printer.stream() << " == "; break;

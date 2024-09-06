@@ -35,6 +35,7 @@ namespace ast {
 
 	public:
 		ComparativeBinaryOperator(std::vector<ComparativeOperatorType> operators, std::vector<utils::NoNull<Expression>> expressions) noexcept;
+		~ComparativeBinaryOperator() override;
 
 		std::vector<utils::NoNull<Expression>>& getExpressions() noexcept;
 		std::vector<ComparativeOperatorType>& getOperators() noexcept;

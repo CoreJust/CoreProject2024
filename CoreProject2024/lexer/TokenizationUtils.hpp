@@ -49,7 +49,7 @@ namespace lexer {
 
 	constexpr std::array<bool, 256> _IDENTIFIER_START_CHARS = _MAKE_IDENTIFIER_START_CHARS();
 	constexpr std::array<bool, 256> _IDENTIFIER_MIDDLE_CHARS = _MAKE_IDENTIFIER_MIDDLE_CHARS();
-	constexpr std::array<bool, 256> _OPERATOR_CHARS = inverseArray("=+-/*%<>!&|(){}:;,");
+	constexpr std::array<bool, 256> _OPERATOR_CHARS = inverseArray("=+-/*%<>!&|~^(){}:;,");
 
 	// Returns true if ch is a valid character for identifier start.
 	constexpr bool isIdentifierStart(utf::Char ch) noexcept {

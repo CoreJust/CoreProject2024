@@ -19,6 +19,7 @@ namespace chir {
 
 	public:
 		ValueStatement(utils::NoNull<Value> value) noexcept;
+		~ValueStatement() override;
 
 		utils::NoNull<Value>& getValue() noexcept;
 	};

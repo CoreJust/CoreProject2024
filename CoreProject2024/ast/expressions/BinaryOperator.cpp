@@ -10,6 +10,11 @@ ast::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNu
 	Node::setParent(m_right, this);
 }
 
+ast::BinaryOperator::~BinaryOperator() {
+	m_left->~Expression();
+	m_right->~Expression();
+}
+
 utils::NoNull<ast::Expression>& ast::BinaryOperator::getLeft() noexcept {
 	return m_left;
 }
@@ -26,6 +31,14 @@ bool ast::BinaryOperator::isArithmetical() const noexcept {
 	return m_operator <= BinaryOperatorType::REMAINDER;
 }
 
+bool ast::BinaryOperator::isBitwise() const noexcept {
+	return m_operator > BinaryOperatorType::REMAINDER && m_operator <= BinaryOperatorType::BITWISE_RIGHT_SHIFT;
+}
+
+bool ast::BinaryOperator::isBitwiseShift() const noexcept {
+	return m_operator == BinaryOperatorType::BITWISE_LEFT_SHIFT || m_operator == BinaryOperatorType::BITWISE_RIGHT_SHIFT;
+}
+
 bool ast::BinaryOperator::isLogical() const noexcept {
-	return m_operator > BinaryOperatorType::REMAINDER;
+	return m_operator > BinaryOperatorType::BITWISE_RIGHT_SHIFT;
 }

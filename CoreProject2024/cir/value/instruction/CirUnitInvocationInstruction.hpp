@@ -20,6 +20,7 @@ namespace cir {
 
 	public:
 		UnitInvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments) noexcept;
+		~UnitInvocationInstruction() override;
 
 		utils::NoNull<Value>& getCallee() noexcept;
 		std::vector<utils::NoNull<Value>>& getArguments() noexcept;

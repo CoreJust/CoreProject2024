@@ -20,6 +20,7 @@ namespace cir {
 
 	public:
 		InvocationInstruction(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utf::String name = "i") noexcept;
+		~InvocationInstruction() override;
 
 		utils::NoNull<Value>& getCallee() noexcept;
 		std::vector<utils::NoNull<Value>>& getArguments() noexcept;

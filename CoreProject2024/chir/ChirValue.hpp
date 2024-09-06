@@ -11,17 +11,19 @@
 
 #pragma once
 #include "ChirNode.hpp"
-#include "symbol/types/Type.hpp"
+#include "symbol/type/Type.hpp"
 
 namespace chir {
 	class Value : public Node {
 	protected:
-		symbol::Type m_type;
+		utils::NoNull<symbol::Type> m_type;
 
 	protected:
-		Value(NodeKind type, symbol::Type valueType) noexcept;
+		Value(NodeKind type, utils::NoNull<symbol::Type> valueType) noexcept;
 
 	public:
-		symbol::Type& getValueType() noexcept;
+		virtual ~Value() override;
+
+		utils::NoNull<symbol::Type> getValueType() noexcept;
 	};
 }

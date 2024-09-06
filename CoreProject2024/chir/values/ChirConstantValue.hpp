@@ -9,16 +9,26 @@
 */
 
 #pragma once
+#include "utils/IntValue.hpp"
 #include "../ChirValue.hpp"
 
 namespace chir {
 	class ConstantValue final : public Value {
 	private:
-		int64_t m_value;
+		utils::IntValue m_value;
 
 	public:
-		ConstantValue(symbol::Type type, int64_t value) noexcept;
+		ConstantValue(utils::NoNull<symbol::Type> type, utils::IntValue value) noexcept;
+		
+		// Used for int literals the type of which is unspecified yet.
+		void setIntLiteralType(utils::NoNull<symbol::Type> type) noexcept;
 
-		int64_t getValue() const noexcept;
+		// Used when the type cannot be inquired from context and the default type is used.
+		void assignOwnLiteralType() noexcept;
+
+		void setBoolLiteralType() noexcept;
+
+		utils::IntValue getValue() const noexcept;
+		utils::IntValue& getValueAsRef() noexcept;
 	};
 }

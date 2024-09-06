@@ -13,7 +13,7 @@ void ast_visitor::AstPrinter::print(utils::NoNull<ast::Node> node) {
 }
 
 void ast_visitor::AstPrinter::visit(ast::LiteralValue& node) {
-	if (node.getType().getTypeName() == "bool") {
+	if (node.getType()->getKind() == ast::TypeKind::BOOL) {
 		m_printer.stream() << (node.parseAsBool() ? "true\0" : "false");
 	} else { // Number
 		m_printer.stream() << node.getRawValue();
@@ -25,8 +25,15 @@ void ast_visitor::AstPrinter::visit(ast::IdentifierValue& node) {
 }
 
 void ast_visitor::AstPrinter::visit(ast::InvocationOperator& node) {
-	Parent::visit(node.getCallee());
-	m_printer.stream() << "(";
+	if (node.getCallee()->getKind() != ast::NodeKind::IDENTIFIER_VALUE) {
+		m_printer.stream() << '(';
+		Parent::visit(node.getCallee());
+		m_printer.stream() << ')';
+	} else {
+		Parent::visit(node.getCallee());
+	}
+
+	m_printer.stream() << '(';
 	
 	const std::vector<utils::NoNull<ast::Expression>>& args = node.getArguments();
 	if (!args.empty()) {
@@ -45,6 +52,7 @@ void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 	switch (node.getOperator()) {
 		case ast::UnaryOperator::PLUS:		m_printer.stream() << '+'; break;
 		case ast::UnaryOperator::MINUS:		m_printer.stream() << '-'; break;
+		case ast::UnaryOperator::BITWISE_NOT: m_printer.stream() << '~'; break;
 		case ast::UnaryOperator::LOGIC_NOT: m_printer.stream() << '!'; break;
 	default: unreachable();
 	}
@@ -56,6 +64,12 @@ void ast_visitor::AstPrinter::visit(ast::UnaryOperator& node) {
 		Parent::visit(node.getExpression());
 		m_printer.stream() << ')';
 	}
+}
+
+void ast_visitor::AstPrinter::visit(ast::AsOperator& node) {
+	m_printer.stream() << '(';
+	Parent::visit(node.getValue());
+	m_printer.stream() << ") as " << node.getType()->toString();
 }
 
 void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {
@@ -73,6 +87,11 @@ void ast_visitor::AstPrinter::visit(ast::BinaryOperator& node) {
 		case ast::BinaryOperator::MULTIPLY:		m_printer.stream() << " * "; break;
 		case ast::BinaryOperator::DIVIDE:		m_printer.stream() << " / "; break;
 		case ast::BinaryOperator::REMAINDER:	m_printer.stream() << " % "; break;
+		case ast::BinaryOperator::BITWISE_AND:	m_printer.stream() << " & "; break;
+		case ast::BinaryOperator::BITWISE_OR:	m_printer.stream() << " | "; break;
+		case ast::BinaryOperator::BITWISE_XOR:	m_printer.stream() << " ^ "; break;
+		case ast::BinaryOperator::BITWISE_LEFT_SHIFT:  m_printer.stream() << " << "; break;
+		case ast::BinaryOperator::BITWISE_RIGHT_SHIFT: m_printer.stream() << " >> "; break;
 		case ast::BinaryOperator::LOGIC_AND:	m_printer.stream() << " && "; break;
 		case ast::BinaryOperator::LOGIC_OR:		m_printer.stream() << " || "; break;
 	default: unreachable();
@@ -169,8 +188,8 @@ void ast_visitor::AstPrinter::visit(ast::IfElseStatement& node) {
 void ast_visitor::AstPrinter::visit(ast::VariableDeclaration& node) {
 	m_printer.printIndent();
 	m_printer.stream() << "let " << node.getName();
-	if (auto type = node.getVariableType(); !type.isNoType()) {
-		m_printer.stream() << ": " << type.getTypeName();
+	if (auto type = node.getVariableType(); !type->isNoType()) {
+		m_printer.stream() << ": " << type->toString();
 	}
 
 	m_printer.stream() << " = ";
@@ -184,17 +203,17 @@ void ast_visitor::AstPrinter::visit(ast::FunctionDeclaration& node) {
 
 	const std::vector<ast::FunctionDeclaration::Argument>& args = node.getArguments();
 	if (!args.empty()) {
-		m_printer.stream() << args[0].name << ": " << args[0].type.getTypeName();
+		m_printer.stream() << args[0].name << ": " << args[0].type->toString();
 	}
 
 	for (size_t i = 1; i < args.size(); i++) {
 		m_printer.stream() << ", ";
-		m_printer.stream() << args[i].name << ": " << args[i].type.getTypeName();
+		m_printer.stream() << args[i].name << ": " << args[i].type->toString();
 	}
 
 	m_printer.stream() << ')';
-	if (auto returnType = node.getReturnType(); !returnType.isNoType()) {
-		m_printer.stream() << ": " << returnType.getTypeName();
+	if (auto returnType = node.getReturnType(); !returnType->isNoType()) {
+		m_printer.stream() << ": " << returnType->toString();
 	}
 
 	m_printer.stream() << ' ';
