@@ -12,13 +12,13 @@
 symbol::Type::Type(TypeKind typeKind) noexcept : m_typeKind(typeKind) { }
 
 utils::NoNull<symbol::Type> symbol::Type::make(TypeKind typeKind) {
-	error::internalAssert(isPrimitive(typeKind));
+	internalAssert(isPrimitive(typeKind));
 
 	return TypeAllocator::make<Type>(typeKind);
 }
 
 utils::NoNull<cir::Type> symbol::Type::makeCirType() const {
-	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
+	internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::UNIT: return cir::Type::make(cir::TypeKind::UNIT);
@@ -55,7 +55,7 @@ symbol::TypeKind symbol::Type::getTypeKind() const noexcept {
 }
 
 uint32_t symbol::Type::getTypeSize() const noexcept {
-	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
+	internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::NO_TYPE:		return 0;
@@ -84,7 +84,7 @@ uint32_t symbol::Type::getTypeSize() const noexcept {
 }
 
 utf::String symbol::Type::toString() const {
-	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
+	internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::UNIT:	return "unit";
@@ -111,7 +111,7 @@ utf::String symbol::Type::toString() const {
 }
 
 utf::String symbol::Type::toMangleString() const {
-	error::internalAssert(m_typeKind != TypeKind::NO_TYPE);
+	internalAssert(m_typeKind != TypeKind::NO_TYPE);
 
 	switch (m_typeKind) {
 		case TypeKind::UNIT:	return "u";

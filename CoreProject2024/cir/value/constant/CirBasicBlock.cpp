@@ -16,6 +16,12 @@ cir::BasicBlock::BasicBlock(CommonFunction& parentFunction, utf::String name) no
 
 }
 
+cir::BasicBlock::~BasicBlock() {
+	for (auto instruction : m_instructions) {
+		instruction->~Instruction();
+	}
+}
+
 void cir::BasicBlock::addInstruction(utils::NoNull<Instruction> instruction) noexcept {
 	m_instructions.emplace_back(instruction);
 	if (instruction->getKind() != ValueKind::LOCAL_VARIABLE) {

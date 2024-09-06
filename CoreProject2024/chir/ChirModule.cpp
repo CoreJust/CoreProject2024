@@ -5,9 +5,15 @@
 #include "ChirModule.hpp"
 #include "chir_visitor/ChirPrinter.hpp"
 
-chir::Module::Module(std::vector<utils::NoNull<Declaration>> declarations) noexcept
-	: m_declarations(std::move(declarations)) {
+chir::Module::Module(std::vector<utils::NoNull<Declaration>> declarations, std::unique_ptr<symbol::SymbolTable> symbolTable) noexcept
+	: m_declarations(std::move(declarations)), m_symbolTable(std::move(symbolTable)) {
 
+}
+
+chir::Module::~Module() {
+	for (auto declaration : m_declarations) {
+		declaration->~Declaration();
+	}
 }
 
 void chir::Module::print(utils::IndentPrinter& printer) {

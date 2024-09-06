@@ -10,6 +10,10 @@ chir::VariableStatement::VariableStatement(symbol::VariableSymbol& variable, uti
 	Node::setParent(m_initialValue, this);
 }
 
+chir::VariableStatement::~VariableStatement() {
+	m_initialValue->~Value();
+}
+
 symbol::VariableSymbol& chir::VariableStatement::getVariable() noexcept {
 	return m_variable;
 }

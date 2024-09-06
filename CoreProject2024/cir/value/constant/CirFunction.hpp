@@ -23,6 +23,7 @@ namespace cir {
 
 	public:
 		Function(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, ValueKind kind, utils::NoNull<Module> parentModule) noexcept;
+		virtual ~Function() override;
 
 		utils::NoNull<Type> getReturnType() const noexcept;
 		std::vector<utils::NoNull<FunctionArgument>>& getArguments() noexcept;

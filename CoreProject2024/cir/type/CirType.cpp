@@ -11,7 +11,7 @@
 cir::Type::Type(TypeKind kind) noexcept : m_typeKind(kind) { }
 
 utils::NoNull<cir::Type> cir::Type::make(TypeKind typeKind) {
-	error::internalAssert(isPrimitive(typeKind));
+	internalAssert(isPrimitive(typeKind));
 
 	return CirTypeAllocator::make<Type>(typeKind);
 }

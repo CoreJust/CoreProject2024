@@ -31,6 +31,7 @@ namespace cir {
 	public:
 		UnaryInstruction(UnaryInstructionKind instructionKind, utils::NoNull<Value> operand, utf::String name = "u") noexcept;
 		UnaryInstruction(utils::NoNull<Value> operand, utils::NoNull<cir::Type> type, utf::String name = "u") noexcept; // Type cast
+		~UnaryInstruction() override;
 
 		UnaryInstructionKind getInstructionKind() const noexcept;
 		utils::NoNull<Value>& getOperand() noexcept;

@@ -4,8 +4,9 @@
 
 #include "IdentifierValue.hpp"
 
-ast::IdentifierValue::IdentifierValue(utf::StringView identifier) noexcept 
-	: Expression(NodeKind::IDENTIFIER_VALUE), m_identifier(identifier) { }
+ast::IdentifierValue::IdentifierValue(utf::StringView identifier) noexcept
+	: Expression(NodeKind::IDENTIFIER_VALUE), m_identifier(identifier) {
+}
 
 utf::StringView ast::IdentifierValue::getIdentifier() const noexcept {
 	return m_identifier;

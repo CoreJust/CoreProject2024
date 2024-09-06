@@ -9,6 +9,11 @@ chir::AsOperator::AsOperator(utils::NoNull<Value> value, utils::NoNull<symbol::T
 	Node::setParent(m_value, this);
 }
 
+chir::AsOperator::~AsOperator() {
+	m_value->~Value();
+	m_type->~Type();
+}
+
 utils::NoNull<chir::Value>& chir::AsOperator::getValue() noexcept {
 	return m_value;
 }

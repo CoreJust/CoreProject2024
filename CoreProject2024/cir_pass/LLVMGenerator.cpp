@@ -59,6 +59,7 @@ void cir_pass::LLVMGenerator::pass(utils::NoNull<cir::Module> module) {
 
 void cir_pass::LLVMGenerator::optimize() {
 	m_modulePassManager.run(m_llvmModule.getModule(), m_moduleAnalysisManager);
+	m_moduleAnalysisManager.clear();
 }
 
 llvm::TargetMachine* cir_pass::LLVMGenerator::getTargetMachine() noexcept {
@@ -232,7 +233,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileRetInstruction(utils::NoNull<cir::R
 	}
 }
 
-llvm::Value* cir_pass::LLVMGenerator::compileValueCast(llvm::Value* operand, utils::NoNull<cir::Type> originalType, utils::NoNull<cir::Type> resultType, utf::StringView name) {
+llvm::Value* cir_pass::LLVMGenerator::compileValueCast(llvm::Value* operand, utils::NoNull<cir::Type> originalType, utils::NoNull<cir::Type> resultType, utf::String name) {
 	if (originalType->equals(resultType)) {
 		return operand;
 	}
@@ -260,7 +261,7 @@ llvm::Value* cir_pass::LLVMGenerator::compileValueCast(llvm::Value* operand, uti
 }
 
 llvm::Value* cir_pass::LLVMGenerator::getFunctionValue(utils::NoNull<cir::Value> value) {
-	error::internalAssert(value->getType()->getTypeKind() == cir::TypeKind::FUNCTION);
+	internalAssert(value->getType()->getTypeKind() == cir::TypeKind::FUNCTION);
 
 	llvm::Value* source = getLLVMValue(value);
 	return source;

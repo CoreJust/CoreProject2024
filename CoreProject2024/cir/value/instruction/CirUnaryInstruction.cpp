@@ -15,6 +15,10 @@ cir::UnaryInstruction::UnaryInstruction(utils::NoNull<Value> operand, utils::NoN
 	Value::addUser(m_operand, *this);
 }
 
+cir::UnaryInstruction::~UnaryInstruction() {
+	Instruction::destroyIfConstant(m_operand);
+}
+
 cir::UnaryInstruction::UnaryInstructionKind cir::UnaryInstruction::getInstructionKind() const noexcept {
 	return m_instuctionKind;
 }

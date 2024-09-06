@@ -23,6 +23,7 @@ namespace ast {
 
 	public:
 		VariableDeclaration(utf::StringView name, utils::NoNull<Type> type, utils::NoNull<Expression> initialValue) noexcept;
+		~VariableDeclaration() override;
 
 		utf::StringView getName() const noexcept;
 		utils::NoNull<Type> getVariableType() const noexcept;

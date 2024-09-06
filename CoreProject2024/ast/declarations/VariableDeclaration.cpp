@@ -9,6 +9,11 @@ ast::VariableDeclaration::VariableDeclaration(utf::StringView name, utils::NoNul
 	Node::setParent(m_initialValue.get(), this);
 }
 
+ast::VariableDeclaration::~VariableDeclaration() {
+	m_initialValue->~Expression();
+	m_type->~Type();
+}
+
 utf::StringView ast::VariableDeclaration::getName() const noexcept {
 	return m_name;
 }

@@ -20,7 +20,14 @@ cir::Function::Function(utf::String name, utils::NoNull<Type> returnType, std::v
 	),
 	m_returnType(std::move(returnType)),
 	m_arguments(std::move(arguments)) {
-	error::internalAssert(cir::isFunction(kind));
+	internalAssert(cir::isFunction(kind));
+}
+
+cir::Function::~Function() {
+	m_returnType->~Type();
+	for (auto argument : m_arguments) {
+		argument->~FunctionArgument();
+	}
 }
 
 utils::NoNull<cir::Type> cir::Function::getReturnType() const noexcept {

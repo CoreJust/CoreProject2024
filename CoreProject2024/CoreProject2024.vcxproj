@@ -45,7 +45,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableASAN>false</EnableASAN>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -105,7 +105,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BENCHMARK_STATIC_DEFINE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DISABLE_STRING_ANNOTATION;_DISABLE_VECTOR_ANNOTATION;_CRT_SECURE_NO_WARNINGS;BENCHMARK_STATIC_DEFINE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\libs\llvm\llvm\llvm\include;C:\Users\egor2\source\repos\CoreProject2024\CoreProject2024;C:\libs\google-benchmark\benchmark\include;C:\libs\llvm\build\include;C:\libs\ap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -114,6 +114,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
       <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +142,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
       <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -250,6 +252,7 @@
     <ClCompile Include="symbol\type\Type.cpp" />
     <ClCompile Include="utf\StringUtils.cpp" />
     <ClCompile Include="utf\Utf.cpp" />
+    <ClCompile Include="utils\ArrayBuilder.cpp" />
     <ClCompile Include="utils\File.cpp" />
     <ClCompile Include="utils\IndentPrinter.cpp" />
     <ClCompile Include="utils\TextPosition.cpp" />
@@ -376,6 +379,7 @@
     <ClInclude Include="utf\StringUtils.hpp" />
     <ClInclude Include="utf\Utf.hpp" />
     <ClInclude Include="utf\UtfIterator.hpp" />
+    <ClInclude Include="utils\ArrayBuilder.hpp" />
     <ClInclude Include="utils\Bit.hpp" />
     <ClInclude Include="utils\Concept.hpp" />
     <ClInclude Include="error\ErrorPrinter.hpp" />

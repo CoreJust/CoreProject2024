@@ -21,6 +21,7 @@ namespace symbol {
 
 	public:
 		FunctionSymbol(SymbolPath path, utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<VariableSymbol>> arguments);
+		~FunctionSymbol() override;
 
 		utf::String makeMangledName() const;
 

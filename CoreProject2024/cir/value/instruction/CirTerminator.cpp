@@ -7,5 +7,5 @@
 
 cir::Terminator::Terminator(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
 	: Instruction(std::move(name), type, kind) {
-	error::internalAssert(cir::isTerminator(kind));
+	internalAssert(cir::isTerminator(kind));
 }

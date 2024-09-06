@@ -23,6 +23,7 @@ namespace cir {
 
 	public:
 		CommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments, utils::NoNull<Module> parentModule) noexcept;
+		~CommonFunction() override;
 
 		utils::NoNull<BasicBlock> makeBasicBlock(utf::String name) noexcept;
 

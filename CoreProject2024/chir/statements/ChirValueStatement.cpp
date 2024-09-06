@@ -9,6 +9,10 @@ chir::ValueStatement::ValueStatement(utils::NoNull<Value> value) noexcept
 	Node::setParent(value, this);
 }
 
+chir::ValueStatement::~ValueStatement() {
+	m_value->~Value();
+}
+
 utils::NoNull<chir::Value>& chir::ValueStatement::getValue() noexcept {
 	return m_value;
 }

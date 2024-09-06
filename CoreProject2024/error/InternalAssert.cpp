@@ -7,10 +7,12 @@
 #include <iostream>
 #include "ErrorPrinter.hpp"
 
-void error::internalAssert(bool condition, utf::StringView message) {
+#ifdef _DEBUG
+void internalAssert(bool condition, utf::StringView message) {
 	if (!condition) {
 		std::cout << "Internal assertion failed: " << message << std::endl;
 	}
 
 	assert(condition);
 }
+#endif

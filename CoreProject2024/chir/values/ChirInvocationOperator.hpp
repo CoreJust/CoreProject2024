@@ -20,6 +20,7 @@ namespace chir {
 
 	public:
 		InvocationOperator(utils::NoNull<Value> callee, std::vector<utils::NoNull<Value>> arguments, utils::NoNull<symbol::Type> type) noexcept;
+		~InvocationOperator() override;
 
 		utils::NoNull<Value>& getCallee() noexcept;
 		std::vector<utils::NoNull<Value>>& getArguments() noexcept;

@@ -12,6 +12,12 @@ ast::ReturnOperator::ReturnOperator(utils::NoNull<Expression> expression) noexce
 	Node::setParent(m_expression, this);
 }
 
+ast::ReturnOperator::~ReturnOperator() {
+	if (m_expression) {
+		m_expression->~Expression();
+	}
+}
+
 ast::Expression*& ast::ReturnOperator::getExpression() noexcept {
 	return m_expression;
 }

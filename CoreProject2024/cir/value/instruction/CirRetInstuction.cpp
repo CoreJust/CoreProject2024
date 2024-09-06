@@ -15,6 +15,12 @@ cir::RetInstruction::RetInstruction(utils::NoNull<Value> operand) noexcept
 	Value::addUser(m_operand, *this);
 }
 
+cir::RetInstruction::~RetInstruction() {
+	if (m_operand != nullptr) {
+		Instruction::destroyIfConstant(m_operand);
+	}
+}
+
 bool cir::RetInstruction::isRetUnit() const noexcept {
 	return m_operand == nullptr;
 }
@@ -24,10 +30,8 @@ cir::Value*& cir::RetInstruction::getOperand() noexcept {
 }
 
 utils::NoNull<cir::Type> cir::RetInstruction::getReturnType() noexcept {
-	static utils::NoNull<Type> s_unitType = Type::make(TypeKind::UNIT);
-
 	if (m_operand == nullptr) {
-		return s_unitType;
+		return Type::make(TypeKind::UNIT);
 	} else {
 		return m_operand->getType();
 	}

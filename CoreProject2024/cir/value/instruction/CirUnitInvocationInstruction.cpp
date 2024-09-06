@@ -17,6 +17,13 @@ cir::UnitInvocationInstruction::UnitInvocationInstruction(utils::NoNull<Value> c
 	}
 }
 
+cir::UnitInvocationInstruction::~UnitInvocationInstruction() {
+	Instruction::destroyIfConstant(m_callee);
+	for (auto argument : m_arguments) {
+		Instruction::destroyIfConstant(argument);
+	}
+}
+
 utils::NoNull<cir::Value>& cir::UnitInvocationInstruction::getCallee() noexcept {
 	return m_callee;
 }

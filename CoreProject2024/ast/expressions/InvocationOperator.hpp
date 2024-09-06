@@ -20,6 +20,7 @@ namespace ast {
 
 	public:
 		InvocationOperator(utils::NoNull<Expression> callee, std::vector<utils::NoNull<Expression>> arguments) noexcept;
+		~InvocationOperator() override;
 
 		utils::NoNull<Expression>& getCallee() noexcept;
 		std::vector<utils::NoNull<Expression>>& getArguments() noexcept;

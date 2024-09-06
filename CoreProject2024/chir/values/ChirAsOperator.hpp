@@ -18,6 +18,7 @@ namespace chir {
 
 	public:
 		AsOperator(utils::NoNull<Value> value, utils::NoNull<symbol::Type> type) noexcept;
+		~AsOperator() override;
 
 		utils::NoNull<Value>& getValue() noexcept;
 	};

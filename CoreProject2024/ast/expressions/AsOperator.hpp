@@ -20,6 +20,7 @@ namespace ast {
 
 	public:
 		AsOperator(utils::NoNull<Expression> value, utils::NoNull<Type> type) noexcept;
+		~AsOperator() override;
 
 		utils::NoNull<Expression>& getValue() noexcept;
 		utils::NoNull<Type>& getType() noexcept;

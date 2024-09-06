@@ -34,6 +34,7 @@ namespace ast {
 
 	public:
 		Type() noexcept; // No type
+		inline virtual ~Type() { }
 
 		// Creates the symbol type from AST type.
 		// Can only be called after the types are loaded into symbol table.

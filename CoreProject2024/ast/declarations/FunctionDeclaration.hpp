@@ -32,6 +32,7 @@ namespace ast {
 	public:
 		FunctionDeclaration(utf::StringView name, utils::NoNull<Type> returnType, std::vector<Argument> arguments, utils::NoNull<Statement> body) noexcept;
 		FunctionDeclaration(utf::StringView name, utils::NoNull<Type> returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept;
+		~FunctionDeclaration();
 
 		utf::StringView getName() const noexcept;
 		utils::NoNull<Type> getReturnType() const noexcept;

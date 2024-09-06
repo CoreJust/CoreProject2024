@@ -7,11 +7,17 @@
 
 ast::ComparativeBinaryOperator::ComparativeBinaryOperator(std::vector<ComparativeOperatorType> operators, std::vector<utils::NoNull<Expression>> expressions) noexcept
 	: Expression(NodeKind::COMPARATIVE_BINARY_OPERATOR), m_operators(std::move(operators)), m_expressions(std::move(expressions)) {
-	error::internalAssert(!m_operators.empty(), "There must be at least one comparison in ComparativeBinaryOperator");
-	error::internalAssert(m_operators.size() + 1 == m_expressions.size(), "Operators and expressions count mismatch");
+	internalAssert(!m_operators.empty(), "There must be at least one comparison in ComparativeBinaryOperator");
+	internalAssert(m_operators.size() + 1 == m_expressions.size(), "Operators and expressions count mismatch");
 
 	for (auto expression : m_expressions) {
 		Node::setParent(expression, this);
+	}
+}
+
+ast::ComparativeBinaryOperator::~ComparativeBinaryOperator() {
+	for (auto expression : m_expressions) {
+		expression->~Expression();
 	}
 }
 

@@ -14,6 +14,13 @@ chir::InvocationOperator::InvocationOperator(utils::NoNull<Value> callee, std::v
 	}
 }
 
+chir::InvocationOperator::~InvocationOperator() {
+	m_callee->~Value();
+	for (auto argument : m_arguments) {
+		argument->~Value();
+	}
+}
+
 utils::NoNull<chir::Value>& chir::InvocationOperator::getCallee() noexcept {
 	return m_callee;
 }

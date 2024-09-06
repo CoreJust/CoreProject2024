@@ -154,7 +154,7 @@ void chir_visitor::CirGenerator::visit(chir::VariableDeclaration& node) {
 			.description = "Not supported yet."
 		});
 
-		error::internalAssert(false); // For debug mode.
+		internalAssert(false); // For debug mode.
 		return;
 	}
 
@@ -190,10 +190,10 @@ utils::NoNull<cir::Value> chir_visitor::CirGenerator::getSymbolValue(symbol::Sym
 		error::ErrorPrinter::error({
 			.code = error::ErrorCode::INTERNAL_ERROR,
 			.name = "Internal error: Tried to get a symbol by unknown ID",
-			.description = std::format( "Symbols map in CIR generators doesn't have symbol with ID {}.", symbolId),
+			.description = std::format( "Symbol map in CIR generator doesn't have symbol with ID {}.", symbolId),
 		});
 
-		error::internalAssert(false); // For debug mode.
+		internalAssert(false); // For debug mode.
 	}
 
 	return it->second;

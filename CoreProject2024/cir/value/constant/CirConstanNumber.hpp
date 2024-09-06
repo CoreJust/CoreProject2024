@@ -21,7 +21,7 @@ namespace cir {
 	class ConstantNumber final : public Constant {
 	public:
 		ConstantNumber(utils::NoNull<Type> type, utils::IntValue value) noexcept;
-		~ConstantNumber() noexcept;
+		~ConstantNumber() override;
 
 		const utils::IntValue& getValue() const noexcept;
 	};

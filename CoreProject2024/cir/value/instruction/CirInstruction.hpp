@@ -14,6 +14,12 @@
 
 namespace cir {
 	class Instruction : public Value {
+	protected:
+		// Helper functions that invokes value's destructor if it is a constant.
+		// It is required because unlike other cir values, constants are not stored in a single place
+		// and must be destroyed by the instructions themselves.
+		static void destroyIfConstant(utils::NoNull<Value> value);
+
 	public:
 		Instruction(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
 

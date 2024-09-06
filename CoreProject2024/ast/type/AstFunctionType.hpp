@@ -22,6 +22,7 @@ namespace ast {
 
 	protected:
 		FunctionType(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes) noexcept;
+		~FunctionType() override;
 
 	public:
 		static utils::NoNull<FunctionType> make(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes);

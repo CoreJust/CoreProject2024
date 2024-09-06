@@ -19,6 +19,7 @@ namespace ast {
 
 	public:
 		ScopeStatement(std::vector<utils::NoNull<Statement>> statements) noexcept;
+		~ScopeStatement() override;
 
 		const std::vector<utils::NoNull<Statement>>& getStatements() noexcept;
 	};

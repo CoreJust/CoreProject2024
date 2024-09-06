@@ -19,6 +19,7 @@ namespace cir {
 
 	public:
 		LocalVariable(utf::String name, utils::NoNull<Type> type, utils::NoNull<Value> initialValue) noexcept;
+		~LocalVariable() override;
 
 		utils::NoNull<Value>& getInitialValue() noexcept;
 

@@ -66,7 +66,7 @@ namespace cir {
 	private:
 		template<class T, class... Args> requires std::is_base_of_v<Instruction, T>
 		utils::NoNull<T> makeInstruction(Args&&... args) {
-			error::internalAssert(m_currentBasicBlock != nullptr, "No basic block available to append instructions to");
+			internalAssert(m_currentBasicBlock != nullptr, "No basic block available to append instructions to");
 
 			utils::NoNull<T> result = CirAllocator::make<T, Args...>(std::forward<Args>(args)...);
 			m_currentBasicBlock->addInstruction(result);

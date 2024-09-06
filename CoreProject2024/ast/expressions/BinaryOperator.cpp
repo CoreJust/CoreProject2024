@@ -10,6 +10,11 @@ ast::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoNu
 	Node::setParent(m_right, this);
 }
 
+ast::BinaryOperator::~BinaryOperator() {
+	m_left->~Expression();
+	m_right->~Expression();
+}
+
 utils::NoNull<ast::Expression>& ast::BinaryOperator::getLeft() noexcept {
 	return m_left;
 }

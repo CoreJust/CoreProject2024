@@ -13,6 +13,11 @@ cir::BinaryInstruction::BinaryInstruction(BinaryInstructionKind instructionKind,
 	Value::addUser(m_right, *this);
 }
 
+cir::BinaryInstruction::~BinaryInstruction() {
+	Instruction::destroyIfConstant(m_left);
+	Instruction::destroyIfConstant(m_right);
+}
+
 cir::BinaryInstruction::BinaryInstructionKind cir::BinaryInstruction::getInstructionKind() const noexcept {
 	return m_instuctionKind;
 }

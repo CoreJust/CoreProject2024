@@ -11,6 +11,12 @@ cir::CommonFunction::CommonFunction(utf::String name, utils::NoNull<Type> return
 
 }
 
+cir::CommonFunction::~CommonFunction() {
+	for (auto basicBlock : m_basicBlocks) {
+		basicBlock->~BasicBlock();
+	}
+}
+
 utils::NoNull<cir::BasicBlock> cir::CommonFunction::makeBasicBlock(utf::String name) noexcept {
 	return m_basicBlocks.emplace_back(cir::CirAllocator::make<cir::BasicBlock>(*this, name + std::to_string(m_basicBlocks.size())));
 }

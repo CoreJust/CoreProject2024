@@ -12,6 +12,12 @@ symbol::FunctionSymbol::FunctionSymbol(SymbolPath path, utf::String name, utils:
 
 }
 
+symbol::FunctionSymbol::~FunctionSymbol() {
+	for (auto argument : m_arguments) {
+		argument->~VariableSymbol();
+	}
+}
+
 utf::String symbol::FunctionSymbol::makeMangledName() const {
 	if (m_name == "main") {
 		return "main";

@@ -22,6 +22,7 @@ namespace ast {
 
 	public:
 		IfElseStatement(std::vector<utils::NoNull<Expression>> conditions, std::vector<utils::NoNull<Statement>> ifBodies, Statement* elseBody) noexcept;
+		~IfElseStatement() override;
 
 		std::vector<utils::NoNull<Expression>>& getConditions() noexcept;
 		std::vector<utils::NoNull<Statement>>& getIfBodies() noexcept;

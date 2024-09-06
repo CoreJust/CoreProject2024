@@ -9,6 +9,10 @@ ast::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<
 	Node::setParent(m_expression, this);
 }
 
+ast::UnaryOperator::~UnaryOperator() {
+	m_expression->~Expression();
+}
+
 utils::NoNull<ast::Expression>& ast::UnaryOperator::getExpression() noexcept {
 	return m_expression;
 }

@@ -12,6 +12,18 @@ ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utils::NoNul
 ast::FunctionDeclaration::FunctionDeclaration(utf::StringView name, utils::NoNull<Type> returnType, std::vector<Argument> arguments, utf::StringView nativeFunctionName) noexcept
 	: Declaration(NodeKind::FUNCTION_DECLARATION), m_name(name), m_returnType(returnType), m_arguments(std::move(arguments)), m_body(nativeFunctionName) { }
 
+ast::FunctionDeclaration::~FunctionDeclaration() {
+	m_returnType->~Type();
+
+	for (auto& argument : m_arguments) {
+		argument.type->~Type();
+	}
+
+	if (!isNative()) {
+		getBodyAsStatement()->~Statement();
+	}
+}
+
 utf::StringView ast::FunctionDeclaration::getName() const noexcept {
 	return m_name;
 }

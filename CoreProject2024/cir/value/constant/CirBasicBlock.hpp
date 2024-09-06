@@ -31,6 +31,7 @@ namespace cir {
 
 	public:
 		BasicBlock(CommonFunction& parentFunction, utf::String name) noexcept;
+		~BasicBlock() override;
 
 		// Adds the instruction to the end of BasicBlock's instruction list.
 		void addInstruction(utils::NoNull<Instruction> instruction) noexcept;

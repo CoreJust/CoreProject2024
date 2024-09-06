@@ -13,6 +13,12 @@ symbol::SymbolTable::SymbolTable()
 	m_currentScope = m_rootScope.get();
 }
 
+symbol::SymbolTable::~SymbolTable() {
+	for (auto [id, symbol] : m_symbolsById) {
+		symbol->~Symbol();
+	}
+}
+
 symbol::VariableSymbol& symbol::SymbolTable::addVariable(SymbolPath path, utf::String name, utils::NoNull<Type> type) {
 	utils::NoNull<VariableSymbol> variable = SymbolAllocator::make<VariableSymbol>(std::move(path), std::move(name), type);
 

@@ -19,6 +19,10 @@ cir::GlobalVariable::GlobalVariable(utf::String name, utils::NoNull<Type> type, 
 	Value::addUser(m_initialValue, *this);
 }
 
+cir::GlobalVariable::~GlobalVariable() {
+	m_initialValue->~Constant();
+}
+
 utils::NoNull<cir::Constant>& cir::GlobalVariable::getInitialValue() noexcept {
 	return m_initialValue;
 }

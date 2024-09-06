@@ -13,7 +13,7 @@ ast::Type::Type(TypeKind typeKind) noexcept : m_typeKind(typeKind) { }
 ast::Type::Type() noexcept : m_typeKind(TypeKind::NO_TYPE) { }
 
 utils::NoNull<ast::Type> ast::Type::make(TypeKind typeKind) {
-	error::internalAssert(isPrimitive(typeKind));
+	internalAssert(isPrimitive(typeKind));
 
 	return AstTypeAllocator::make<Type>(typeKind);
 }

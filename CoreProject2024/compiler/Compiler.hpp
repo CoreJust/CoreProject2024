@@ -31,19 +31,19 @@ namespace compiler {
 		utf::StringView loadModule();
 
 		// Parses the source code string into AST.
-		ast::Declaration* parseModule(utf::StringView sourceCode);
+		utils::NoNull<ast::Declaration> parseModule(utf::StringView sourceCode);
 
 		// Loads the symbols from AST.
-		symbol::SymbolTable loadSymbols(ast::Declaration* ast);
+		std::unique_ptr<symbol::SymbolTable> loadSymbols(utils::NoNull<ast::Declaration> ast);
 
 		// Generates the Core High-level IR based on AST.
-		chir::Module generateCHIR(ast::Declaration* ast, symbol::SymbolTable&& symbolTable);
+		std::unique_ptr<chir::Module> generateCHIR(utils::NoNull<ast::Declaration> ast, std::unique_ptr<symbol::SymbolTable> symbolTable);
 
 		// Generates the Core IR based on Core High-level IR.
-		cir::Module generateCIR(chir::Module&& chirModule);
+		std::unique_ptr<cir::Module> generateCIR(std::unique_ptr<chir::Module> chirModule);
 
 		// Generates the LLVM IR based on Core IR.
-		llvm::TargetMachine* generateLLVM(cir::Module&& cirModule, llvm_utils::LLVMModule& result);
+		llvm::TargetMachine* generateLLVM(std::unique_ptr<cir::Module> cirModule, llvm_utils::LLVMModule& result);
 
 		// Creates the object code file based on LLVM IR.
 		void generateObjectFile(llvm_utils::LLVMModule&& llvmModule, llvm::TargetMachine* targetMachine);

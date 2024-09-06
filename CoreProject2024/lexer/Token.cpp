@@ -8,7 +8,7 @@
 #include "error/InternalAssert.hpp"
 
 utf::String lexer::tokenType2String(TokenType type) {
-	error::internalAssert(type <= TOKEN_TYPES_COUNT);
+	internalAssert(type <= TOKEN_TYPES_COUNT);
 
 	static const char* TOKEN_TYPE_NAMES[] = {
 		"IDENTIFIER", "NUMBER", "TEXT", "RAW_TEXT",

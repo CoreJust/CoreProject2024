@@ -27,6 +27,8 @@ namespace symbol {
 		static utils::NoNull<FunctionType> make(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes);
 
 	public:
+		~FunctionType() override;
+
 		utils::NoNull<cir::Type> makeCirType() const override;
 		bool equals(const Type& other) const noexcept override;
 		utf::String toString() const noexcept override;

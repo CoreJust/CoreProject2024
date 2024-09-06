@@ -13,13 +13,13 @@
 #include "chir/ChirClassImplementations.hpp"
 #include "chir/ChirAllocator.hpp"
 
-ast_visitor::CHIRGenerator::CHIRGenerator(symbol::SymbolTable& symbols) noexcept
-	: Parent(*this), m_symbols(symbols) { }
+ast_visitor::CHIRGenerator::CHIRGenerator(std::unique_ptr<symbol::SymbolTable> symbols) noexcept
+	: Parent(*this), m_symbols(std::move(symbols)) { }
 
-chir::Module ast_visitor::CHIRGenerator::generateCHIRModule(utils::NoNull<ast::Declaration> node) {
+std::unique_ptr<chir::Module> ast_visitor::CHIRGenerator::generateCHIRModule(utils::NoNull<ast::Declaration> node) {
 	Parent::visit(node);
 
-	return chir::Module(std::move(m_declarations));
+	return std::make_unique<chir::Module>(std::move(m_declarations), std::move(m_symbols));
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& node) {
@@ -31,7 +31,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::LiteralValue& 
 }
 
 utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValue& node) {
-	std::vector<utils::NoNull<symbol::Symbol>> symbols = m_symbols.getSymbols(node.getIdentifier());
+	std::vector<utils::NoNull<symbol::Symbol>> symbols = m_symbols->getSymbols(node.getIdentifier());
 	if (symbols.empty()) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::UNRESOLVED_SYMBOL,
@@ -42,8 +42,8 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::IdentifierValu
 			.explanation = "Maybe you forgot to declare this symbol or made a mistake in its name."
 		});
 	} else if (symbols.size() > 1) {
-		if (!m_typeInquire.empty()) { // Has requirements for function argument types.
-			const symbol::FunctionSymbol* function = m_symbols.getFunction(node.getIdentifier(), m_typeInquire);
+		if (m_hasTypeInquire) { // Has requirements for function argument types.
+			const symbol::FunctionSymbol* function = m_symbols->getFunction(node.getIdentifier(), m_typeInquire);
 			if (function == nullptr) {
 				error::ErrorPrinter::fatalError({
 					.code = error::ErrorCode::UNRESOLVED_SYMBOL,
@@ -92,6 +92,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 	);
 
 	m_typeInquire = std::move(argumentTypes);
+	m_hasTypeInquire = true;
 	utils::NoNull<chir::Value> callee = Parent::visit(node.getCallee());
 
 	// Verification of the callee type.
@@ -118,14 +119,14 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::InvocationOper
 		});
 	}
 
-	m_typeInquire.clear();
+	m_hasTypeInquire = false;
 
 	// Literal type inquire
 	const std::vector<utils::NoNull<symbol::Type>>& calleeTypes = callee->getValueType().as<symbol::FunctionType>()->getArgumentTypes();
 	uint32_t i = 0;
 	for (auto argument : arguments) {
 		if (argument->getValueType()->isLiteralType()) {
-			error::internalAssert(argument->getKind() == chir::NodeKind::CONSTANT_VALUE);
+			internalAssert(argument->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 			argument.as<chir::ConstantValue>()->setIntLiteralType(calleeTypes[i]);
 		}
@@ -267,7 +268,17 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 	if (left->getKind() == chir::NodeKind::CONSTANT_VALUE && right->getKind() == chir::NodeKind::CONSTANT_VALUE) {
 		utils::IntValue& leftIntValue = left.as<chir::ConstantValue>()->getValueAsRef();
 		utils::IntValue& rightIntValue = right.as<chir::ConstantValue>()->getValueAsRef();
-		switch (node.getOperator()) {
+		ast::BinaryOperator::BinaryOperatorType operatorType = node.getOperator();
+		if (rightIntValue == 0 && (operatorType == ast::BinaryOperator::DIVIDE || operatorType == ast::BinaryOperator::REMAINDER)) { // Check for division by zero.
+			error::ErrorPrinter::fatalError({
+				.code = error::ErrorCode::DIVISION_BY_ZERO,
+				.name = "Compile-time evaluation error: Division by zero",
+				.selectionStart = node.getPosition(),
+				.description = std::format("Tried to divide by zero while evaluating compile-time expression: {} / 0.", leftIntValue.str())
+			});
+		}
+
+		switch (operatorType) {
 			case ast::BinaryOperator::PLUS: leftIntValue += rightIntValue; return left;
 			case ast::BinaryOperator::MINUS: leftIntValue -= rightIntValue; return left;
 			case ast::BinaryOperator::MULTIPLY: leftIntValue *= rightIntValue; return left;
@@ -284,11 +295,11 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::BinaryOperator
 		default: unreachable();
 		}
 	} else if (left->getValueType()->isLiteralType()) { // Literal type inquire
-		error::internalAssert(left->getKind() == chir::NodeKind::CONSTANT_VALUE);
+		internalAssert(left->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 		left.as<chir::ConstantValue>()->setIntLiteralType(right->getValueType());
 	} else if (right->getValueType()->isLiteralType()) { // Literal type inquire
-		error::internalAssert(right->getKind() == chir::NodeKind::CONSTANT_VALUE);
+		internalAssert(right->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 		right.as<chir::ConstantValue>()->setIntLiteralType(left->getValueType());
 	}
@@ -353,11 +364,11 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ComparativeBin
 		} else {
 			// Literal type inquire
 			if (left->getValueType()->isLiteralType()) {
-				error::internalAssert(left->getKind() == chir::NodeKind::CONSTANT_VALUE);
+				internalAssert(left->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 				left.as<chir::ConstantValue>()->setIntLiteralType(right->getValueType());
 			} else if (right->getValueType()->isLiteralType()) {
-				error::internalAssert(right->getKind() == chir::NodeKind::CONSTANT_VALUE);
+				internalAssert(right->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 				right.as<chir::ConstantValue>()->setIntLiteralType(left->getValueType());
 			}
@@ -425,7 +436,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator
 		});
 	}
 
-	symbol::FunctionSymbol* function = m_symbols.getCurrentScope().getFunction();
+	symbol::FunctionSymbol* function = m_symbols->getCurrentScope().getFunction();
 	if (function == nullptr) {
 		error::ErrorPrinter::fatalError({
 			.code = error::ErrorCode::NON_FUNCTION_CONTEXT,
@@ -441,7 +452,7 @@ utils::NoNull<chir::Value> ast_visitor::CHIRGenerator::visit(ast::ReturnOperator
 
 		// Literal type inquire
 		if (value->getValueType()->isLiteralType() && functionReturnType->isArithmeticType()) {
-			error::internalAssert(value->getKind() == chir::NodeKind::CONSTANT_VALUE);
+			internalAssert(value->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 			value.as<chir::ConstantValue>()->setIntLiteralType(functionReturnType);
 		}
@@ -490,7 +501,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
 	bool needOwnScope = node.getParent()->getKind() != ast::NodeKind::FUNCTION_DECLARATION;
 
 	if (needOwnScope) {
-		m_symbols.pushScope("");
+		m_symbols->pushScope("");
 	}
 
 	for (auto statement : node.getStatements()) {
@@ -501,7 +512,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::ScopeStatement& node) {
 	}
 
 	if (needOwnScope) {
-		m_symbols.popScope();
+		m_symbols->popScope();
 	}
 
 	return chir::ChirAllocator::make<chir::ScopeStatement>(node.getPosition(), std::move(statements)).get();
@@ -561,7 +572,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 
 	// Literal type inquire
 	if (initialValue->getValueType()->isLiteralType()) {
-		error::internalAssert(initialValue->getKind() == chir::NodeKind::CONSTANT_VALUE);
+		internalAssert(initialValue->getKind() == chir::NodeKind::CONSTANT_VALUE);
 
 		if (type->isIntegerType()) {
 			initialValue.as<chir::ConstantValue>()->setIntLiteralType(type);
@@ -570,11 +581,11 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 		}
 	}
 
-	if (m_symbols.getCurrentScope().getFunction() == nullptr) { // Global variable
-		const symbol::VariableSymbol* variable = m_symbols.getVariable(node.getName());
+	if (m_symbols->getCurrentScope().getFunction() == nullptr) { // Global variable
+		const symbol::VariableSymbol* variable = m_symbols->getVariable(node.getName());
 
-		error::internalAssert(variable != nullptr);
-		error::internalAssert(variable->getType() == type);
+		internalAssert(variable != nullptr);
+		internalAssert(variable->getType() == type);
 
 		m_declarations.emplace_back(chir::ChirAllocator::make<chir::VariableDeclaration>(
 			node.getPosition(),
@@ -588,7 +599,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 			type = initialValue->getValueType(); // Local variable type inquirement.
 		}
 
-		symbol::VariableSymbol& variable = m_symbols.addVariable(symbol::SymbolPath { }, utf::String(node.getName()), type);
+		symbol::VariableSymbol& variable = m_symbols->addVariable(symbol::SymbolPath { }, utf::String(node.getName()), type);
 		return chir::ChirAllocator::make<chir::VariableStatement>(
 			node.getPosition(),
 			variable,
@@ -599,16 +610,16 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::VariableDeclaration& nod
 
 chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& node) {
 	symbol::FunctionSymbol* function;
-	symbol::FunctionSymbol* externalFunction = m_symbols.getCurrentScope().getFunction();
+	symbol::FunctionSymbol* externalFunction = m_symbols->getCurrentScope().getFunction();
 
 	if (externalFunction == nullptr) { // Global function.
 		auto argumentTypes = utils::map<std::vector<utils::NoNull<symbol::Type>>>(node.getArguments(), [](const auto& argument) -> auto {
 			return argument.type->makeSymbolType();
 		});
 
-		function = const_cast<symbol::FunctionSymbol*>(m_symbols.getFunction(node.getName(), argumentTypes));
+		function = const_cast<symbol::FunctionSymbol*>(m_symbols->getFunction(node.getName(), argumentTypes));
 
-		error::internalAssert(function != nullptr);
+		internalAssert(function != nullptr);
 	} else { // Local function
 		symbol::SymbolPath path = externalFunction->getSymbolPath();
 		path.internalPath.path.push_back(externalFunction->getName());
@@ -620,10 +631,10 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 			}
 		);
 
-		function = &m_symbols.addFunction(path, utf::String(node.getName()), node.getReturnType()->makeSymbolType(), std::move(arguments));
+		function = &m_symbols->addFunction(path, utf::String(node.getName()), node.getReturnType()->makeSymbolType(), std::move(arguments));
 	}
 
-	symbol::Scope& scope = m_symbols.pushFunctionScope(*function);
+	symbol::Scope& scope = m_symbols->pushFunctionScope(*function);
 
 	if (node.isNative()) {
 		m_declarations.emplace_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, utf::String(node.getBodyAsNative())));
@@ -632,7 +643,7 @@ chir::Statement* ast_visitor::CHIRGenerator::visit(ast::FunctionDeclaration& nod
 		m_declarations.emplace_back(chir::ChirAllocator::make<chir::FunctionDeclaration>(node.getPosition(), *function, functionBody));
 	}
 
-	m_symbols.popScope();
+	m_symbols->popScope();
 	return nullptr;
 }
 

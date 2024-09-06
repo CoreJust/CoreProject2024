@@ -9,10 +9,10 @@
 
 cir::Value::Value(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
 	: m_name(std::move(name)), m_type(std::move(type)), m_kind(kind), m_id(generateUniqueId()) {
-	error::internalAssert((type->getTypeKind() == TypeKind::UNIT) == !cir::isUsable(kind));
+	internalAssert((type->getTypeKind() == TypeKind::UNIT) == !cir::isUsable(kind));
 }
 
-utf::StringView cir::Value::getName() const noexcept {
+utf::String cir::Value::getName() const noexcept {
 	return m_name;
 }
 
@@ -85,7 +85,7 @@ utf::String cir::Value::toString() const {
 }
 
 void cir::Value::addUser(utils::NoNull<Value> value, Value& user) {
-	error::internalAssert(value->isUsable());
+	internalAssert(value->isUsable());
 
 	value->m_users.emplace_back(&user);
 }

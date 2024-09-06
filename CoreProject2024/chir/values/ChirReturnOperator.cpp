@@ -13,6 +13,12 @@ chir::ReturnOperator::ReturnOperator(utils::NoNull<Value> value) noexcept
 	Node::setParent(m_value, this);
 }
 
+chir::ReturnOperator::~ReturnOperator() {
+	if (m_value) {
+		m_value->~Value();
+	}
+}
+
 chir::Value*& chir::ReturnOperator::getValue() noexcept {
 	return m_value;
 }

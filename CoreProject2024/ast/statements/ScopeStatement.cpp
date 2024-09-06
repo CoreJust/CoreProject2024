@@ -11,6 +11,12 @@ ast::ScopeStatement::ScopeStatement(std::vector<utils::NoNull<ast::Statement>> s
 	}
 }
 
+ast::ScopeStatement::~ScopeStatement() {
+	for (auto statement : m_statements) {
+		statement->~Statement();
+	}
+}
+
 const std::vector<utils::NoNull<ast::Statement>>& ast::ScopeStatement::getStatements() noexcept {
 	return m_statements;
 }

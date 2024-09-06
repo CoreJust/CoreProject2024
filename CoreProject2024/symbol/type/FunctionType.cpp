@@ -11,6 +11,14 @@
 symbol::FunctionType::FunctionType(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes) noexcept 
 	: Type(TypeKind::FUNCTION), m_returnType(returnType), m_argumentTypes(std::move(argumentTypes)) { }
 
+symbol::FunctionType::~FunctionType() {
+	for (auto argumentType : m_argumentTypes) {
+		argumentType->~Type();
+	}
+
+	m_returnType->~Type();
+}
+
 utils::NoNull<symbol::FunctionType> symbol::FunctionType::make(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes) {
 	return TypeAllocator::make<FunctionType>(returnType, std::move(argumentTypes));
 }

@@ -4,6 +4,7 @@
 
 #include "File.hpp"
 #include <fstream>
+#include <iostream>
 #include <filesystem>
 #include "utf/Utf.hpp"
 #include "error/ErrorPrinter.hpp"

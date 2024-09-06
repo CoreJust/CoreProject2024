@@ -24,7 +24,7 @@ namespace parser {
 	public:
 		Parser(lexer::Tokenizer tokenizer);
 
-		ast::Declaration* parse();
+		utils::NoNull<ast::Declaration> parse();
 
 	private:
 		// Declarations

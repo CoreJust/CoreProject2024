@@ -36,6 +36,8 @@ namespace symbol {
 		Type(TypeKind typeKind) noexcept;
 
 	public:
+		inline virtual ~Type() { }
+
 		static utils::NoNull<Type> make(TypeKind typeKind);
 
 		// Creates the CIR type from CHIR type.

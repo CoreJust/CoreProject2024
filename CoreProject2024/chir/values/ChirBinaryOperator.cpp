@@ -10,6 +10,11 @@ chir::BinaryOperator::BinaryOperator(BinaryOperatorType operatorType, utils::NoN
 	Node::setParent(m_right, this);
 }
 
+chir::BinaryOperator::~BinaryOperator() {
+	m_left->~Value();
+	m_right->~Value();
+}
+
 utils::NoNull<chir::Value>& chir::BinaryOperator::getLeft() noexcept {
 	return m_left;
 }

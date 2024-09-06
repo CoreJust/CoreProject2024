@@ -19,6 +19,7 @@ namespace chir {
 	public:
 		ReturnOperator() noexcept;
 		ReturnOperator(utils::NoNull<Value> value) noexcept;
+		~ReturnOperator() override;
 
 		Value*& getValue() noexcept;
 	};

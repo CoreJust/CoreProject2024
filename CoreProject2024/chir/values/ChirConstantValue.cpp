@@ -3,10 +3,11 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "ChirConstantValue.hpp"
+#include <format>
 #include "utf/FastFmt.hpp" // For ilog2
 #include "error/ErrorPrinter.hpp"
 
-const utils::IntValue INT_LIMITS[][2] = { // [ilog2(bytes) - 1][is_signed]
+const utils::IntValue INT_LIMITS[][2] = { // [ilog2(bytes)][is_signed]
 	{ utils::IntValue(0xff), utils::IntValue(0x7f) }, // u8, i8
 	{ utils::IntValue(0xffff), utils::IntValue(0x7fff) }, // u16, i16
 	{ utils::IntValue(0xffffffff), utils::IntValue(0x7fffffff) }, // u32, i32
@@ -15,7 +16,7 @@ const utils::IntValue INT_LIMITS[][2] = { // [ilog2(bytes) - 1][is_signed]
 };
 
 const bool canTypeHoldIntValue(utils::NoNull<symbol::Type> type, utils::IntValue& value) noexcept {
-	utils::IntValue maxValue = INT_LIMITS[utf::ilog2(type->getTypeSize()) - 1][type->isSignedType()];
+	utils::IntValue maxValue = INT_LIMITS[utf::ilog2(type->getTypeSize())][type->isSignedType()];
 	if (type->isSignedType() && value >= utils::IntValue(0)) {
 		maxValue -= utils::IntValue(1);
 	}
@@ -33,7 +34,7 @@ void chir::ConstantValue::setIntLiteralType(utils::NoNull<symbol::Type> type) no
 			.name = "Semantic error: Assigning negative value to unsigned type",
 			.selectionStart = m_position,
 			.selectionLength = 1,
-			.description = "Tried to use a negative integer literal in a context where an unsigned value is expected."
+			.description = std::format("Tried to use a negative integer literal ({}) in a context where an unsigned value is expected.", m_value.str())
 		});
 	}
 
@@ -43,7 +44,7 @@ void chir::ConstantValue::setIntLiteralType(utils::NoNull<symbol::Type> type) no
 			.name = "Semantic error: Int literal overflow",
 			.selectionStart = m_position,
 			.selectionLength = 1,
-			.description = "Tried to assign a value that is larger than the type can hold."
+			.description = std::format("Tried to assign a value ({}) that is larger than the type can hold.", m_value.str())
 		});
 	}
 
@@ -67,11 +68,11 @@ void chir::ConstantValue::assignOwnLiteralType() noexcept {
 		return;
 	}
 
-	error::internalAssert(false, "Cannot fill the value in any type.");
+	internalAssert(false, "Cannot fill the value in any type.");
 }
 
 void chir::ConstantValue::setBoolLiteralType() noexcept {
-	error::internalAssert(m_value == 0 || m_value == 1);
+	internalAssert(m_value == 0 || m_value == 1);
 
 	m_type = symbol::Type::make(symbol::TypeKind::BOOL);
 }

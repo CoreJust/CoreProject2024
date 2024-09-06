@@ -11,7 +11,7 @@
 
 parser::Parser::Parser(lexer::Tokenizer tokenizer) : m_toks(std::move(tokenizer)) { }
 
-ast::Declaration* parser::Parser::parse() {
+utils::NoNull<ast::Declaration> parser::Parser::parse() {
 	std::vector<utils::NoNull<ast::Declaration>> result;
 	m_toks.match(lexer::NEWLINE); // Skipping possible initial new line.
 
@@ -26,7 +26,7 @@ ast::Declaration* parser::Parser::parse() {
 				.name = "Syntax error: Expected a declaration",
 				.selectionStart = m_toks.current().position,
 				.selectionLength = m_toks.current().text.size(),
-				.description = std::format("Encountered unexpected token {}, while a global declaration was expected.",  m_toks.current().toString()),
+				.description = std::format("Encountered unexpected token {}, while a global declaration was expected.", m_toks.current().toString()),
 			});
 
 			m_toks.next();
@@ -36,7 +36,7 @@ ast::Declaration* parser::Parser::parse() {
 		m_toks.consumeRange(lexer::NEWLINE, lexer::NO_TOKEN_TYPE, "Declarations must begin with a new line.");
 	}
 
-	return ast::AstAllocator::make<ast::ModuleDeclarations>(utils::TextPosition(), std::move(result)).get();
+	return ast::AstAllocator::make<ast::ModuleDeclarations>(utils::TextPosition(), std::move(result));
 }
 
 ast::Declaration* parser::Parser::functionDeclaration() {

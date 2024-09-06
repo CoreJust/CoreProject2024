@@ -53,11 +53,14 @@
 #define CORE_BENCHMARKING_MODE 1
 
 // By changing this macro value one can run current benchmarks, or build the actual project.
-#define CURRENT_COMPILATION_MODE CORE_BUILD_MODE
+#define CURRENT_COMPILATION_MODE 1
 
 #if CURRENT_COMPILATION_MODE == CORE_BUILD_MODE
+#include <chrono>
+#include <iostream>
 #include "utf/UtfIO.hpp"
 #include "compiler/Compiler.hpp"
+#include "test/SourceCodeGenerator.hpp"
 
 // The entry point of the CoreProject2024.
 int main() {
@@ -67,8 +70,12 @@ int main() {
 	}
 
 	// Running the build.
+	auto start = std::chrono::high_resolution_clock::now();
 	compiler::Compiler compiler;
 	compiler.build();
+
+	auto compilationTime = std::chrono::high_resolution_clock::now() - start;
+	std::cout << "\nCompilation time: " << (double(compilationTime.count()) / 1'000'000'000) << std::endl;
 
 	return 0;
 }

@@ -35,6 +35,7 @@ namespace ast {
 
 	public:
 		BinaryOperator(BinaryOperatorType operatorType, utils::NoNull<Expression> left, utils::NoNull<Expression> right) noexcept;
+		~BinaryOperator() override;
 
 		utils::NoNull<Expression>& getLeft() noexcept;
 		utils::NoNull<Expression>& getRight() noexcept;

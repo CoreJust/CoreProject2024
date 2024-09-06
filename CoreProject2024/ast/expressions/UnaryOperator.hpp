@@ -29,6 +29,7 @@ namespace ast {
 
 	public:
 		UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Expression> expression) noexcept;
+		~UnaryOperator() override;
 
 		utils::NoNull<Expression>& getExpression() noexcept;
 		UnaryOperatorType getOperator() const noexcept;

@@ -26,6 +26,10 @@ utf::StringView error::ErrorPrinter::setSource(utf::String source) noexcept {
 	return s_currentSource = std::move(source);
 }
 
+void error::ErrorPrinter::resetSource() noexcept {
+	s_currentSource.clear();
+}
+
 bool error::ErrorPrinter::hasErrors() noexcept {
 	return s_hasErrors;
 }

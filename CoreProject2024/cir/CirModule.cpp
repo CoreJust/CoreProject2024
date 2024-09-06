@@ -14,6 +14,14 @@ cir::Module::Module(utf::String name) noexcept
 	m_globalConstructor->makeBasicBlock("entry");
 }
 
+cir::Module::~Module() {
+	for (auto global : m_globals) {
+		global->~GlobalValue();
+	}
+
+	m_globalConstructor->~CommonFunction();
+}
+
 void cir::Module::print(std::ostream& out) {
 	utils::IndentPrinter indentPrinter(out);
 	cir_pass::PrinterPass printerPass(indentPrinter);
@@ -33,7 +41,7 @@ utils::NoNull<cir::CommonFunction> cir::Module::addCommonFunction(utf::String na
 	return m_globals.emplace_back(CirAllocator::make<CommonFunction>(std::move(name), std::move(returnType), std::move(arguments), this)).as<CommonFunction>();
 }
 
-utf::StringView cir::Module::getName() const noexcept {
+utf::String cir::Module::getName() const noexcept {
 	return m_name;
 }
 

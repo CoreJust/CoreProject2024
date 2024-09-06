@@ -24,3 +24,7 @@ Alpha 0.1.2 (16.08.2024 - ?)
 - Added compile-time computation of expressions with literals.
 - Added variables of function type.
 - Added type cast operator (as).
+- Added compilation time output.
+- Fixed bug when compiler failed to choose a function when it has no arguments.
+- Fixed bug where a division by zero during compile-time evaluation somehow went unnoticed.
+- Fixed memory leaks due to destructors not being called.

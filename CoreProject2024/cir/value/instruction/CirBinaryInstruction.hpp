@@ -43,6 +43,7 @@ namespace cir {
 
 	public:
 		BinaryInstruction(BinaryInstructionKind instructionKind, utils::NoNull<Value> left, utils::NoNull<Value> right, utf::String name = "b") noexcept;
+		~BinaryInstruction() override;
 
 		BinaryInstructionKind getInstructionKind() const noexcept;
 		utils::NoNull<Value>& getLeft() noexcept;

@@ -33,6 +33,8 @@ namespace symbol {
 
 	public:
 		SymbolTable();
+		SymbolTable(SymbolTable&&) = default;
+		~SymbolTable();
 
 		// Adds a new variable to the table.
 		// It must be checked outside that there were no such variable previously.

@@ -37,7 +37,7 @@ namespace cir {
 		Value(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept;
 		virtual ~Value() noexcept = default;
 
-		utf::StringView getName() const noexcept;
+		utf::String getName() const noexcept;
 		utils::NoNull<Type> getType() const noexcept;
 		const ValueId getId() const noexcept;
 		const ValueKind getKind() const noexcept;

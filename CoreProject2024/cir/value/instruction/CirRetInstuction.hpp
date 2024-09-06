@@ -20,6 +20,7 @@ namespace cir {
 	public:
 		RetInstruction() noexcept;
 		RetInstruction(utils::NoNull<Value> operand) noexcept;
+		~RetInstruction() override;
 
 		bool isRetUnit() const noexcept;
 		Value*& getOperand() noexcept;

@@ -28,6 +28,7 @@ namespace cir {
 
 	public:
 		Module(utf::String name) noexcept;
+		~Module();
 
 		// Prints the module in a human-friendly manner to the given stream.
 		void print(std::ostream& out);
@@ -36,7 +37,7 @@ namespace cir {
 		utils::NoNull<NativeFunction> addNativeFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
 		utils::NoNull<CommonFunction> addCommonFunction(utf::String name, utils::NoNull<Type> returnType, std::vector<utils::NoNull<FunctionArgument>> arguments);
 
-		utf::StringView getName() const noexcept;
+		utf::String getName() const noexcept;
 		std::vector<utils::NoNull<GlobalValue>>& getGlobals() noexcept;
 		utils::NoNull<cir::CommonFunction> getGlobalConstructor() const noexcept;
 	};

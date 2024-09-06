@@ -21,6 +21,7 @@ namespace chir {
 
 	public:
 		VariableDeclaration(const symbol::VariableSymbol& variable, utils::NoNull<Value> initialValue) noexcept;
+		~VariableDeclaration() override;
 
 		const symbol::VariableSymbol& getVariable() const noexcept;
 		utils::NoNull<Value>& getInitialValue() noexcept;

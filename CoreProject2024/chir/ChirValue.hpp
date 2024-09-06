@@ -22,6 +22,8 @@ namespace chir {
 		Value(NodeKind type, utils::NoNull<symbol::Type> valueType) noexcept;
 
 	public:
+		virtual ~Value() override;
+
 		utils::NoNull<symbol::Type> getValueType() noexcept;
 	};
 }

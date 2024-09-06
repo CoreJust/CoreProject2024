@@ -12,12 +12,9 @@
 #pragma once
 #include "utf/String.hpp"
 
-namespace error {
 #ifndef _DEBUG
-#define error::internalAssert _INTERNAL_ASSERT_DUMMY
-#define _INTERNAL_ASSERT_DUMMY(...)
+#define internalAssert(...)
 #else
 	// If the condition is false, causes fatal internal error with the given message for description.
 	void internalAssert(bool condition, utf::StringView message = "");
 #endif
-}

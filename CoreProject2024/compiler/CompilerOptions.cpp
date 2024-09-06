@@ -4,11 +4,11 @@
 
 #include "CompilerOptions.hpp"
 
-utf::String compiler::CompilerOptions::s_sourceName = "test";
+utf::String compiler::CompilerOptions::s_sourceName = "bench";
 utf::String compiler::CompilerOptions::s_linker = "clang++";
 compiler::Target compiler::CompilerOptions::s_target { };
 compiler::ProjectMode compiler::CompilerOptions::s_projectMode = compiler::ProjectMode::EXECUTABLE;
-compiler::EmitMode compiler::CompilerOptions::s_emitMode = compiler::EmitMode::ALL;
+compiler::EmitMode compiler::CompilerOptions::s_emitMode = compiler::EmitMode::OBJECT_FILE;
 compiler::CompilationMode compiler::CompilerOptions::s_compilationMode = compiler::CompilationMode::RELEASE;
 compiler::OptimizationLevel compiler::CompilerOptions::s_optimizationLevel = compiler::OptimizationLevel::O2;
 

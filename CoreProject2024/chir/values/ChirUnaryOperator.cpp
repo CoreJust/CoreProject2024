@@ -9,6 +9,10 @@ chir::UnaryOperator::UnaryOperator(UnaryOperatorType operatorType, utils::NoNull
 	Node::setParent(m_value, this);
 }
 
+chir::UnaryOperator::~UnaryOperator() {
+	m_value->~Value();
+}
+
 utils::NoNull<chir::Value>& chir::UnaryOperator::getValue() noexcept {
 	return m_value;
 }

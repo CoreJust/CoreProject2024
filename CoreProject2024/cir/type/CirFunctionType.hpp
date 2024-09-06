@@ -28,6 +28,8 @@ namespace cir {
 		FunctionType(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes) noexcept;
 
 	public:
+		~FunctionType() override;
+
 		static utils::NoNull<FunctionType> make(utils::NoNull<Type> returnType, std::vector<utils::NoNull<Type>> argumentTypes);
 
 		llvm::FunctionType* makeRawLLVMFunctionType(llvm::LLVMContext& context) const;

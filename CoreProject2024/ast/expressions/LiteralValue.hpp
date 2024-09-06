@@ -23,6 +23,7 @@ namespace ast {
 	public:
 		LiteralValue(utf::StringView value) noexcept; // Int
 		LiteralValue(bool value) noexcept; // Bool
+		~LiteralValue() override;
 
 		utils::NoNull<Type> getType() const noexcept;
 		utf::StringView getRawValue() const noexcept;

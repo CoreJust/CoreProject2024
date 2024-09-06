@@ -36,6 +36,8 @@ namespace cir {
 		Type(TypeKind typeKind) noexcept;
 
 	public:
+		inline virtual ~Type() { }
+
 		static utils::NoNull<Type> make(TypeKind typeKind);
 
 		virtual llvm::Type* makeLLVMType(llvm::LLVMContext& context) const;

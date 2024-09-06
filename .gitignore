@@ -10,6 +10,7 @@ bench.core
 *.i
 *.cfg
 *.cmd
+*.diagsession
 
 # User-specific files
 *.rsuser

@@ -9,39 +9,39 @@
 #include "CirTypeAllocator.hpp"
 
 cir::IntegerType::IntegerType(uint32_t bitSize, bool isSigned) noexcept 
-    : Type(TypeKind::INTEGER), m_bitSize(bitSize), m_isSigned(isSigned) { }
+	: Type(TypeKind::INTEGER), m_bitSize(bitSize), m_isSigned(isSigned) { }
 
 utils::NoNull<cir::IntegerType> cir::IntegerType::make(uint32_t bitSize, bool isSigned) {
-    error::internalAssert(bitSize != 0);
+	internalAssert(bitSize != 0);
 
-    return CirTypeAllocator::make<IntegerType>(bitSize, isSigned);
+	return CirTypeAllocator::make<IntegerType>(bitSize, isSigned);
 }
 
 llvm::Type* cir::IntegerType::makeLLVMType(llvm::LLVMContext& context) const {
-    return llvm::Type::getIntNTy(context, m_bitSize);
+	return llvm::Type::getIntNTy(context, m_bitSize);
 }
 
 bool cir::IntegerType::equals(utils::NoNull<Type> other) const noexcept {
-    if (other->getTypeKind() != TypeKind::INTEGER) {
-        return false;
-    }
+	if (other->getTypeKind() != TypeKind::INTEGER) {
+		return false;
+	}
 
-    utils::NoNull<IntegerType> otherAsInteger = other.as<IntegerType>();
-    return otherAsInteger->getBitSize() == m_bitSize && otherAsInteger->isSigned() == m_isSigned;
+	utils::NoNull<IntegerType> otherAsInteger = other.as<IntegerType>();
+	return otherAsInteger->getBitSize() == m_bitSize && otherAsInteger->isSigned() == m_isSigned;
 }
 
 uint32_t cir::IntegerType::getTypeSize() const noexcept {
-    return m_bitSize >> 3;
+	return m_bitSize >> 3;
 }
 
 uint32_t cir::IntegerType::getBitSize() const noexcept {
-    return m_bitSize;
+	return m_bitSize;
 }
 
 bool cir::IntegerType::isSigned() const noexcept {
-    return m_isSigned;
+	return m_isSigned;
 }
 
 utf::String cir::IntegerType::toString() const {
-    return std::format("{}{}", char('u' - m_isSigned * ('u' - 'i')), m_bitSize);
+	return std::format("{}{}", char('u' - m_isSigned * ('u' - 'i')), m_bitSize);
 }

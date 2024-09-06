@@ -15,7 +15,7 @@ utf::String extractIntValue(utils::IntValue&& value) noexcept {
 cir::ConstantNumber::ConstantNumber(utils::NoNull<Type> type, utils::IntValue value) noexcept
 	: Constant(extractIntValue(std::move(value)), std::move(type), ValueKind::CONSTANT_NUMBER) { }
 
-cir::ConstantNumber::~ConstantNumber() noexcept {
+cir::ConstantNumber::~ConstantNumber() {
 	// A way to call the default destructor.
 	std::ignore = std::move(*reinterpret_cast<utils::IntValue*>(m_name.data()));
 }

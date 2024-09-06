@@ -7,5 +7,5 @@
 
 cir::Constant::Constant(utf::String name, utils::NoNull<Type> type, ValueKind kind) noexcept
 	: Value(std::move(name), std::move(type), kind) {
-	error::internalAssert(cir::isConstant(kind));
+	internalAssert(cir::isConstant(kind));
 }

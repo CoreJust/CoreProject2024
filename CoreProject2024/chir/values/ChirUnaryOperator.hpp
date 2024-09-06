@@ -29,6 +29,7 @@ namespace chir {
 
 	public:
 		UnaryOperator(UnaryOperatorType operatorType, utils::NoNull<Value> value, utils::NoNull<symbol::Type> type) noexcept;
+		~UnaryOperator() override;
 
 		utils::NoNull<Value>& getValue() noexcept;
 		UnaryOperatorType getOperator() const noexcept;
